@@ -1,0 +1,1 @@
+All manifests for deploying kubecube
