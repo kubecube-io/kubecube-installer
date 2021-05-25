@@ -1,0 +1,28 @@
+# Default values for kubecube
+
+kubecube:
+  replicas: 3
+  image: hub.c.163.com/nceqzh/kubecube:0.1.5-ha
+
+  args:
+    logLevel: info
+    securePort: 7443
+    webhookServerPort: 9443
+    leaderElect: true
+
+  env:
+    wardenImage: hub.c.163.com/nceqzh/warden:0.0.1-ha
+    pivotCubeSvc: kubecube.kubecube-system.svc:7443
+    pivotCubeHost: ""
+
+webhook:
+  caBundle: ""
+
+tlsSecret:
+  key: ""
+  crt: ""
+
+pivotCluster:
+  kubernetesAPIEndpoint: ""
+  kubeconfig: ""
+

@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubecube-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubecube
+  namespace: kubecube-system
+spec:
+  selector:
+    kubecube.io/app: kubecube
+  ports:
+    - name: http
+      protocol: TCP
+      port: 7777
+      targetPort: 7777
+    - name: https
+      protocol: TCP
+      port: 7443
+      targetPort: 7443
+    - name: webhook
+      port: 9443
+      targetPort: 9443
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubecube
+  namespace: kubecube-system
+  labels:
+    kubecube.io/app: kubecube
+spec:
+  replicas: { { .Values.kubecube.replicas } }
+  selector:
+    matchLabels:
+      kubecube.io/app: kubecube
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: kubecube
+    spec:
+      containers:
+        - name: kubecube
+          image: { { .Values.kubecube.image } }
+          securityContext:
+            runAsUser: 0
+            privileged: true
+          args:
+            - -log-level={{ .Values.kubecube.args.logLevel }}
+            - -secure-port={{ .Values.kubecube.args.securePort }}
+            - -tls-cert=/etc/tls/tls.crt
+            - -tls-key=/etc/tls/tls.key
+            - -webhook-cert=/etc/tls
+            - -webhook-server-port={{ .Values.kubecube.args.webhookServerPort }}
+            - -leader-elect={{ .Values.kubecube.args.leaderElect }}
+          env:
+            - name: WARDEN_IMAGE
+              value: { { .Values.kubecube.env.wardenImage } }
+            - name: PIVOT_CUBE_HEADLESS_SVC
+              value: { { .Values.kubecube.env.pivotCubeSvc } }
+            - name: PIVOT_CUBE_HOST
+              value: { { .Values.kubecube.env.pivotCubeHost } }
+          volumeMounts:
+            - name: cube-tls
+              mountPath: "/etc/tls"
+              readOnly: true
+      volumes:
+        - name: cube-tls
+          secret:
+            secretName: cube-tls-secret
