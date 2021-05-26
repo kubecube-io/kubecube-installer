@@ -302,7 +302,7 @@ yum clean all >/dev/null
 yum makecache >/dev/null
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	yum updating\033[0m"
+echo -e "\033[32m>>>>>>	yum updating...\033[0m"
 yum -y update
 
 echo -e "\033[32m================================================\033[0m"
