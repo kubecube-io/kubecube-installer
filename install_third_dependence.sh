@@ -22,11 +22,11 @@ echo -e "\033[32m>>>>>>	installing helm...\033[0m"
 tar -zxvf manifests/helm/helm-v3.5.4-linux-amd64.tar.gz
 sudo mv linux-amd64/helm /usr/local/bin/helm
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	deploy nginx ingress controller...\033[0m"
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx
+#echo -e "\033[32m================================================\033[0m"
+#echo -e "\033[32m>>>>>>	deploy nginx ingress controller...\033[0m"
+#helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+#helm repo update
+#helm install ingress-nginx ingress-nginx/ingress-nginx
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	third dependence install success\033[0m"

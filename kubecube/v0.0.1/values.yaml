@@ -13,16 +13,16 @@ kubecube:
   env:
     wardenImage: hub.c.163.com/nceqzh/warden:0.0.1-ha
     pivotCubeSvc: kubecube.kubecube-system.svc:7443
-    pivotCubeHost: ""
+    pivotCubeHost: "2"
 
 webhook:
-  caBundle: ""
+  caBundle: "2"
 
 tlsSecret:
-  key: ""
-  crt: ""
+  key: "2"
+  crt: "2"
 
 pivotCluster:
-  kubernetesAPIEndpoint: ""
-  kubeconfig: ""
+  kubernetesAPIEndpoint: "2"
+  kubeconfig: "2"
 

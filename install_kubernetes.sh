@@ -88,7 +88,7 @@ apiServer:
 #  certSANs:
 #  # 设置证书，如果是多个master就把master的ip和主机名写入，还可以配置域名和VIP
 #  - ${IPADDR}
-imageRepository: "registry.aliyuncs.com/google_containers"
+imageRepository: "hub.c.163.com/kubecube"
 EOF
 }
 
@@ -131,7 +131,7 @@ fi
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	config hostname\033[0m"
-hostnamectl set-hostname master # todo: dynamic hostname?
+hostnamectl set-hostname master
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	config hosts\033[0m"
