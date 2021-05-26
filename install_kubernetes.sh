@@ -153,7 +153,7 @@ sysctl -p /etc/sysctl.d/k8s.conf
 echo "1" > /proc/sys/net/ipv4/ip_forward
 
 echo -e "\033[32m================================================\033[0m"
-echo ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
+echo -e ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
 rpm -qa |grep docker |grep -v grep >/dev/null
 if [ $? -ne 0 ];then
 	yum -y install yum-utils device-mapper-persistent-data lvm2 >/dev/null
