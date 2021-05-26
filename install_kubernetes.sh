@@ -70,9 +70,9 @@ apiServer:
     audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
     audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
     audit-log-path: "/var/log/audit"
-    audit-log-maxage: 10
-    audit-log-maxsize: 100
-    audit-log-maxbackup: 10
+    audit-log-maxage: "10"
+    audit-log-maxsize: "100"
+    audit-log-maxbackup: "10"
     audit-log-format: "json"
   extraVolumes:
   - name: "cube"
@@ -280,7 +280,7 @@ kubectl get svc --all-namespaces
 # wait for kubernetes-dashboard creating，predict completed time：4m40s(1.19.0)
 #sleep 60 >/dev/null
 echo -e "\033[32m==========================================================================\033[0m"
-echo -e "\033[32m Kubernetes ${Version} deploy completed...\033[0m"
+echo -e "\033[32m Kubernetes ${Version} deploy completed\033[0m"
 #echo -e "\033[32m kubernetes-dashboard site https://${IPADDR}:30000\033[0m"
 #echo -e "\033[32m Token get：kubectl describe secrets -n kubernetes-dashboard ${Token} |grep token |awk 'NR==3 {print \$2}'\033[0m"
 echo -e "\033[32m==========================================================================\033[0m"
