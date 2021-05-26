@@ -13,18 +13,20 @@ MEM_Avail=$(free -m |awk '/Mem/ {print "memory available:",$4"M"}')
 DISK_INFO=$(df -h |grep -w "/" |awk '{print "disk total:",$1,$2}')
 DISK_Avail=$(df -h |grep -w "/" |awk '{print "disk available:",$1,$4}')
 LOAD_INFO=$(uptime |awk '{print "CPU load: "$(NF-2),$(NF-1),$NF}'|sed 's/\,//g')
+API_IP=${IPADDR}
 
 if [ ${UID} -ne 0 ];then
   action "please use root to execute install shell..." /bin/false
   exit 1
 fi
 
-#if [ -z ${vip} ]
-#then
-#   echo "-z $a : 字符串长度为 0"
-#else
-#   echo "-z $a : 字符串长度不为 0"
-#fi
+if [ -z ${VIP} ]
+then
+   echo -e "\033[32mVIP not be used\033[0m"
+else
+   API_IP=${VIP}
+   echo -e "\033[32mUse VIP: ${API_IP}\033[0m"
+fi
 
 function Kubernetes_Version (){
   echo -e "\033[32mVersion：1.20.0 Available...\033[0m"
@@ -69,10 +71,9 @@ apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: ${Version}
 #masterip和端口，这里也可以设置域名或者VIP
-#controlPlaneEndpoint: ${IPADDR}
+controlPlaneEndpoint: ${API_IP}
 apiServer:
   extraArgs:
-    advertise-address: ${IPADDR}
     authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
     audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
     audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
@@ -92,9 +93,9 @@ apiServer:
     mountPath: "/var/log/audit"
     readOnly: false
     pathType: DirectoryOrCreate
-#  certSANs:
-#  # 设置证书，如果是多个master就把master的ip和主机名写入，还可以配置域名和VIP
-#  - ${IPADDR}
+  certSANs:
+  # 设置证书，如果是多个master就把master的ip和主机名写入，还可以配置域名和VIP
+  - ${API_IP}
 imageRepository: "hub.c.163.com/kubecube"
 EOF
 }
@@ -232,7 +233,7 @@ fi
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version${Version}\033[0m"
-kubeadm init --config=/etc/cube/kubeadm/init.config -service-cidr=172.16.0.0/16 --pod-network-cidr=172.17.0.0/16
+kubeadm init --config=/etc/cube/kubeadm/init.config --service-cidr=172.16.0.0/16 --pod-network-cidr=172.17.0.0/16
 #kubeadm init --kubernetes-version=${Version} \
 #--apiserver-advertise-address=${IPADDR} \
 #--image-repository registry.aliyuncs.com/google_containers \
