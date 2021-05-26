@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 IPADDR=$(hostname -I |awk '{print $1}')
 
 function sign_cert() {
@@ -58,21 +60,21 @@ cd ..
 function render_values() {
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	render values of KubeCube...\033[0m"
-cat << EOF >values.yaml
+cat >values.yaml <<EOF
 kubecube:
   env:
     pivotCubeHost: ${IPADDR}:30443
 
 webhook:
-  caBundle: ${cat ca/ca.crt | base64}
+  caBundle: $(cat ca/ca.crt | base64 -w 0)
 
 tlsSecret:
-  key: ${cat ca/tls.key | base64}
-  crt: ${cat ca/tls.crt | base64}
+  key: $(cat ca/tls.key | base64 -w 0)
+  crt: $(cat ca/tls.crt | base64 -w 0)
 
 pivotCluster:
   kubernetesAPIEndpoint: ${IPADDR}:6443
-  kubeconfig: ${cat /root/.kube/config | base64}
+  kubeconfig: $(cat /root/.kube/config | base64 -w 0)
 EOF
 }
 
@@ -80,7 +82,7 @@ sign_cert
 render_values
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	deploying KubeCube...\033[0m"
-helm install -f values.yaml kubecube kubecube/v0.0.1
+helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	        Welcome to KubeCube!       <<<<<<\033[0m"

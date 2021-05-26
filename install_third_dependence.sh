@@ -2,7 +2,13 @@
 
 set -e
 
-# kubectl taint node master node-role.kubernetes.io/master-
+if [ $(kubectl get nodes | wc -l) -eq 2 ]
+then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m>>>>>>	delete taint of master node...\033[0m"
+  kubectl get nodes | grep -v "NAME" | awk '{print $1}' | sed -n '1p' | xargs kubectl taint node $() node-role.kubernetes.io/master-
+fi
+
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	deploy metrics-server...\033[0m"
 kubectl apply -f manifests/metrics-server/metrics-server.yaml
