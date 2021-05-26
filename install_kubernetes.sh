@@ -19,6 +19,13 @@ if [ ${UID} -ne 0 ];then
   exit 1
 fi
 
+if [ -z ${vip} ]
+then
+   echo "-z $a : 字符串长度为 0"
+else
+   echo "-z $a : 字符串长度不为 0"
+fi
+
 function Kubernetes_Version (){
   echo -e "\033[32mVersion：1.20.0 Available...\033[0m"
   echo -e "\033[32mVersion：1.19.9 Available...\033[0m"
@@ -225,7 +232,8 @@ fi
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version${Version}\033[0m"
-kubeadm init --config=/etc/cube/kubeadm/init.config
+kubeadm init --config=/etc/cube/kubeadm/init.config \
+-service-cidr=172.16.0.0/16 --pod-network-cidr=172.17.0.0/16
 #kubeadm init --kubernetes-version=${Version} \
 #--apiserver-advertise-address=${IPADDR} \
 #--image-repository registry.aliyuncs.com/google_containers \
@@ -344,7 +352,7 @@ sysctl -p /etc/sysctl.d/k8s.conf
 echo "1" > /proc/sys/net/ipv4/ip_forward
 
 echo -e "\033[32m================================================\033[0m"
-echo ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
+echo -e ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
 rpm -qa |grep docker |grep -v grep >/dev/null
 if [ $? -ne 0 ];then
 	yum -y install yum-utils device-mapper-persistent-data lvm2 >/dev/null
