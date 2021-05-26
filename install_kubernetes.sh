@@ -19,12 +19,12 @@ if [ ${UID} -ne 0 ];then
   exit 1
 fi
 
-if [ -z ${vip} ]
-then
-   echo "-z $a : 字符串长度为 0"
-else
-   echo "-z $a : 字符串长度不为 0"
-fi
+#if [ -z ${vip} ]
+#then
+#   echo "-z $a : 字符串长度为 0"
+#else
+#   echo "-z $a : 字符串长度不为 0"
+#fi
 
 function Kubernetes_Version (){
   echo -e "\033[32mVersion：1.20.0 Available...\033[0m"
@@ -72,7 +72,7 @@ kubernetesVersion: ${Version}
 #controlPlaneEndpoint: ${IPADDR}
 apiServer:
   extraArgs:
-    apiserver-advertise-address: ${IPADDR}
+    advertise-address: ${IPADDR}
     authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
     audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
     audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
