@@ -232,8 +232,7 @@ fi
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version${Version}\033[0m"
-kubeadm init --config=/etc/cube/kubeadm/init.config \
--service-cidr=172.16.0.0/16 --pod-network-cidr=172.17.0.0/16
+kubeadm init --config=/etc/cube/kubeadm/init.config -service-cidr=172.16.0.0/16 --pod-network-cidr=172.17.0.0/16
 #kubeadm init --kubernetes-version=${Version} \
 #--apiserver-advertise-address=${IPADDR} \
 #--image-repository registry.aliyuncs.com/google_containers \
