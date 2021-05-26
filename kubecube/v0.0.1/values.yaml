@@ -2,7 +2,7 @@
 
 kubecube:
   replicas: 3
-  image: hub.c.163.com/nceqzh/kubecube:0.1.5-ha
+  image: hub.c.163.com/kubecube/kubecube:0.0.1-deploy
 
   args:
     logLevel: info
@@ -11,18 +11,18 @@ kubecube:
     leaderElect: true
 
   env:
-    wardenImage: hub.c.163.com/nceqzh/warden:0.0.1-ha
+    wardenImage: hub.c.163.com/kubecube/warden:0.0.1-deploy
     pivotCubeSvc: kubecube.kubecube-system.svc:7443
-    pivotCubeHost: "2"
+    pivotCubeHost: "Cg=="
 
 webhook:
-  caBundle: "2"
+  caBundle: "Cg=="
 
 tlsSecret:
-  key: "2"
-  crt: "2"
+  key: "Cg=="
+  crt: "Cg=="
 
 pivotCluster:
-  kubernetesAPIEndpoint: "2"
-  kubeconfig: "2"
+  kubernetesAPIEndpoint: "Cg=="
+  kubeconfig: "Cg=="
 
