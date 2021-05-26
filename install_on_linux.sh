@@ -20,4 +20,4 @@ sudo sh manifests/install_third_dependence.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing kubecube...\033[0m"
-sudo sh install_kubecube.sh
+sudo sh manifests/install_kubecube.sh
