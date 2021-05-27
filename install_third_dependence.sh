@@ -8,7 +8,7 @@ then
 fi
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	deploy hnc-manager...\033[0m"
+echo -e "\033[32m>>>>>>	deploy hnc-manager, and wait for ready...\033[0m"
 kubectl apply -f manifests/hnc/hnc.yaml
 
 hnc_ready="0/2"
