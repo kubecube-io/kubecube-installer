@@ -20,12 +20,19 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing third dependence...\033[0m"
 sudo sh manifests/install_third_dependence.sh
 
-# todo use hostname
+if [ -z ${CLUSTER_NAME} ]
+then
+   echo -e "\033[32m empty CLUSTER_NAME, used hostname default \033[0m"
+   CLUSTER_NAME = $(hostname)
+else
+   echo -e "\033[32mUse member cluster name is: ${CLUSTER_NAME}\033[0m"
+fi
+
 cat >cluster.yaml <<EOF
 apiVersion: cluster.kubecube.io/v1
 kind: Cluster
 metadata:
-  name: member-cluster
+  name: ${CLUSTER_NAME}
 spec:
   kubernetesAPIEndpoint: ${IPADDR}:6443
   networkType: calico

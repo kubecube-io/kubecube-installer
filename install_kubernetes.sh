@@ -15,11 +15,6 @@ DISK_Avail=$(df -h |grep -w "/" |awk '{print "disk available:",$1,$4}')
 LOAD_INFO=$(uptime |awk '{print "CPU load: "$(NF-2),$(NF-1),$NF}'|sed 's/\,//g')
 API_IP=${IPADDR}
 
-if [ ${UID} -ne 0 ];then
-  action "please use root to execute install shell..." /bin/false
-  exit 1
-fi
-
 if [ -z ${VIP} ]
 then
    echo -e "\033[32mVIP not be used\033[0m"
