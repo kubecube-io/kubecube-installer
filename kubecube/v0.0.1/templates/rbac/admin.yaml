@@ -1,0 +1,11 @@
+apiVersion: user.kubecube.io/v1
+kind: User
+metadata:
+  name: admin
+  annotations:
+    kubecube.io/sync: "true"
+spec:
+  displayName: admin
+  language: en
+  loginType: normal
+  password: d12cf9e2ce438cd32fc368b3cc28a730
