@@ -1,0 +1,30 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: warden-validating-webhook-configuration
+webhooks:
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      caBundle: {{ .Values.webhook.caBundle }}
+      service:
+        name: warden
+        namespace: kubecube-system
+        port: 8443
+        path: /validate-core-kubernetes-v1-resource-quota
+    failurePolicy: Fail
+    name: vresourcequota.kb.io
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - resourcequotas
+    sideEffects: None

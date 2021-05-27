@@ -151,7 +151,7 @@ swapoff -a
 sed -i '/swap/s/^/#/g' /etc/fstab
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	config cornel params, passing bridge flow of IPv4 to iptables chain\033[0m"
+echo -e "\033[32m>>>>>>	config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
 cat >/etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -266,17 +266,17 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 #kubectl -n kubernetes-dashboard get secret
 #Token=$(kubectl -n kubernetes-dashboard get secret |awk '/kubernetes-dashboard-token/ {print $1}')
 
-sleep 60 >/dev/null
+sleep 30 >/dev/null
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	inspect node\033[0m"
 kubectl get node
 
-sleep 60 >/dev/null
+sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	inspect pod\033[0m"
 kubectl get pod --all-namespaces
 
-sleep 60 >/dev/null
+sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	inspect service\033[0m"
 kubectl get svc --all-namespaces
@@ -342,7 +342,7 @@ swapoff -a
 sed -i '/swap/s/^/#/g' /etc/fstab
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	config cornel params, passing bridge flow of IPv4 to iptables chain\033[0m"
+echo -e "\033[32m>>>>>>	config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
 cat >/etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1

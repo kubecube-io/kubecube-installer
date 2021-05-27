@@ -82,7 +82,7 @@ sign_cert
 render_values
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	deploying KubeCube...\033[0m"
-helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
+/usr/local/bin/helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	        Welcome to KubeCube!       <<<<<<\033[0m"

@@ -8,16 +8,16 @@ unzip  master.zip > /dev/null
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	make configurations...\033[0m"
-sudo sh manifests/make_config.sh
+source ./manifests/make_config.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing kubernetes...\033[0m"
-sudo sh manifests/install_kubernetes.sh
+source ./manifests/install_kubernetes.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing third dependence...\033[0m"
-sudo sh manifests/install_third_dependence.sh
+source ./manifests/install_third_dependence.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing kubecube...\033[0m"
-sudo sh manifests/install_kubecube.sh
+source ./manifests/install_kubecube.sh
