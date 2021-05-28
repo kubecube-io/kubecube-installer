@@ -84,6 +84,11 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	deploying KubeCube...\033[0m"
 /usr/local/bin/helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
 
+#while true; do
+#  sleep 5 > /dev/null
+#  curl -k https:${IPADDR}:30443/healthz
+#done
+
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	        Welcome to KubeCube!       <<<<<<\033[0m"
 echo -e "\033[32m================================================\033[0m"

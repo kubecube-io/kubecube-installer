@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/instance: ingress-nginx
 
 ---
+# those for skiff
 kind: ConfigMap
 apiVersion: v1
 metadata:
