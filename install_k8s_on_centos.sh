@@ -1,9 +1,7 @@
 #!/bin/bash
 
-set -e
-
 source /etc/init.d/functions
-source ./manifests/make_config.sh
+source ./manifests/params_process.sh
 
 SYS_VERSION=$(cat /etc/redhat-release)
 IPADDR=$(hostname -I |awk '{print $1}')

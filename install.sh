@@ -1,10 +1,8 @@
 #!/bin/bash
 
-#echo -e "\033[32m================================================\033[0m"
-#echo -e "\033[32m>>>>>>	download manifests for kubecube...\033[0m"
-#wget https://gitee.com/kubecube/manifests/repository/archive/master.zip
-#yum install -y unzip > /dev/null
-#unzip  master.zip > /dev/null
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	Processing params... \033[0m"
+source ./manifests/params_process.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
