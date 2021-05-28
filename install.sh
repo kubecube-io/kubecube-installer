@@ -27,7 +27,20 @@ else
   echo -e "\033[32m>>>>>>	        - kube-apiserver  \033[0m"
   echo -e "\033[32m>>>>>>	        - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config  \033[0m"
   echo -e "\033[32m>>>>>>	        - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config  \033[0m"
-  # todo: need confirm
+  # todo: to complete it
+
+  echo -e "\033[32m Please enter 'exit' to modify args of k8s api-server \033[0m"
+  echo -e "\033[32m After modify is done, please enter 'confirm' to continue \033[0m"
+  while read confirm
+  do
+    if [[ ${confirm} = "confirm" ]]; then
+      break
+    elif [[ ${confirm} = "exit" ]]; then
+      exit 1
+    else
+      continue
+    fi
+  done
 fi
 
 if [ ${INSTALL_KUBECUBE_PIVOT} = "true" ]; then
