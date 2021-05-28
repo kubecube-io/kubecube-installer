@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ./manifests/install.conf
-
 #echo -e "\033[32m================================================\033[0m"
 #echo -e "\033[32m>>>>>>	download manifests for kubecube...\033[0m"
 #wget https://gitee.com/kubecube/manifests/repository/archive/master.zip

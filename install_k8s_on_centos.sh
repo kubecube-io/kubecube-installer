@@ -1,6 +1,9 @@
 #!/bin/bash
 
+set -e
+
 source /etc/init.d/functions
+source ./manifests/make_config.sh
 
 SYS_VERSION=$(cat /etc/redhat-release)
 IPADDR=$(hostname -I |awk '{print $1}')
@@ -157,7 +160,7 @@ fi
 
 function make_cluster_configuration (){
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Make ClusterConfiguration\033[0m"
+echo -e "\033[32m>>>>>>	Make ClusterConfiguration For Kubeadm\033[0m"
 mkdir -p /etc/cube/kubeadm
 
 if [ -z ${CONTROL_PLANE_ENDPOINT} ]
