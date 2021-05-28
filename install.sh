@@ -10,13 +10,13 @@ source ./manifests/install.conf
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
-. ./manifests/make_config.sh
+source ./manifests/make_config.sh
 
 # todo: to support different linux os
 if [ ${INSTALL_KUBERNETES} = "true" ]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Kubernetes...\033[0m"
-  . ./manifests/install_k8s_on_centos.sh
+  sh ./manifests/install_k8s_on_centos.sh
 else
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	IMPORTANT !!! ...                                 \033[0m"
@@ -37,17 +37,17 @@ fi
 if [ ${INSTALL_KUBECUBE_PIVOT} = "true" ]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
-  . ./manifests/install_third_dependence.sh
+  sh ./manifests/install_third_dependence.sh
 
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing KubeCube...\033[0m"
-  . ./manifests/install_kubecube.sh
+  sh ./manifests/install_kubecube.sh
 fi
 
 if [ ${INSTALL_KUBECUBE_MEMBER} = "true" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
-. ./manifests/install_third_dependence.sh
+sh ./manifests/install_third_dependence.sh
 
 cat >cluster.yaml <<EOF
 apiVersion: cluster.kubecube.io/v1

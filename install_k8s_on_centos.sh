@@ -151,6 +151,7 @@ fi
 else
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	current only support ch! \033[0m"
+  exit 1
 fi
 }
 

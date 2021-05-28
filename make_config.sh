@@ -87,11 +87,6 @@ if [ -z ${MASTER_IP} ]; then
   exit 1
 fi
 
-if [ -z ${MASTER_USER} ];then
-  echo -e "\033[31m MASTER_USER can not be empty! \033[0m"
-  exit 1
-fi
-
 if [ -z ${LOCAL_IP} ]; then
   echo -e "\033[31m empty LOCAL_IP, exact ip by default \033[0m"
   LOCAL_IP=$(hostname -I |awk '{print $1}')
