@@ -9,7 +9,7 @@ echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
 source ./manifests/make_config.sh
 
 # todo: to support different linux os
-if [ ${INSTALL_KUBERNETES} = "true" ]; then
+if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Kubernetes...\033[0m"
   sh ./manifests/install_k8s_on_centos.sh
@@ -28,6 +28,7 @@ else
   echo -e "\033[32m>>>>>>	        - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config  \033[0m"
   echo -e "\033[32m>>>>>>	        - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config  \033[0m"
   # todo: to complete it
+  echo -e "\033[32m================================================\033[0m"
 
   echo -e "\033[32m Please enter 'exit' to modify args of k8s api-server \033[0m"
   echo -e "\033[32m After modify is done, please enter 'confirm' to continue \033[0m"
@@ -43,7 +44,7 @@ else
   done
 fi
 
-if [ ${INSTALL_KUBECUBE_PIVOT} = "true" ]; then
+if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
   sh ./manifests/install_third_dependence.sh
@@ -53,7 +54,7 @@ if [ ${INSTALL_KUBECUBE_PIVOT} = "true" ]; then
   sh ./manifests/install_kubecube.sh
 fi
 
-if [ ${INSTALL_KUBECUBE_MEMBER} = "true" ]; then
+if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
 sh ./manifests/install_third_dependence.sh

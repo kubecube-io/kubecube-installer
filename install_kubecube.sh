@@ -59,7 +59,7 @@ cd ..
 
 function render_values() {
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	render values of KubeCube...\033[0m"
+echo -e "\033[32m>>>>>>	Render Values of KubeCube...\033[0m"
 cat >values.yaml <<EOF
 kubecube:
   env:
@@ -81,13 +81,18 @@ EOF
 sign_cert
 render_values
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	deploying KubeCube...\033[0m"
+echo -e "\033[32m>>>>>>	Deploying KubeCube...\033[0m"
 /usr/local/bin/helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
 
-#while true; do
-#  sleep 5 > /dev/null
-#  curl -k https:${IPADDR}:30443/healthz
-#done
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	Wait For KubeCube ready...\033[0m"
+while true; do
+  sleep 7 > /dev/null
+  healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
+  if [[ $healthz = "healthy" ]]; then
+    break
+  fi
+done
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	        Welcome to KubeCube!       <<<<<<\033[0m"
