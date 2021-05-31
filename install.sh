@@ -2,7 +2,7 @@
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Processing params... \033[0m"
-source ./manifests/params_process.sh
+source ./manifests/souceparams_process.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
@@ -12,7 +12,7 @@ source ./manifests/make_config.sh
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Kubernetes...\033[0m"
-  sh ./manifests/install_k8s_on_centos.sh
+  /bin/bash ./manifests/install_k8s_on_centos.sh
 else
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	IMPORTANT !!! ...                                 \033[0m"
@@ -47,11 +47,11 @@ fi
 if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
-  sh ./manifests/install_third_dependence.sh
+  /bin/bash ./manifests/install_third_dependence.sh
 
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing KubeCube...\033[0m"
-  sh ./manifests/install_kubecube.sh
+  /bin/bash ./manifests/install_kubecube.sh
 fi
 
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
