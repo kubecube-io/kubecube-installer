@@ -33,10 +33,10 @@ if [ -z ${LOCAL_IP} ]; then
   LOCAL_IP=$(hostname -I |awk '{print $1}')
 fi
 
-if [ -z ${MEMBER_CLUSTER_NAME} ]; then
-  echo -e "\033[32m empty MEMBER_CLUSTER_NAME, used hostname by default \033[0m"
-  MEMBER_CLUSTER_NAME = $(hostname)
-fi
+#if [ -z ${MEMBER_CLUSTER_NAME} ]; then
+#  echo -e "\033[32m empty MEMBER_CLUSTER_NAME, used hostname by default \033[0m"
+#  MEMBER_CLUSTER_NAME = $(hostname)
+#fi
 
 if [ -z ${ZONE} ]; then
   ZONE="ch"

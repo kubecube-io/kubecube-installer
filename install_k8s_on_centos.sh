@@ -30,7 +30,7 @@ function system_info () {
 }
 
 function prev_install() {
-if [[ ${ZONE} = "ch" ]]; then
+if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Start previous requirements install... \033[0m"
 echo -e "\033[32m>>>>>>	Config source of yum\033[0m"
@@ -297,7 +297,7 @@ else
   echo -e "\033[32m>>>>>>	ACCESS_PASSWORD or ACCESS_PRIVATE_KEY_PATH must be specified\033[0m"
 fi
 
-if [[ ${NODE_MODE} = "node-join-control-plane" ]]; then
+if [ ${NODE_MODE} = "node-join-control-plane" ]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	to join cluster as master \033[0m"
   kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash} --control-plane --certificate-key ${CertificateKey}
@@ -314,9 +314,9 @@ function Main() {
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Node MODE: ${NODE_MODE} \033[0m"
 
-  if [[ ${NODE_MODE} = "master" -o ${NODE_MODE} = "control-plane-master" ]];then
+  if [ ${NODE_MODE} = "master" -o ${NODE_MODE} = "control-plane-master" ];then
     Install_Kubernetes_Master
-  elif [[ ${NODE_MODE} = "node-join-control-plane" -o ${NODE_MODE} = "node-join-master" ]]; then
+  elif [ ${NODE_MODE} = "node-join-control-plane" -o ${NODE_MODE} = "node-join-master" ]; then
     Install_Kubernetes_Node
   fi
 }
