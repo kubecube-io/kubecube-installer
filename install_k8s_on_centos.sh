@@ -29,7 +29,7 @@ function system_info () {
   echo -e "\033[32m>>>>>>	${LOAD_INFO} \033[0m"
 }
 
-function prev_install() {
+function prev_install_redhat() {
 if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Start previous requirements install... \033[0m"
@@ -79,10 +79,10 @@ modprobe br_netfilter
 sysctl -p /etc/sysctl.d/k8s.conf
 echo "1" > /proc/sys/net/ipv4/ip_forward
 
-echo -e "\033[32m================================================\033[0m"
-echo -e ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
 rpm -qa |grep docker |grep -v grep >/dev/null
 if [ $? -ne 0 ];then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
 	yum -y install yum-utils device-mapper-persistent-data lvm2 >/dev/null
 	yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo # todo 国内外源
 	if [ ${KUBERNETES_VERSION} = "1.18.8" -o ${KUBERNETES_VERSION} = "1.19.0" ];then
@@ -133,6 +133,102 @@ EOF
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing kubectl、kubelet、kubeadm\033[0m"
 yum -y install kubectl-${KUBERNETES_VERSION} kubelet-${KUBERNETES_VERSION} kubeadm-${KUBERNETES_VERSION} >/dev/null
+rpm -qa |grep kubelet >/dev/null
+if [ $? -eq 0 ];then
+	systemctl enable kubelet
+	systemctl start kubelet
+	if [ $? -eq 0 ];then
+		echo -e "\033[32m================================================\033[0m"
+		action "kubelet-${KUBERNETES_VERSION} Start Success..." /bin/true
+	else
+		echo -e "\033[32m================================================\033[0m"
+		action "kubelet-${KUBERNETES_VERSION} Start Failed..." /bin/false
+		exit 1
+	fi
+else
+	action "kubelet-${KUBERNETES_VERSION} Install Failed..." /bin/false
+	exit 1
+fi
+else
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m>>>>>>	current only support ch! \033[0m"
+  exit 1
+fi
+}
+
+function prev_install_debian() {
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	apt-get updating...\033[0m"
+apt-get update -y
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	installing dependence...\033[0m"
+apt-get install -y rpm apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass  >/dev/null
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	add source for apt \033[0m"
+add-apt-repository \
+   "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian \
+  $(lsb_release -cs) \
+  stable"
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	closing swap\033[0m"
+swapoff -a
+sed -i '/swap/s/^/#/g' /etc/fstab
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
+cat >/etc/sysctl.d/k8s.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+modprobe br_netfilter
+sysctl -p /etc/sysctl.d/k8s.conf
+echo "1" > /proc/sys/net/ipv4/ip_forward
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	add k8s GPG key \033[0m"
+curl http://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	config k8s source of apt \033[0m"
+cat  << EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
+EOF
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	add docker GPG key \033[0m"
+curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/debian/gpg | sudo apt-key add -
+
+apt-get update -y
+
+rpm -qa |grep docker |grep -v grep >/dev/null
+if [ $? -ne 0 ];then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
+  apt-get install docker-ce docker-ce-cli containerd.io >/dev/null
+  systemctl enable docker
+	systemctl start docker
+	if [ $? -eq 0 ];then
+		echo -e "\033[32m================================================\033[0m"
+		echo -e "\033[32m>>>>>>	Docker Start Success...\033[0m"
+	else
+		echo -e "\033[32m================================================\033[0m"
+		echo -e "\033[32m>>>>>>	Docker Start Failed...\033[0m"
+		exit 1
+	fi
+else
+	echo -e "\033[32m================================================\033[0m"
+	echo -e "\033[32m>>>>>>	Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
+fi
+
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	installing kubectl、kubelet、kubeadm\033[0m"
+apt-get install -y kubeadm=${KUBERNETES_VERSION}-00 kubectl=${KUBERNETES_VERSION}-00 kubelet=${KUBERNETES_VERSION}-00
+
 rpm -qa |grep kubelet >/dev/null
 if [ $? -eq 0 ];then
 	systemctl enable kubelet
@@ -310,6 +406,20 @@ function Main() {
   system_info
   make_cluster_configuration
   prev_install
+
+  has_apt=$(which apt)
+  if [ ! -z ${has_apt} ]; then
+      echo -e "\033[32m================================================\033[0m"
+      echo -e "\033[32m>>>>>>	Installing on debian like os... \033[0m"
+      prev_install_debian
+  fi
+
+  has_yum=$(which yum)
+  if [ $? -eq 0 ]; then
+      echo -e "\033[32m================================================\033[0m"
+      echo -e "\033[32m>>>>>>	Installing on redhat like os... \033[0m"
+      prev_install_redhat
+  fi
 
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Node MODE: ${NODE_MODE} \033[0m"

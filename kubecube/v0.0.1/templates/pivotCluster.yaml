@@ -3,7 +3,7 @@ kind: Cluster
 metadata:
   name: pivot-cluster
 spec:
-  kubernetesAPIEndpoint: {{ .Values.pivotCluster.kubernetesAPIEndpoint }}:6443
+  kubernetesAPIEndpoint: {{ .Values.pivotCluster.kubernetesAPIEndpoint }}
   networkType: calico
   isMemberCluster: false
   description: "this is pivot cluster"
