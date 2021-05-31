@@ -2,7 +2,7 @@
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Processing params... \033[0m"
-source ./manifests/souceparams_process.sh
+source ./manifests/params_process.sh
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
