@@ -139,14 +139,15 @@ if [ $? -eq 0 ];then
 	systemctl start kubelet
 	if [ $? -eq 0 ];then
 		echo -e "\033[32m================================================\033[0m"
-		action "kubelet-${KUBERNETES_VERSION} Start Success..." /bin/true
+		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Success...\033[0m"
 	else
 		echo -e "\033[32m================================================\033[0m"
-		action "kubelet-${KUBERNETES_VERSION} Start Failed..." /bin/false
+		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Failed...\033[0m"
 		exit 1
 	fi
 else
-	action "kubelet-${KUBERNETES_VERSION} Install Failed..." /bin/false
+  echo -e "\033[32m================================================\033[0m"
+	echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Install Failed...\033[0m"
 	exit 1
 fi
 else
@@ -191,7 +192,7 @@ cat  << EOF >/etc/apt/sources.list.d/kubernetes.list
 deb http://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
 EOF
 
-if [ ! -z $(uname -a | grep -i 'debian') ]; then
+if [ ! -z $(uname -a | grep -i 'debian' | awk '{print $1}') ]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	add docker GPG key \033[0m"
   curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add -
@@ -200,7 +201,7 @@ if [ ! -z $(uname -a | grep -i 'debian') ]; then
   add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian $(lsb_release -cs) stable"
 fi
 
-if [ ! -z $(uname -a | grep -i 'ubuntu') ]; then
+if [ ! -z $(uname -a | grep -i 'ubuntu' | awk '{print $1}') ]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	add docker GPG key \033[0m"
   curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg |  apt-key add -
@@ -209,21 +210,13 @@ if [ ! -z $(uname -a | grep -i 'ubuntu') ]; then
   add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 fi
 
-#echo \
-#  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/debian \
-#  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-#add-apt-repository \
-#   "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian \
-#  $(lsb_release -cs) \
-#  stable"
-
 apt-get update -y
 
 rpm -qa |grep docker |grep -v grep >/dev/null
 if [ $? -ne 0 ];then
   echo -e "\033[32m================================================\033[0m"
-  echo -e ">>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
-  apt-get install docker-ce docker-ce-cli containerd.io >/dev/null
+  echo -e "\033[32m>>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
+  apt-get install -y docker-ce docker-ce-cli containerd.io >/dev/null
   systemctl enable docker
 	systemctl start docker
 	if [ $? -eq 0 ];then
@@ -239,7 +232,6 @@ else
 	echo -e "\033[32m>>>>>>	Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
 fi
 
-
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing kubectl、kubelet、kubeadm\033[0m"
 apt-get install -y kubeadm=${KUBERNETES_VERSION}-00 kubectl=${KUBERNETES_VERSION}-00 kubelet=${KUBERNETES_VERSION}-00
@@ -250,14 +242,15 @@ if [ $? -eq 0 ];then
 	systemctl start kubelet
 	if [ $? -eq 0 ];then
 		echo -e "\033[32m================================================\033[0m"
-		action "kubelet-${KUBERNETES_VERSION} Start Success..." /bin/true
+		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Success...\033[0m"
 	else
 		echo -e "\033[32m================================================\033[0m"
-		action "kubelet-${KUBERNETES_VERSION} Start Failed..." /bin/false
+		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Failed...\033[0m"
 		exit 1
 	fi
 else
-	action "kubelet-${KUBERNETES_VERSION} Install Failed..." /bin/false
+  echo -e "\033[32m================================================\033[0m"
+	echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Install Failed...\033[0m"
 	exit 1
 fi
 else
