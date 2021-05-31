@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source /etc/init.d/functions
+#source /etc/init.d/functions
 source ./manifests/params_process.sh
 
-SYS_VERSION=$(cat /etc/redhat-release)
+#SYS_VERSION=$(cat /etc/redhat-release)
 IPADDR=$(hostname -I |awk '{print $1}')
 Uptime_day=$(uptime |awk '{print $3,$4}')
 CPU_NUM=$(grep -c 'processor' /proc/cpuinfo)
@@ -18,7 +18,7 @@ LOAD_INFO=$(uptime |awk '{print "CPU load: "$(NF-2),$(NF-1),$NF}'|sed 's/\,//g')
 function system_info () {
   echo -e "\033[32m-------------System Infomation-------------\033[0m"
   echo -e "\033[32m>>>>>>	System running time：${Uptime_day}${Uptime} \033[0m"
-  echo -e "\033[32m>>>>>>	Operating system: ${SYS_VERSION} \033[0m"
+#  echo -e "\033[32m>>>>>>	Operating system: ${SYS_VERSION} \033[0m"
   echo -e "\033[32m>>>>>>	IP: ${IPADDR} \033[0m"
   echo -e "\033[32m>>>>>>	CPU model:${CPU_Model} \033[0m"
   echo -e "\033[32m>>>>>>	CPU cores: ${CPU_NUM} \033[0m"
@@ -157,7 +157,7 @@ fi
 }
 
 function prev_install_debian() {
-
+if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	apt-get updating...\033[0m"
 apt-get update -y
