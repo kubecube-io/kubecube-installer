@@ -167,13 +167,6 @@ echo -e "\033[32m>>>>>>	installing dependence...\033[0m"
 apt-get install -y rpm apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass  >/dev/null
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	add source for apt \033[0m"
-add-apt-repository \
-   "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian \
-  $(lsb_release -cs) \
-  stable"
-
-echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	closing swap\033[0m"
 swapoff -a
 sed -i '/swap/s/^/#/g' /etc/fstab
@@ -198,9 +191,31 @@ cat  << EOF >/etc/apt/sources.list.d/kubernetes.list
 deb http://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
 EOF
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	add docker GPG key \033[0m"
-curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/debian/gpg | sudo apt-key add -
+if [ ! -z $(uname -a | grep -i 'debian') ]; then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m>>>>>>	add docker GPG key \033[0m"
+  curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add -
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m>>>>>>	add source for apt \033[0m"
+  add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian $(lsb_release -cs) stable"
+fi
+
+if [ ! -z $(uname -a | grep -i 'ubuntu') ]; then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m>>>>>>	add docker GPG key \033[0m"
+  curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg |  apt-key add -
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m>>>>>>	add source for apt \033[0m"
+  add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+fi
+
+#echo \
+#  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/debian \
+#  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+#add-apt-repository \
+#   "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian \
+#  $(lsb_release -cs) \
+#  stable"
 
 apt-get update -y
 
