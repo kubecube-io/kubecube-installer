@@ -67,7 +67,7 @@ metadata:
 spec:
   kubernetesAPIEndpoint: ${LOCAL_IP}:6443
   networkType: calico
-  isMemberCluster: false
+  isMemberCluster: true
   description: "this is member cluster"
   kubeconfig: $(cat /root/.kube/config | base64 -w 0)
 EOF

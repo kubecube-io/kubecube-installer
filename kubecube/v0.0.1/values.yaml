@@ -1,8 +1,8 @@
 # Default values for kubecube
 
 kubecube:
-  replicas: 3
-  image: hub.c.163.com/kubecube/kubecube:0.0.2-deploy
+  replicas: 1
+  image: hub.c.163.com/kubecube/kubecube:0.0.3-deploy
 
   args:
     logLevel: info
@@ -11,7 +11,7 @@ kubecube:
     leaderElect: true
 
   env:
-    wardenImage: hub.c.163.com/kubecube/warden:0.0.2-deploy
+    wardenImage: hub.c.163.com/kubecube/warden:0.0.3-deploy
     pivotCubeSvc: kubecube.kubecube-system.svc:7443
     pivotCubeHost: "Cg=="
 
