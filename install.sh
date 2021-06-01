@@ -8,11 +8,10 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
 source ./manifests/make_config.sh
 
-# todo: to support different linux os
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Kubernetes...\033[0m"
-  /bin/bash ./manifests/install_k8s_on_centos.sh
+  /bin/bash ./manifests/install_k8s.sh
 else
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	IMPORTANT !!! ...                                 \033[0m"
