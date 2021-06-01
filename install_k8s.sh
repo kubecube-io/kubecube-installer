@@ -334,6 +334,9 @@ fi
 
 function Install_Kubernetes_Master (){
 echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	Pull images of k8s for kubeadm... \033[0m"
+kubeadm config images pull
+echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version${KUBERNETES_VERSION}\033[0m"
 if [ ${NODE_MODE} = "master" ];then
 kubeadm init --config=/etc/cube/kubeadm/init.config
@@ -379,6 +382,9 @@ echo -e "\033[32m===============================================================
 
 function Install_Kubernetes_Node (){
 echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	Pull images of k8s for kubeadm... \033[0m"
+kubeadm config images pull
+echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version：${KUBERNETES_VERSION}\033[0m"
 echo -e "\033[32m================================================\033[0m"
 
@@ -413,7 +419,6 @@ fi
 function Main() {
   system_info
   make_cluster_configuration
-  prev_install
 
   has_apt=$(which apt)
   if [ ! -z ${has_apt} ]; then

@@ -56,7 +56,7 @@ fi
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
-sh ./manifests/install_third_dependence.sh
+/bin/bash ./manifests/install_third_dependence.sh
 
 cat >cluster.yaml <<EOF
 apiVersion: cluster.kubecube.io/v1
