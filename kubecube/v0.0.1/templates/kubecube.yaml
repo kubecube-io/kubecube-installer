@@ -80,7 +80,19 @@ spec:
             - name: cube-tls
               mountPath: "/etc/tls"
               readOnly: true
+            - name: logs
+              mountPath: "/etc/logs/cube"
+            - name: helm-pkg
+              mountPath: "/root/helmchartpkg"
       volumes:
         - name: cube-tls
           secret:
             secretName: cube-tls-secret
+        - name: helm-pkg
+          hostPath:
+            path: /etc/cube/helm-pkg
+            type: DirectoryOrCreate
+        - name: logs
+          hostPath:
+            path: /etc/cube/logs
+            type: DirectoryOrCreate
