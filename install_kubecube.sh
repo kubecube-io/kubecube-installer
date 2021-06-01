@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 IPADDR=$(hostname -I |awk '{print $1}')
 
 function sign_cert() {
@@ -87,20 +85,21 @@ echo -e "\033[32m>>>>>>	Deploying KubeCube...\033[0m"
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Waiting For KubeCube ready...\033[0m"
 echo
-while true; do
-  sleep 7 > /dev/null
+while true
+do
   cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
   warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
-    echo -e "\033[32m>>>>>>	              Welcome to KubeCube!              <<<<<<\033[0m"
-    echo -e "\033[32m>>>>>>	        Please use 'admin/admin' to login       <<<<<<\033[0m"
-    echo -e "\033[32m>>>>>>	        You must change password after login    <<<<<<\033[0m"
+    echo -e "\033[32m>>>>>>	            Welcome to KubeCube!               <<<<<<\033[0m"
+    echo -e "\033[32m>>>>>>	      Please use 'admin/admin' to login        <<<<<<\033[0m"
+    echo -e "\033[32m>>>>>>	      You must change password after login     <<<<<<\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
-    break
+    exit 0
   fi
+  sleep 7 > /dev/null
 done
 
 
