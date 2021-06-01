@@ -1,9 +1,7 @@
 #!/bin/bash
 
-#source /etc/init.d/functions
 source ./manifests/params_process.sh
 
-#SYS_VERSION=$(cat /etc/redhat-release)
 IPADDR=$(hostname -I |awk '{print $1}')
 Uptime_day=$(uptime |awk '{print $3,$4}')
 CPU_NUM=$(grep -c 'processor' /proc/cpuinfo)
@@ -18,7 +16,6 @@ LOAD_INFO=$(uptime |awk '{print "CPU load: "$(NF-2),$(NF-1),$NF}'|sed 's/\,//g')
 function system_info () {
   echo -e "\033[32m-------------System Infomation-------------\033[0m"
   echo -e "\033[32m>>>>>>	System running time：${Uptime_day}${Uptime} \033[0m"
-#  echo -e "\033[32m>>>>>>	Operating system: ${SYS_VERSION} \033[0m"
   echo -e "\033[32m>>>>>>	IP: ${IPADDR} \033[0m"
   echo -e "\033[32m>>>>>>	CPU model:${CPU_Model} \033[0m"
   echo -e "\033[32m>>>>>>	CPU cores: ${CPU_NUM} \033[0m"
@@ -105,18 +102,6 @@ else
 	echo -e "\033[32m================================================\033[0m"
 	echo -e "\033[32m>>>>>>	Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
 fi
-
-#echo -e "\033[32m================================================\033[0m"
-#echo -e "\033[32m>>>>>>	config source for docker registry\033[0m"
-#mkdir -p /etc/docker
-#cat >/etc/docker/daemon.json <<EOF
-#{
-#  "registry-mirrors": ["https://fl791z1h.mirror.aliyuncs.com"],
-#  "exec-opts": ["native.cgroupdriver=systemd"]
-#}
-#EOF
-#systemctl daemon-reload
-#systemctl restart docker
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>> config source for kubernetes of yum\033[0m"
@@ -334,9 +319,6 @@ fi
 
 function Install_Kubernetes_Master (){
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Pull images of k8s for kubeadm... \033[0m"
-kubeadm config images pull
-echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version${KUBERNETES_VERSION}\033[0m"
 if [ ${NODE_MODE} = "master" ];then
 kubeadm init --config=/etc/cube/kubeadm/init.config
@@ -381,9 +363,6 @@ echo -e "\033[32m===============================================================
 }
 
 function Install_Kubernetes_Node (){
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Pull images of k8s for kubeadm... \033[0m"
-kubeadm config images pull
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Init Kubernetes, Version：${KUBERNETES_VERSION}\033[0m"
 echo -e "\033[32m================================================\033[0m"

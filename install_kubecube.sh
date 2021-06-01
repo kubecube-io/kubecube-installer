@@ -88,14 +88,16 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	Wait For KubeCube ready...\033[0m"
 while true; do
   sleep 7 > /dev/null
-  healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
-  if [[ $healthz = "healthy" ]]; then
+  cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
+  warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
+  if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
+    echo -e "\033[32m=============================================================\033[0m"
+    echo -e "\033[32m>>>>>>	              Welcome to KubeCube!              <<<<<<\033[0m"
+    echo -e "\033[32m>>>>>>	        Please use 'admin/admin' to login       <<<<<<\033[0m"
+    echo -e "\033[32m>>>>>>	        You must change password for admin      <<<<<<\033[0m"
+    echo -e "\033[32m=============================================================\033[0m"
     break
   fi
 done
-
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	        Welcome to KubeCube!       <<<<<<\033[0m"
-echo -e "\033[32m================================================\033[0m"
 
 
