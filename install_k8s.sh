@@ -213,7 +213,7 @@ fi
 apt-get update -y
 
 has_docker=$(which docker)
-if [ -z ${has_apt} ];then
+if [ -z ${has_docker} ];then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	installing Docker-ce、config for auto start when start on\033[0m"
   apt-get install -y docker-ce docker-ce-cli containerd.io
@@ -348,13 +348,13 @@ mkdir -p ${HOME}/.kube
 sudo cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
 sudo chown $(id -u):$(id -g) ${HOME}/.kube/config
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	config kubectl autocomplete\033[0m"
-rpm -qa |grep bash-completion >/dev/null
-if [ $? -ne 0 ];then
-	yum -y install bash-completion >/dev/null
-	source /etc/profile.d/bash_completion.sh
-fi
+#echo -e "\033[32m================================================\033[0m"
+#echo -e "\033[32m>>>>>>	config kubectl autocomplete\033[0m"
+#rpm -qa |grep bash-completion >/dev/null
+#if [ $? -ne 0 ];then
+#	yum -y install bash-completion >/dev/null
+#	source /etc/profile.d/bash_completion.sh
+#fi
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing calico\033[0m"
