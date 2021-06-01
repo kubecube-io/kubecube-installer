@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubecube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubecube-audit
+  namespace: kubecube-system
+  labels:
+    kubecube.io/app: kubecube-audit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kubecube.io/app: kubecube-audit
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: kubecube-audit
+    spec:
+      containers:
+        - name: kubecube-audit
+          image: hub.c.163.com/kubecube/audit:v0.0.1
+          ports:
+            - containerPort: 8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubecube-audit-nodeport
+  namespace: kubecube-system
+spec:
+  type: NodePort
+  selector:
+    kubecube.io/app: kubecube-audit
+  ports:
+    - name: http
+      port: 8888
+      targetPort: 8888
+      nodePort: 30008

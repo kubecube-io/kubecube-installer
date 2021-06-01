@@ -28,7 +28,7 @@ cat >/etc/cube/audit/audit-webhook.config  <<EOF
 apiVersion: v1
 clusters:
 - cluster:
-    server: http://${IPADDR}:8888/api/v1/cube/audit/k8s
+    server: http://${IPADDR}:30008/api/v1/cube/audit/k8s
     insecure-skip-tls-verify: true
   name: audit
 contexts:
