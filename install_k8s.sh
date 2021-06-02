@@ -15,22 +15,23 @@ LOAD_INFO=$(uptime |awk '{print "CPU load: "$(NF-2),$(NF-1),$NF}'|sed 's/\,//g')
 
 function system_info () {
   echo -e "\033[32m-------------System Infomation-------------\033[0m"
-  echo -e "\033[32m	System running time：${Uptime_day}${Uptime} \033[0m"
-  echo -e "\033[32m	IP: ${IPADDR} \033[0m"
-  echo -e "\033[32m	CPU model:${CPU_Model} \033[0m"
-  echo -e "\033[32m	CPU cores: ${CPU_NUM} \033[0m"
-  echo -e "\033[32m	${DISK_INFO} \033[0m"
-  echo -e "\033[32m	${DISK_Avail} \033[0m"
-  echo -e "\033[32m	${MEM_INFO} \033[0m"
-  echo -e "\033[32m	${MEM_Avail} \033[0m"
-  echo -e "\033[32m	${LOAD_INFO} \033[0m"
+  echo -e "\033[32m System running time：${Uptime_day}${Uptime} \033[0m"
+  echo -e "\033[32m IP: ${IPADDR} \033[0m"
+  echo -e "\033[32m CPU model:${CPU_Model} \033[0m"
+  echo -e "\033[32m CPU cores: ${CPU_NUM} \033[0m"
+  echo -e "\033[32m ${DISK_INFO} \033[0m"
+  echo -e "\033[32m ${DISK_Avail} \033[0m"
+  echo -e "\033[32m ${MEM_INFO} \033[0m"
+  echo -e "\033[32m ${MEM_Avail} \033[0m"
+  echo -e "\033[32m ${LOAD_INFO} \033[0m"
 }
 
 function prev_install_redhat() {
 if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	Start previous requirements install... \033[0m"
-echo -e "\033[32m	Config source of yum\033[0m"
+echo -e "\033[32m Start previous requirements install... \033[0m"
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m Config source of yum\033[0m"
 mkdir -p /etc/yum.repos.d/bak
 \mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak
 [ -f $(which wget) ] || yum -y install wget >/dev/null
@@ -39,35 +40,35 @@ yum clean all >/dev/null
 yum makecache >/dev/null
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	yum updating...\033[0m"
+echo -e "\033[32m yum updating...\033[0m"
 yum -y update
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	install sshpass...\033[0m"
+echo -e "\033[32m install sshpass...\033[0m"
 yum -y install sshpass >/dev/null
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	close firewall、selinux\033[0m"
+echo -e "\033[32m close firewall、selinux\033[0m"
 SYSTEM_VERSION=$(awk -F. '{print $1}' /etc/redhat-release |awk '{print $NF}')
 if [ ${SYSTEM_VERSION} -eq 6 ];then
-	service iptables stop
-	chkconfig iptables off
-	sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-	setenforce 0 >/dev/null
+ service iptables stop
+ chkconfig iptables off
+ sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+ setenforce 0 >/dev/null
 else
-	systemctl stop firewalld.service
-	systemctl disable firewalld.service
-	sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-	setenforce 0 >/dev/null
+ systemctl stop firewalld.service
+ systemctl disable firewalld.service
+ sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+ setenforce 0 >/dev/null
 fi
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	closing swap\033[0m"
+echo -e "\033[32m closing swap\033[0m"
 swapoff -a
 sed -i '/swap/s/^/#/g' /etc/fstab
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
+echo -e "\033[32m config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
 cat >/etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -79,28 +80,28 @@ echo "1" > /proc/sys/net/ipv4/ip_forward
 rpm -qa |grep docker |grep -v grep >/dev/null
 if [ $? -ne 0 ];then
   echo -e "\033[32m================================================\033[0m"
-  echo -e "	installing Docker-ce、config for auto start when start on\033[0m"
-	yum -y install yum-utils device-mapper-persistent-data lvm2 >/dev/null
-	yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo # todo 国内外源
-	if [ ${KUBERNETES_VERSION} = "1.18.8" -o ${KUBERNETES_VERSION} = "1.19.0" ];then
-		version="19.03.12"
-	else
-		version="18.09.9"
-	fi
-	yum -y install docker-ce-${version} docker-ce-cli-${version} containerd.io
-	systemctl enable docker
-	systemctl start docker
-	if [ $? -eq 0 ];then
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m	Docker Start Success...\033[0m"
-	else
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m	Docker Start Failed...\033[0m"
-		exit 1
-	fi
+  echo -e "\033[32m installing Docker-ce、config for auto start when start on\033[0m"
+ yum -y install yum-utils device-mapper-persistent-data lvm2 >/dev/null
+ yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo # todo 国内外源
+ if [ ${KUBERNETES_VERSION} = "1.18.8" -o ${KUBERNETES_VERSION} = "1.19.0" ];then
+  version="19.03.12"
+ else
+  version="18.09.9"
+ fi
+ yum -y install docker-ce-${version} docker-ce-cli-${version} containerd.io
+ systemctl enable docker
+ systemctl start docker
+ if [ $? -eq 0 ];then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m Docker Start Success...\033[0m"
+ else
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m Docker Start Failed...\033[0m"
+  exit 1
+ fi
 else
-	echo -e "\033[32m================================================\033[0m"
-	echo -e "\033[32m	Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
+ echo -e "\033[32m================================================\033[0m"
+ echo -e "\033[32m Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
 fi
 
 echo -e "\033[32m================================================\033[0m"
@@ -116,28 +117,28 @@ gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors
 EOF
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	installing kubectl、kubelet、kubeadm\033[0m"
+echo -e "\033[32m installing kubectl、kubelet、kubeadm\033[0m"
 yum -y install kubectl-${KUBERNETES_VERSION} kubelet-${KUBERNETES_VERSION} kubeadm-${KUBERNETES_VERSION}
 rpm -qa |grep kubelet >/dev/null
 if [ $? -eq 0 ];then
-	systemctl enable kubelet
-	systemctl start kubelet
-	if [ $? -eq 0 ];then
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Success...\033[0m"
-	else
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Failed...\033[0m"
-		exit 1
-	fi
+ systemctl enable kubelet
+ systemctl start kubelet
+ if [ $? -eq 0 ];then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Success...\033[0m"
+ else
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Failed...\033[0m"
+  exit 1
+ fi
 else
   echo -e "\033[32m================================================\033[0m"
-	echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Install Failed...\033[0m"
-	exit 1
+ echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Install Failed...\033[0m"
+ exit 1
 fi
 else
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	current only support ch! \033[0m"
+  echo -e "\033[32m current only support ch! \033[0m"
   exit 1
 fi
 }
@@ -145,20 +146,20 @@ fi
 function prev_install_debian() {
 if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	apt-get updating...\033[0m"
+echo -e "\033[32m apt-get updating...\033[0m"
 apt-get update -y
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	installing dependence...\033[0m"
+echo -e "\033[32m installing dependence...\033[0m"
 apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass  >/dev/null
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	closing swap\033[0m"
+echo -e "\033[32m closing swap\033[0m"
 swapoff -a
 sed -i '/swap/s/^/#/g' /etc/fstab
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
+echo -e "\033[32m config kernel params, passing bridge flow of IPv4 to iptables chain\033[0m"
 cat >/etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -168,30 +169,30 @@ sysctl -p /etc/sysctl.d/k8s.conf
 echo "1" > /proc/sys/net/ipv4/ip_forward
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	add k8s GPG key \033[0m"
+echo -e "\033[32m add k8s GPG key \033[0m"
 curl http://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	config k8s source of apt \033[0m"
+echo -e "\033[32m config k8s source of apt \033[0m"
 cat  << EOF >/etc/apt/sources.list.d/kubernetes.list
 deb http://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
 EOF
 
 if [ ! -z $(uname -a | grep -i 'debian' | awk '{print $1}') ]; then
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	add docker GPG key \033[0m"
+  echo -e "\033[32m add docker GPG key \033[0m"
   curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add -
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	add source for apt \033[0m"
+  echo -e "\033[32m add source for apt \033[0m"
   add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian $(lsb_release -cs) stable"
 fi
 
 if [ ! -z $(uname -a | grep -i 'ubuntu' | awk '{print $1}') ]; then
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	add docker GPG key \033[0m"
+  echo -e "\033[32m add docker GPG key \033[0m"
   curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg |  apt-key add -
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	add source for apt \033[0m"
+  echo -e "\033[32m add source for apt \033[0m"
   add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 fi
 
@@ -200,54 +201,54 @@ apt-get update -y
 has_docker=$(which docker)
 if [ -z ${has_docker} ];then
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	installing Docker-ce、config for auto start when start on\033[0m"
+  echo -e "\033[32m installing Docker-ce、config for auto start when start on\033[0m"
   apt-get install -y docker-ce docker-ce-cli containerd.io
   systemctl enable docker
-	systemctl start docker
-	if [ $? -eq 0 ];then
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m	Docker Start Success...\033[0m"
-	else
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m	Docker Start Failed...\033[0m"
-		exit 1
-	fi
+ systemctl start docker
+ if [ $? -eq 0 ];then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m Docker Start Success...\033[0m"
+ else
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m Docker Start Failed...\033[0m"
+  exit 1
+ fi
 else
-	echo -e "\033[32m================================================\033[0m"
-	echo -e "\033[32m	Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
+ echo -e "\033[32m================================================\033[0m"
+ echo -e "\033[32m Docker Version：$(docker --version |awk -F ',' '{print $1}') \033[0m"
 fi
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	installing kubectl、kubelet、kubeadm\033[0m"
+echo -e "\033[32m installing kubectl、kubelet、kubeadm\033[0m"
 apt-get install -y kubeadm=${KUBERNETES_VERSION}-00 kubectl=${KUBERNETES_VERSION}-00 kubelet=${KUBERNETES_VERSION}-00
 
 has_kubelet=$(which kubelet)
 if [ ! -z ${has_kubelet} ];then
-	systemctl enable kubelet
-	systemctl start kubelet
-	if [ $? -eq 0 ];then
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Success...\033[0m"
-	else
-		echo -e "\033[32m================================================\033[0m"
-		echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Failed...\033[0m"
-		exit 1
-	fi
+ systemctl enable kubelet
+ systemctl start kubelet
+ if [ $? -eq 0 ];then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Success...\033[0m"
+ else
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Start Failed...\033[0m"
+  exit 1
+ fi
 else
   echo -e "\033[32m================================================\033[0m"
-	echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Install Failed...\033[0m"
-	exit 1
+ echo -e "\033[32m kubelet-${KUBERNETES_VERSION} Install Failed...\033[0m"
+ exit 1
 fi
 else
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	current only support ch! \033[0m"
+  echo -e "\033[32m current only support ch! \033[0m"
   exit 1
 fi
 }
 
 function make_cluster_configuration (){
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	Make ClusterConfiguration For Kubeadm\033[0m"
+echo -e "\033[32m Make ClusterConfiguration For Kubeadm \033[0m"
 mkdir -p /etc/cube/kubeadm
 
 if [ -z ${CONTROL_PLANE_ENDPOINT} ]
@@ -319,7 +320,7 @@ fi
 
 function Install_Kubernetes_Master (){
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	Init Kubernetes, Version${KUBERNETES_VERSION}\033[0m"
+echo -e "\033[32m Init Kubernetes, Version${KUBERNETES_VERSION}\033[0m"
 if [ ${NODE_MODE} = "master" ];then
 kubeadm init --config=/etc/cube/kubeadm/init.config
 elif [ ${NODE_MODE} = "control-plane-master" ];then
@@ -331,30 +332,30 @@ sudo cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
 sudo chown $(id -u):$(id -g) ${HOME}/.kube/config
 
 #echo -e "\033[32m================================================\033[0m"
-#echo -e "\033[32m	config kubectl autocomplete\033[0m"
+#echo -e "\033[32m config kubectl autocomplete\033[0m"
 #rpm -qa |grep bash-completion >/dev/null
 #if [ $? -ne 0 ];then
-#	yum -y install bash-completion >/dev/null
-#	source /etc/profile.d/bash_completion.sh
+# yum -y install bash-completion >/dev/null
+# source /etc/profile.d/bash_completion.sh
 #fi
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	installing calico\033[0m"
+echo -e "\033[32m installing calico\033[0m"
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
 sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	inspect node\033[0m"
+echo -e "\033[32m inspect node\033[0m"
 kubectl get node
 
 sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	inspect pod\033[0m"
+echo -e "\033[32m inspect pod\033[0m"
 kubectl get pod --all-namespaces
 
 sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	inspect service\033[0m"
+echo -e "\033[32m inspect service\033[0m"
 kubectl get svc --all-namespaces
 
 echo -e "\033[32m==========================================================================\033[0m"
@@ -364,7 +365,7 @@ echo -e "\033[32m===============================================================
 
 function Install_Kubernetes_Node (){
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	Init Kubernetes, Version：${KUBERNETES_VERSION}\033[0m"
+echo -e "\033[32m Init Kubernetes, Version：${KUBERNETES_VERSION}\033[0m"
 echo -e "\033[32m================================================\033[0m"
 
 if [ ! -z ${ACCESS_PASSWORD} ]; then
@@ -381,12 +382,12 @@ elif [ ! -z ${ACCESS_PRIVATE_KEY_PATH} ]; then
   fi
 else
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	ACCESS_PASSWORD or ACCESS_PRIVATE_KEY_PATH must be specified\033[0m"
+  echo -e "\033[32m ACCESS_PASSWORD or ACCESS_PRIVATE_KEY_PATH must be specified\033[0m"
 fi
 
 if [ ${NODE_MODE} = "node-join-control-plane" ]; then
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	to join cluster as master \033[0m"
+  echo -e "\033[32m to join cluster as master \033[0m"
   kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash} --control-plane --certificate-key ${CertificateKey}
 elif [ ${NODE_MODE} = "node-join-master" ]; then
   kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash}
@@ -400,19 +401,19 @@ function Main() {
   has_apt=$(which apt)
   if [ ! -z ${has_apt} ]; then
       echo -e "\033[32m================================================\033[0m"
-      echo -e "\033[32m	Installing on debian like os... \033[0m"
+      echo -e "\033[32m Installing on debian like os... \033[0m"
       prev_install_debian
   fi
 
   has_yum=$(which yum)
   if [ $? -eq 0 ]; then
       echo -e "\033[32m================================================\033[0m"
-      echo -e "\033[32m	Installing on redhat like os... \033[0m"
+      echo -e "\033[32m Installing on redhat like os... \033[0m"
       prev_install_redhat
   fi
 
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	Installing Node MODE: ${NODE_MODE} \033[0m"
+  echo -e "\033[32m Installing Node MODE: ${NODE_MODE} \033[0m"
 
   if [ ${NODE_MODE} = "master" -o ${NODE_MODE} = "control-plane-master" ];then
     Install_Kubernetes_Master
