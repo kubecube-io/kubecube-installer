@@ -69,5 +69,5 @@ audit_webhook
 audit_policy
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	make configurations success\033[0m"
+echo -e "\033[32m make configurations success\033[0m"
 

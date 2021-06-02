@@ -7,16 +7,16 @@ mkdir -p ca
 cd ca
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Generate ca key and ca cert...[0m"
+echo -e "\033[32m Generate ca key and ca cert...[0m"
 openssl genrsa -out ca.key 2048
 openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system.svc" -days 10000 -out ca.crt
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Generate tls key...\033[0m"
+echo -e "\033[32m Generate tls key...\033[0m"
 openssl genrsa -out tls.key 2048
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Make tls csr...\033[0m"
+echo -e "\033[32m Make tls csr...\033[0m"
 cat << EOF >csr.conf
 [ req ]
 default_bits = 2048
@@ -50,14 +50,14 @@ EOF
 openssl req -new -key tls.key -out tls.csr -config csr.conf
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Generate tls cert...\033[0m"
+echo -e "\033[32m Generate tls cert...\033[0m"
 openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt -days 10000 -extensions v3_ext -extfile csr.conf
 cd ..
 }
 
 function render_values() {
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Render Values of KubeCube...\033[0m"
+echo -e "\033[32m Render Values of KubeCube...\033[0m"
 cat >values.yaml <<EOF
 kubecube:
   env:
@@ -81,25 +81,25 @@ EOF
 }
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	create namespace for kubecube...\033[0m"
+echo -e "\033[32m Create namespace for kubecube...\033[0m"
 kubectl apply -f manifests/ns/ns.yaml
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	deploy frontend for kubecube...\033[0m"
+echo -e "\033[32m Deploy frontend for kubecube...\033[0m"
 kubectl apply -f manifests/frontend/frontend.yaml
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	deploy audit server for kubecube...\033[0m"
+echo -e "\033[32m Deploy audit server for kubecube...\033[0m"
 kubectl apply -f manifests/audit/audit.yaml
 
 sign_cert
 render_values
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Deploying KubeCube...\033[0m"
+echo -e "\033[32m Deploying KubeCube...\033[0m"
 /usr/local/bin/helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Waiting For KubeCube ready...\033[0m"
+echo -e "\033[32m Waiting For KubeCube ready...\033[0m"
 echo
 while true
 do
@@ -108,10 +108,10 @@ do
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
-    echo -e "\033[32m>>>>>>	            Welcome to KubeCube!               <<<<<<\033[0m"
-    echo -e "\033[32m>>>>>>	      Please use 'admin/admin' to login        <<<<<<\033[0m"
-    echo -e "\033[32m>>>>>>	              '${IPADDR}:30080'                <<<<<<\033[0m"
-    echo -e "\033[32m>>>>>>	      You must change password after login     <<<<<<\033[0m"
+    echo -e "\033[32m              Welcome to KubeCube!               \033[0m"
+    echo -e "\033[32m        Please use 'admin/admin' to login        \033[0m"
+    echo -e "\033[32m                '${IPADDR}:30080'                \033[0m"
+    echo -e "\033[32m        You must change password after login     \033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     exit 0
