@@ -22,6 +22,10 @@ tlsSecret:
   key: "Cg=="
   crt: "Cg=="
 
+caSecret:
+  key: "Cg=="
+  crt: "Cg=="
+
 pivotCluster:
   kubernetesAPIEndpoint: "Cg=="
   kubeconfig: "Cg=="

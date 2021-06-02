@@ -32,10 +32,6 @@ echo -e "\033[32m>>>>>>	deploy nginx ingress controller...\033[0m"
 kubectl apply -f manifests/ingress-controller/ingress-controller.yaml
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	deploy audit server for kubecube...\033[0m"
-kubectl apply -f manifests/audit/audit.yaml
-
-echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m>>>>>>	installing helm...\033[0m"
 tar -zxvf manifests/helm/helm-v3.5.4-linux-amd64.tar.gz
 mv linux-amd64/helm /usr/local/bin/helm

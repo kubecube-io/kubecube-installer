@@ -70,11 +70,27 @@ tlsSecret:
   key: $(cat ca/tls.key | base64 -w 0)
   crt: $(cat ca/tls.crt | base64 -w 0)
 
+caSecret:
+  key: $(cat ca/ca.key | base64 -w 0)
+  crt: $(cat ca/ca.crt | base64 -w 0)
+
 pivotCluster:
   kubernetesAPIEndpoint: ${IPADDR}:6443
   kubeconfig: $(cat /root/.kube/config | base64 -w 0)
 EOF
 }
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	create namespace for kubecube...\033[0m"
+kubectl apply -f manifests/ns/ns.yaml
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	deploy frontend for kubecube...\033[0m"
+kubectl apply -f manifests/frontend/frontend.yaml
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m>>>>>>	deploy audit server for kubecube...\033[0m"
+kubectl apply -f manifests/audit/audit.yaml
 
 sign_cert
 render_values
@@ -94,6 +110,7 @@ do
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m>>>>>>	            Welcome to KubeCube!               <<<<<<\033[0m"
     echo -e "\033[32m>>>>>>	      Please use 'admin/admin' to login        <<<<<<\033[0m"
+    echo -e "\033[32m>>>>>>	              '${IPADDR}:30080'                <<<<<<\033[0m"
     echo -e "\033[32m>>>>>>	      You must change password after login     <<<<<<\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"

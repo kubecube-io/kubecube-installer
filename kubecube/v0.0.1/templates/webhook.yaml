@@ -76,3 +76,27 @@ webhooks:
         resources:
           - cuberesourcequota
     sideEffects: None
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      caBundle: {{ .Values.webhook.caBundle }}
+      service:
+        name: kubecube
+        namespace: kubecube-system
+        port: {{ .Values.kubecube.args.webhookServerPort }}
+        path: /validate-hotplug-kubecube-io-v1-hotplug
+    failurePolicy: Fail
+    name: vhotplug.kb.io
+    rules:
+      - apiGroups:
+          - hotplug.kubecube.io
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - hotplugs
+    sideEffects: None
