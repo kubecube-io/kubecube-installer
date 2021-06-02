@@ -1,35 +1,35 @@
 #!/bin/bash
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Processing params... \033[0m"
+echo -e "\033[32m Processing params... \033[0m"
 source ./manifests/params_process.sh
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Make Configurations for k8s api-server...\033[0m"
+echo -e "\033[32m Make Configurations for k8s api-server...\033[0m"
 source ./manifests/make_config.sh
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Copy third part helm charts to /etc/cube/helm-pkg \033[0m"
+echo -e "\033[32m Copy third part helm charts to /etc/cube/helm-pkg \033[0m"
 cp -r ./manifests/third-charts /etc/cube/helm-pkg
 
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m>>>>>>	Installing Kubernetes...\033[0m"
+  echo -e "\033[32m Installing Kubernetes...\033[0m"
   /bin/bash ./manifests/install_k8s.sh
 else
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m>>>>>>	IMPORTANT !!! ...                                 \033[0m"
-  echo -e "\033[32m>>>>>>	you need change the args of k8s api-server before \033[0m"
-  echo -e "\033[32m>>>>>>	installing kubecube, steps below:                 \033[0m"
-  echo -e "\033[32m>>>>>>	1. find the manifests folder contains kube-apiserver.yaml   \033[0m"
-  echo -e "\033[32m>>>>>>	   generally in /etc/kubernetes/manifests of master node.   \033[0m"
-  echo -e "\033[32m>>>>>>	2. add patches as below:   \033[0m"
-  echo -e "\033[32m>>>>>>	spec:   \033[0m"
-  echo -e "\033[32m>>>>>>	  containers:  \033[0m"
-  echo -e "\033[32m>>>>>>	    - command:  \033[0m"
-  echo -e "\033[32m>>>>>>	        - kube-apiserver  \033[0m"
-  echo -e "\033[32m>>>>>>	        - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config  \033[0m"
-  echo -e "\033[32m>>>>>>	        - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config  \033[0m"
+  echo -e "\033[32m IMPORTANT !!! ...                                 \033[0m"
+  echo -e "\033[32m you need change the args of k8s api-server before \033[0m"
+  echo -e "\033[32m installing kubecube, steps below:                 \033[0m"
+  echo -e "\033[32m 1. find the manifests folder contains kube-apiserver.yaml   \033[0m"
+  echo -e "\033[32m    generally in /etc/kubernetes/manifests of master node.   \033[0m"
+  echo -e "\033[32m 2. add patches as below:   \033[0m"
+  echo -e "\033[32m	spec:   \033[0m"
+  echo -e "\033[32m	  containers:  \033[0m"
+  echo -e "\033[32m	    - command:  \033[0m"
+  echo -e "\033[32m	        - kube-apiserver  \033[0m"
+  echo -e "\033[32m	        - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config  \033[0m"
+  echo -e "\033[32m	        - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config  \033[0m"
   # todo: to complete it
   echo -e "\033[32m================================================\033[0m"
 
@@ -53,13 +53,13 @@ if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
   /bin/bash ./manifests/install_third_dependence.sh
 
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m>>>>>>	Installing KubeCube...\033[0m"
+  echo -e "\033[32m	Installing KubeCube...\033[0m"
   /bin/bash ./manifests/install_kubecube.sh
 fi
 
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
+echo -e "\033[32m	Installing Third Dependence...\033[0m"
 /bin/bash ./manifests/install_third_dependence.sh
 
 cat >cluster.yaml <<EOF
@@ -76,8 +76,8 @@ spec:
 EOF
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m>>>>>> member cluster is ready! \033[0m"
-echo -e "\033[32m>>>>>>	please execute 'kubectl apply -f cluster.yaml' in pivot cluster.\033[0m"
+echo -e "\033[32m Member cluster is ready! \033[0m"
+echo -e "\033[32m	Please execute 'kubectl apply -f cluster.yaml' in pivot cluster.\033[0m"
 fi
 
 
