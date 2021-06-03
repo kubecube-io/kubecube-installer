@@ -32,9 +32,10 @@ fi
 unzip master.zip > /dev/null
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m     please make sure under kubecube folder     \033[0m"
-echo -e "\033[32m     please modify ./manifests/install.conf     \033[0m"
-echo -e "\033[32m  	  'vi ./manifests/install.conf'              \033[0m"
-echo -e "\033[32m    	confirm every args then do command below:  \033[0m"
-echo -e "\033[32m     '/bin/bash ./manifests/main.sh'         \033[0m"
+echo -e "\033[32m Please make sure under kubecube folder     \033[0m"
+echo -e "\033[32m 'cd ./kubecube'                            \033[0m"
+echo -e "\033[32m Please modify ./manifests/install.conf     \033[0m"
+echo -e "\033[32m 'vi ./manifests/install.conf'              \033[0m"
+echo -e "\033[32m Confirm every args then do command below:  \033[0m"
+echo -e "\033[32m '/bin/bash ./manifests/main.sh'            \033[0m"
 echo -e "\033[32m================================================\033[0m"
