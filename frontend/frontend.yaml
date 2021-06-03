@@ -23,7 +23,7 @@ data:
 
         upstream cube {
             # hello is the internal DNS name used by the backend Service inside Kubernetes
-            server kubecube.kubecube-system.svc.cluster.local:7443;
+            server kubecube:7443;
         }
 
         log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -56,7 +56,6 @@ data:
 
             location ^~ /api/v1/cube/ {
                 proxy_pass https://cube;
-                proxy_cookie_domain localhost kubecube.kubecube-system.svc.cluster.local;
             }
         }
     }
