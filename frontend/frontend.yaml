@@ -57,6 +57,11 @@ data:
             location ^~ /api/v1/cube/ {
                 proxy_pass https://cube;
             }
+
+            location / {
+                root /usr/share/nginx/html/public;
+                index index.html index.htm;
+            }
         }
     }
 ---
