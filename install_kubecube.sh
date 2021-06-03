@@ -9,7 +9,7 @@ cd ca
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Generate ca key and ca cert...[0m"
 openssl genrsa -out ca.key 2048
-openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system.svc" -days 10000 -out ca.crt
+openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system" -days 10000 -out ca.crt
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Generate tls key...\033[0m"
@@ -30,13 +30,15 @@ C = ch
 ST = zj
 L = hz
 O = kubecube
-CN = *.kubecube-system.svc
+CN = *.kubecube-system
 
 [ req_ext ]
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = *.kubecube-system.svc
+DNS.1 = *.kubecube-system
+DNS.2 = *.kubecube-system.svc
+DNS.3 = *.kubecube-system.svc.cluster.local
 IP.1 = 127.0.0.1
 IP.2 = ${IPADDR}
 
@@ -104,18 +106,18 @@ echo
 while true
 do
   cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
-  warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
-  if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
+  if [[ ${cube_healthz} = "healthy" ]]; then
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m              Welcome to KubeCube!               \033[0m"
-    echo -e "\033[32m        Please use 'admin/admin' to login        \033[0m"
+    echo -e "\033[32m        Please use 'admin/admin' to access        \033[0m"
     echo -e "\033[32m                '${IPADDR}:30080'                \033[0m"
     echo -e "\033[32m        You must change password after login     \033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     exit 0
   fi
+  echo -e "\033[32m ...... \033[0m"
   sleep 7 > /dev/null
 done
 
