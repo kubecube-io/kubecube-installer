@@ -16,6 +16,11 @@ if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m Installing Kubernetes...\033[0m"
   /bin/bash ./manifests/install_k8s.sh
+  if [ "$?" -ne 0 ]; then
+      echo -e "\033[32m================================================\033[0m"
+      echo -e "\033[32m [ERROR] Install Kubernetes Failed \033[0m"
+      exit 1
+  fi
 else
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m IMPORTANT !!! ...                                 \033[0m"
@@ -51,16 +56,31 @@ if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
   /bin/bash ./manifests/install_third_dependence.sh
+  if [ "$?" -ne 0 ]; then
+      echo -e "\033[32m================================================\033[0m"
+      echo -e "\033[32m [ERROR] Install Third Dependence Failed \033[0m"
+      exit 1
+  fi
 
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m	Installing KubeCube...\033[0m"
   /bin/bash ./manifests/install_kubecube.sh
+  if [ "$?" -ne 0 ]; then
+      echo -e "\033[32m================================================\033[0m"
+      echo -e "\033[32m [ERROR] Install KubeCube Failed \033[0m"
+      exit 1
+  fi
 fi
 
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m	Installing Third Dependence...\033[0m"
 /bin/bash ./manifests/install_third_dependence.sh
+if [ "$?" -ne 0 ]; then
+    echo -e "\033[32m================================================\033[0m"
+    echo -e "\033[32m [ERROR] Install Third Dependence Failed \033[0m"
+    exit 1
+fi
 
 cat >cluster.yaml <<EOF
 apiVersion: cluster.kubecube.io/v1
