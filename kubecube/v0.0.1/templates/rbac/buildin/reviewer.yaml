@@ -27,6 +27,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - rbac.authorization.k8s.io
     resources:
@@ -37,6 +42,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -51,6 +61,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - apps
     resources:
@@ -70,6 +85,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - autoscaling
     resources:
@@ -79,6 +99,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - batch
     resources:
@@ -90,6 +115,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - extensions
     resources:
@@ -109,6 +139,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - policy
     resources:
@@ -118,6 +153,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -128,6 +168,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - hnc.x-k8s.io
     resources:
@@ -144,3 +189,11 @@ rules:
       - get
       - patch
       - update
+  - apiGroups:
+      - monitoring.kubecube.io
+    resources:
+      - dashboards
+    verbs:
+      - get
+      - list
+      - watch

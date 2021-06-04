@@ -23,6 +23,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -38,6 +43,9 @@ rules:
       - pods/portforward
       - pods/proxy
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -56,6 +64,9 @@ rules:
       - services
       - services/proxy
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -73,6 +84,9 @@ rules:
       - statefulsets
       - statefulsets/scale
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -83,6 +97,9 @@ rules:
     resources:
       - horizontalpodautoscalers
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -94,6 +111,9 @@ rules:
       - cronjobs
       - jobs
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -112,6 +132,9 @@ rules:
       - replicasets/scale
       - replicationcontrollers/scale
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -122,6 +145,9 @@ rules:
     resources:
       - poddisruptionbudgets
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -133,6 +159,9 @@ rules:
       - ingresses
       - networkpolicies
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -155,6 +184,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -170,6 +204,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - apps
     resources:
@@ -189,6 +228,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - autoscaling
     resources:
@@ -198,6 +242,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - batch
     resources:
@@ -209,6 +258,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - extensions
     resources:
@@ -228,6 +282,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - policy
     resources:
@@ -237,6 +296,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -247,6 +311,11 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
   - apiGroups:
       - rbac.authorization.k8s.io
     resources:
@@ -277,3 +346,11 @@ rules:
       - get
       - patch
       - update
+  - apiGroups:
+      - monitoring.kubecube.io
+    resources:
+      - dashboards
+    verbs:
+      - get
+      - list
+      - watch

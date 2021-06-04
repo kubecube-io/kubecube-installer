@@ -23,6 +23,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -38,6 +42,9 @@ rules:
       - pods/portforward
       - pods/proxy
     verbs:
+      - get
+      - list
+      - watch
       - create
       - delete
       - deletecollection
@@ -147,6 +154,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -203,6 +214,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -219,6 +234,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
@@ -227,6 +246,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - apps
     resources:
@@ -246,6 +269,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - autoscaling
     resources:
@@ -255,6 +282,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - batch
     resources:
@@ -266,6 +297,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - extensions
     resources:
@@ -285,6 +320,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - policy
     resources:
@@ -294,6 +333,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -304,6 +347,10 @@ rules:
       - get
       - list
       - watch
+      - create
+      - delete
+      - patch
+      - update
   - apiGroups:
       - authorization.k8s.io
     resources:
@@ -476,6 +523,18 @@ rules:
     resources:
       - clusterrolebindings
       - clusterroles
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - monitoring.kubecube.io
+    resources:
+      - dashboards
     verbs:
       - create
       - delete
