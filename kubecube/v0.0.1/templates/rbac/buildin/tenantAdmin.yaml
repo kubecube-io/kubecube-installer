@@ -6,6 +6,7 @@ metadata:
   name: tenant-admin
   labels:
     kubecube.io/rbac: "true"
+    kubecube.io/role: "tenant"
   annotations:
     kubecube.io/sync: "true"
 rules:
@@ -260,3 +261,23 @@ rules:
       - patch
       - update
       - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - subnamespaceanchors
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - subnamespaceanchors/status
+    verbs:
+      - get
+      - patch
+      - update

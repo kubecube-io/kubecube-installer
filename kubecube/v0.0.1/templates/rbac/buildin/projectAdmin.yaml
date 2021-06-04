@@ -6,6 +6,7 @@ metadata:
   name: project-admin
   labels:
     kubecube.io/rbac: "true"
+    kubecube.io/role: "project"
   annotations:
     kubecube.io/sync: "true"
 rules:
@@ -260,3 +261,19 @@ rules:
       - patch
       - update
       - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - subnamespaceanchors
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - subnamespaceanchors/status
+    verbs:
+      - get
+      - patch
+      - update

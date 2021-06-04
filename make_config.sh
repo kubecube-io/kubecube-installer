@@ -9,7 +9,7 @@ kind: Config
 clusters:
   - name: warden
     cluster:
-      server: https://warden.kubecube-system:7443/api/v1/warden/authenticate
+      server: https://${IPADDR}:31443/api/v1/warden/authenticate
       insecure-skip-tls-verify: true
 users:
   - name: api-server

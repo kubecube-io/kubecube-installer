@@ -6,6 +6,7 @@ metadata:
   name: reviewer
   labels:
     kubecube.io/rbac: "true"
+    kubecube.io/role: "reviewer"
   annotations:
     kubecube.io/sync: "true"
 rules:
@@ -127,3 +128,19 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - subnamespaceanchors
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - subnamespaceanchors/status
+    verbs:
+      - get
+      - patch
+      - update
