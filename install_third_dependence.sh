@@ -20,6 +20,7 @@ do
   echo -e "\033[32m hnc-manager ready status: ${hnc_ready}...\033[0m"
 done
 
+sleep 7 > /dev/null
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m hnc-manager ready...\033[0m"
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./manifests/cube.conf
+
 IPADDR=$(hostname -I |awk '{print $1}')
 
 function sign_cert() {
@@ -62,7 +64,13 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Render Values of KubeCube...\033[0m"
 cat >values.yaml <<EOF
 kubecube:
+  replicas: ${kubecube_replicas}
+  args:
+    logLevel: ${kubecube_args_logLevel}
+    securePort: ${kubecube_args_securePort}
+    webhookServerPort: ${kubecube_args_webhookServerPort}
   env:
+    jwtSecret: ${kubecube_env_jwtSecret}
     pivotCubeHost: ${IPADDR}:30443
 
 webhook:

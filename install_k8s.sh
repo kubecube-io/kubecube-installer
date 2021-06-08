@@ -146,12 +146,8 @@ fi
 function prev_install_debian() {
 if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m apt-get updating...\033[0m"
-apt-get update -y
-
-echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing dependence...\033[0m"
-apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass  >/dev/null
+apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m closing swap\033[0m"
@@ -341,7 +337,7 @@ sudo chown $(id -u):$(id -g) ${HOME}/.kube/config
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing calico\033[0m"
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl apply -f ./manifests/calico/calico.yaml
 
 sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
