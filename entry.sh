@@ -31,7 +31,7 @@ fi
 
 unzip all-in-one.zip > /dev/null
 
-if [ ${CUSTOMIZE} = "true" ]; then
+if [[ ${CUSTOMIZE} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m Please make sure under kubecube folder     \033[0m"
   echo -e "\033[32m 'cd ./kubecube'                            \033[0m"
