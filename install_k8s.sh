@@ -338,7 +338,7 @@ sudo chown $(id -u):$(id -g) ${HOME}/.kube/config
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing calico\033[0m"
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl apply -f ./manifests/calico/calico.yaml
 
 sleep 20 >/dev/null
 echo -e "\033[32m================================================\033[0m"
