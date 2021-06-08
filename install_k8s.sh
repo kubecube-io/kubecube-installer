@@ -147,6 +147,7 @@ function prev_install_debian() {
 if [ ${ZONE} = "ch" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing dependence...\033[0m"
+echo '* libraries/restart-without-asking boolean true' | debconf-set-selections
 apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass
 
 echo -e "\033[32m================================================\033[0m"
