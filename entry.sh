@@ -11,7 +11,7 @@ cd kubecube
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Download manifests for kubecube...\033[0m"
 echo -e "\033[32m================================================\033[0m"
-wget https://gitee.com/kubecube/manifests/repository/archive/feature/all-in-one.zip
+wget https://gitee.com/kubecube/manifests/repository/archive/feature/master.zip
 
 has_apt=$(which apt)
 if [ ! -z ${has_apt} ]; then
@@ -29,7 +29,7 @@ if [ $? -eq 0 ]; then
   yum install -y unzip > /dev/null
 fi
 
-unzip all-in-one.zip > /dev/null
+unzip master.zip > /dev/null
 
 if [[ ${CUSTOMIZE} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
