@@ -145,6 +145,7 @@ fi
 
 function prev_install_debian() {
 if [ ${ZONE} = "ch" ]; then
+DEBIAN_FRONTEND=noninteractive
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing dependence...\033[0m"
 apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sshpass
