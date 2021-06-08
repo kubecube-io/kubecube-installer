@@ -76,6 +76,8 @@ spec:
               value: {{ .Values.kubecube.env.pivotCubeSvc }}
             - name: PIVOT_CUBE_HOST
               value: {{ .Values.kubecube.env.pivotCubeHost }}
+            - name: JWT_SECRET
+              value: {{ .Values.kubecube.env.jwtSecret }}
           volumeMounts:
             - name: cube-tls
               mountPath: "/etc/tls"

@@ -24,8 +24,12 @@ else
 fi
 
 if [ -z ${MASTER_IP} ]; then
-  echo -e "\033[31m MASTER_IP can not be empty! \033[0m"
-  exit 1
+  if [ ${NODE_MODE} = "master" ]; then
+    MASTER_IP=$(hostname -I |awk '{print $1}')
+  else
+    echo -e "\033[31m MASTER_IP can not be empty! \033[0m"
+    exit 1
+  fi
 fi
 
 if [ -z ${LOCAL_IP} ]; then

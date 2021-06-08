@@ -20,6 +20,9 @@ spec:
           image: hub.c.163.com/kubecube/audit:v0.0.1
           ports:
             - containerPort: 8888
+          env:
+            - name: JWT_SECRET
+              value: "56F0D8DB90241C6E"
 ---
 apiVersion: v1
 kind: Service
