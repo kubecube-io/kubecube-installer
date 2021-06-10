@@ -484,6 +484,7 @@ rules:
       - user.kubecube.io
     resources:
       - users
+      - keys
     verbs:
       - create
       - delete
@@ -535,6 +536,101 @@ rules:
       - monitoring.kubecube.io
     resources:
       - dashboards
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - alertmanagerconfigs
+      - alertmanagers
+      - podmonitors
+      - probes
+      - prometheuses
+      - prometheusrules
+      - servicemonitors
+      - thanosrulers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - crd.projectcalico.org
+    resources:
+      - bgpconfigurations
+      - bgppeers
+      - blockaffinities
+      - clusterinformations
+      - felixconfigurations
+      - globalnetworkpolicies
+      - globalnetworksets
+      - hostendpoints
+      - ipamblocks
+      - ipamconfigs
+      - ipamhandles
+      - ippools
+      - kubecontrollersconfigurations
+      - networkpolicies
+      - networksets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - monitoring.kubecube.io
+    resources:
+      - dashboards
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - hnc.x-k8s.io
+    resources:
+      - hierarchyconfigurations
+      - hncconfigurations
+      - subnamespaceanchors
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - hotplug.kubecube.io
+    resources:
+      - hotplugs
     verbs:
       - create
       - delete
