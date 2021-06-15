@@ -114,7 +114,8 @@ echo
 while true
 do
   cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
-  if [[ ${cube_healthz} = "healthy" ]]; then
+  warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
+  if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m              Welcome to KubeCube!               \033[0m"
