@@ -25,6 +25,10 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m hnc-manager ready...\033[0m"
 
 echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m deploy local-path-storage...\033[0m"
+kubectl apply -f manifests/local-path-storage/local-path-storage.yaml
+
+echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m deploy metrics-server...\033[0m"
 kubectl apply -f manifests/metrics-server/metrics-server.yaml
 

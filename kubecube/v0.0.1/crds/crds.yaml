@@ -545,3 +545,66 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: logconfigs.netease.com
+  labels:
+    kubecube.io/crds: "true"
+spec:
+  conversion:
+    strategy: None
+  group: netease.com
+  names:
+    kind: Logconfig
+    listKind: LogconfigList
+    plural: logconfigs
+    shortNames:
+      - lgc
+    singular: logconfig
+  scope: Namespaced
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              x-kubernetes-preserve-unknown-fields: true
+              type: object
+      subresources:
+        status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: nodelogconfigs.netease.com
+  labels:
+    kubecube.io/crds: "true"
+spec:
+  conversion:
+    strategy: None
+  group: netease.com
+  names:
+    kind: NodeLogconfig
+    plural: nodelogconfigs
+    singular: nodelogconfig
+    shortNames:
+      - nlgc
+  scope: Cluster
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              x-kubernetes-preserve-unknown-fields: true
+              type: object
+      subresources:
+        status: {}

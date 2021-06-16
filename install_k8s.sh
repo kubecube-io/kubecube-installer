@@ -27,7 +27,7 @@ function system_info () {
 }
 
 function prev_install_redhat() {
-if [ ${ZONE} = "ch" ]; then
+if [ ${ZONE} = "cn" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Start previous requirements install... \033[0m"
 echo -e "\033[32m================================================\033[0m"
@@ -144,7 +144,7 @@ fi
 }
 
 function prev_install_debian() {
-if [ ${ZONE} = "ch" ]; then
+if [ ${ZONE} = "cn" ]; then
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing dependence...\033[0m"
 echo '* libraries/restart-without-asking boolean true' | debconf-set-selections

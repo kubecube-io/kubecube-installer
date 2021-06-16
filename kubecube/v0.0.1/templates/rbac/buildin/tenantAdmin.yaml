@@ -358,3 +358,16 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - netease.com
+    resources:
+      - nodelogconfigs
+      - logconfigs
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
