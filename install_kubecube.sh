@@ -118,10 +118,10 @@ do
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
-    echo -e "\033[32m              Welcome to KubeCube!               \033[0m"
-    echo -e "\033[32m        Please use 'admin/admin' to access        \033[0m"
-    echo -e "\033[32m                '${IPADDR}:30080'                \033[0m"
-    echo -e "\033[32m        You must change password after login     \033[0m"
+    echo -e "\033[32m              Welcome to KubeCube!                   \033[0m"
+    echo -e "\033[32m        Please use 'admin/admin123' to access        \033[0m"
+    echo -e "\033[32m                '${IPADDR}:30080'                    \033[0m"
+    echo -e "\033[32m        You must change password after login         \033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     exit 0

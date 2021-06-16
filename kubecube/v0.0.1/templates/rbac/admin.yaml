@@ -5,7 +5,8 @@ metadata:
   annotations:
     kubecube.io/sync: "true"
 spec:
+  password: c826e02f3359f5b460af1a6fe8412d04
   displayName: admin
   language: en
   loginType: normal
-  password: d12cf9e2ce438cd32fc368b3cc28a730
+  state: normal

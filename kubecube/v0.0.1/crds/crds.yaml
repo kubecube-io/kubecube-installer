@@ -555,8 +555,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: logconfigs.netease.com
-  labels:
-    kubecube.io/crds: "true"
 spec:
   conversion:
     strategy: None
@@ -587,8 +585,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: nodelogconfigs.netease.com
-  labels:
-    kubecube.io/crds: "true"
 spec:
   conversion:
     strategy: None
