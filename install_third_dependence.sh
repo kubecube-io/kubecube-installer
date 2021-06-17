@@ -1,5 +1,13 @@
 #!/bin/bash
 
+function init_etcd_secret (){
+  kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic etcd-certs -nmonitoring --dry-run=client -o yaml \
+  --from-file=ca.crt=/etc/kubernetes/pki/ca.crt \
+  --from-file=client.crt=/etc/kubernetes/pki/apiserver-etcd-client.crt \
+  --from-file=client.key=/etc/kubernetes/pki/apiserver-etcd-client.key | kubectl apply -f -
+}
+
 if [ $(kubectl get nodes | wc -l) -eq 2 ]
 then
   echo -e "\033[32m================================================\033[0m"
@@ -35,6 +43,10 @@ kubectl apply -f manifests/metrics-server/metrics-server.yaml
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m deploy nginx ingress controller...\033[0m"
 kubectl apply -f manifests/ingress-controller/ingress-controller.yaml
+
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m init etcd-certs secret for etcd monitoring \033[0m"
+init_etcd_secret
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing helm...\033[0m"
