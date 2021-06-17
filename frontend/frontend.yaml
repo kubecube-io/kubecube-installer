@@ -107,7 +107,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: hub.c.163.com/kubecube/frontend:0.0.8-deploy
+          image: hub.c.163.com/kubecube/frontend:0.0.9-deploy
           lifecycle:
             preStop:
               exec:
