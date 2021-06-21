@@ -118,7 +118,7 @@ fi
 #echo -e "\033[32m Member cluster is ready! \033[0m"
 #echo -e "\033[32m	Please execute 'kubectl apply -f cluster.yaml' in pivot cluster.\033[0m"
 
-register_success=$(curl -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"${LOCAL_IP}\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"{{ .Description }}\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}")
+register_success=$(curl -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"${LOCAL_IP}\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"this is member cluster\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}")
 if [[ ${register_success} = "success" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m             add cluster success!               \033[0m"
