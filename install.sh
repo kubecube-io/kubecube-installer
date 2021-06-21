@@ -101,34 +101,17 @@ if [ "$?" -ne 0 ]; then
     exit 1
 fi
 
-#cat >cluster.yaml <<EOF
-#apiVersion: cluster.kubecube.io/v1
-#kind: Cluster
-#metadata:
-#  name: ${MEMBER_CLUSTER_NAME}
-#spec:
-#  kubernetesAPIEndpoint: ${LOCAL_IP}:6443
-#  networkType: calico
-#  isMemberCluster: true
-#  description: "this is member cluster"
-#  kubeconfig: $(cat /root/.kube/config | base64 -w 0)
-#EOF
-
-#echo -e "\033[32m================================================\033[0m"
-#echo -e "\033[32m Member cluster is ready! \033[0m"
-#echo -e "\033[32m	Please execute 'kubectl apply -f cluster.yaml' in pivot cluster.\033[0m"
-
-register_success=$(curl -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"${LOCAL_IP}\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"this is member cluster\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}")
-if [[ ${register_success} = "success" ]]; then
+curl -s -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"${LOCAL_IP}\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"this is member cluster\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}"
+if [[ $? = 0 ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m             add cluster success!               \033[0m"
   echo -e "\033[32m      please go to console and check out!       \033[0m"
+  echo -e "\033[32m================================================\033[0m"
   exit 0
 else
   echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m add cluster failed. \033[0m"
+  echo -e "\033[32m             add cluster failed.                \033[0m"
+  echo -e "\033[32m================================================\033[0m"
   exit 1
 fi
 fi
-
-

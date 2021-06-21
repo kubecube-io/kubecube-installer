@@ -329,12 +329,23 @@ cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
 chown $(id -u):$(id -g) ${HOME}/.kube/config
 
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m wait for kube-system ready... \033[0m"
-kubectl wait --for=condition=Ready --timeout=300m pods --all --namespace kube-system
-
-echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing calico\033[0m"
 kubectl apply -f ./manifests/calico/calico.yaml
+
+sleep 20 >/dev/null
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m inspect node\033[0m"
+kubectl get node
+
+sleep 20 >/dev/null
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m inspect pod\033[0m"
+kubectl get pod --all-namespaces
+
+sleep 20 >/dev/null
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m inspect service\033[0m"
+kubectl get svc --all-namespaces
 
 echo -e "\033[32m==========================================================================\033[0m"
 echo -e "\033[32m Kubernetes ${KUBERNETES_VERSION} deploy completed\033[0m"
