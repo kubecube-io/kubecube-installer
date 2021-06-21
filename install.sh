@@ -22,24 +22,43 @@ if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
       exit 1
   fi
 else
-  echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m IMPORTANT !!! ...                                 \033[0m"
-  echo -e "\033[32m you need change the args of k8s api-server before \033[0m"
-  echo -e "\033[32m installing kubecube, steps below:                 \033[0m"
-  echo -e "\033[32m 1. find the manifests folder contains kube-apiserver.yaml   \033[0m"
-  echo -e "\033[32m    generally in /etc/kubernetes/manifests of master node.   \033[0m"
-  echo -e "\033[32m 2. add patches as below:   \033[0m"
-  echo -e "\033[32m	spec:   \033[0m"
-  echo -e "\033[32m	  containers:  \033[0m"
-  echo -e "\033[32m	    - command:  \033[0m"
-  echo -e "\033[32m	        - kube-apiserver  \033[0m"
-  echo -e "\033[32m	        - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config  \033[0m"
-  echo -e "\033[32m	        - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config  \033[0m"
-  # todo: to complete it
-  echo -e "\033[32m================================================\033[0m"
-
+  echo -e "\033[32m================================================================================================\033[0m"
+  echo -e "\033[32m IMPORTANT !!!                                                                                  \033[0m"
+  echo -e "\033[32m You must change the args of k8s api-server before installing kubecube, steps below:            \033[0m"
+  echo -e "\033[32m 1. find the manifests folder contains kube-apiserver.yaml                                      \033[0m"
+  echo -e "\033[32m    generally in /etc/kubernetes/manifests of master node.                                      \033[0m"
+  echo -e "\033[32m 2. add patches as below:                                                                       \033[0m"
+  echo -e "\033[32m================================================================================================\033[0m"
+  echo -e "\033[32m spec:                                                                                          \033[0m"
+  echo -e "\033[32m   containers:                                                                                  \033[0m"
+  echo -e "\033[32m     - command:                                                                                 \033[0m"
+  echo -e "\033[32m         - kube-apiserver                                                                       \033[0m"
+  echo -e "\033[32m         - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config                     \033[0m"
+  echo -e "\033[32m         - --audit-policy-file=/etc/cube/audit/audit-policy.yaml                                \033[0m"
+  echo -e "\033[32m         - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config           \033[0m"
+  echo -e "\033[32m         - --audit-log-format=json                                                              \033[0m"
+  echo -e "\033[32m         - --audit-log-maxage=10                                                                \033[0m"
+  echo -e "\033[32m         - --audit-log-maxbackup=10                                                             \033[0m"
+  echo -e "\033[32m         - --audit-log-maxsize=100                                                              \033[0m"
+  echo -e "\033[32m         - --audit-log-path=/var/log/audit                                                      \033[0m"
+  echo -e "\033[32m       volumeMounts:                                                                            \033[0m"
+  echo -e "\033[32m       - mountPath: /var/log/audit                                                              \033[0m"
+  echo -e "\033[32m         name: audit-log                                                                        \033[0m"
+  echo -e "\033[32m       - mountPath: /etc/cube                                                                   \033[0m"
+  echo -e "\033[32m         name: cube                                                                             \033[0m"
+  echo -e "\033[32m         readOnly: true                                                                         \033[0m"
+  echo -e "\033[32m   volumes:                                                                                     \033[0m"
+  echo -e "\033[32m     - hostPath                                                                                 \033[0m"
+  echo -e "\033[32m         path: /var/log/audit                                                                   \033[0m"
+  echo -e "\033[32m         type: DirectoryOrCreate                                                                \033[0m"
+  echo -e "\033[32m       name: audit-log                                                                          \033[0m"
+  echo -e "\033[32m     - hostPath                                                                                 \033[0m"
+  echo -e "\033[32m         path: /etc/cube                                                                        \033[0m"
+  echo -e "\033[32m         type: DirectoryOrCreate                                                                \033[0m"
+  echo -e "\033[32m       name: cube                                                                               \033[0m"
+  echo -e "\033[32m================================================================================================\033[0m"
   echo -e "\033[32m Please enter 'exit' to modify args of k8s api-server \033[0m"
-  echo -e "\033[32m After modify is done, please enter 'confirm' to continue \033[0m"
+  echo -e "\033[32m After modify is done, please redo script and enter 'confirm' to continue \033[0m"
   while read confirm
   do
     if [[ ${confirm} = "confirm" ]]; then
@@ -82,22 +101,34 @@ if [ "$?" -ne 0 ]; then
     exit 1
 fi
 
-cat >cluster.yaml <<EOF
-apiVersion: cluster.kubecube.io/v1
-kind: Cluster
-metadata:
-  name: ${MEMBER_CLUSTER_NAME}
-spec:
-  kubernetesAPIEndpoint: ${LOCAL_IP}:6443
-  networkType: calico
-  isMemberCluster: true
-  description: "this is member cluster"
-  kubeconfig: $(cat /root/.kube/config | base64 -w 0)
-EOF
+#cat >cluster.yaml <<EOF
+#apiVersion: cluster.kubecube.io/v1
+#kind: Cluster
+#metadata:
+#  name: ${MEMBER_CLUSTER_NAME}
+#spec:
+#  kubernetesAPIEndpoint: ${LOCAL_IP}:6443
+#  networkType: calico
+#  isMemberCluster: true
+#  description: "this is member cluster"
+#  kubeconfig: $(cat /root/.kube/config | base64 -w 0)
+#EOF
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Member cluster is ready! \033[0m"
-echo -e "\033[32m	Please execute 'kubectl apply -f cluster.yaml' in pivot cluster.\033[0m"
+#echo -e "\033[32m================================================\033[0m"
+#echo -e "\033[32m Member cluster is ready! \033[0m"
+#echo -e "\033[32m	Please execute 'kubectl apply -f cluster.yaml' in pivot cluster.\033[0m"
+
+register_success=$(curl -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"${LOCAL_IP}\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"{{ .Description }}\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}")
+if [[ ${register_success} = "success" ]]; then
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m             add cluster success!               \033[0m"
+  echo -e "\033[32m      please go to console and check out!       \033[0m"
+  exit 0
+else
+  echo -e "\033[32m================================================\033[0m"
+  echo -e "\033[32m add cluster failed. \033[0m"
+  exit 1
+fi
 fi
 
 
