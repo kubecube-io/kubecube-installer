@@ -78,6 +78,10 @@ spec:
               value: {{ .Values.kubecube.env.pivotCubeHost }}
             - name: JWT_SECRET
               value: {{ .Values.kubecube.env.jwtSecret }}
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           volumeMounts:
             - name: cube-tls
               mountPath: "/etc/tls"
