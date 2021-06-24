@@ -248,7 +248,9 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Make ClusterConfiguration For Kubeadm \033[0m"
 mkdir -p /etc/cube/kubeadm
 
-COMMON_CONF=$(cat <<- EOF
+API_SERVER_CONF=$(cat <<- EOF
+apiServer:
+  extraArgs:
     authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
     audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
     audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
@@ -286,36 +288,26 @@ metricsBindAddress: 0.0.0.0:10249
 EOF
 )
 
-if [ -z ${CONTROL_PLANE_ENDPOINT} ]
-then
+if [ -z ${CONTROL_PLANE_ENDPOINT} ]; then
 echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m VIP not be set, use single master mode \033[0m"
+echo -e "\033[32m VIP not be set, use node ip \033[0m"
+CONTROL_PLANE_ENDPOINT=${LOCAL_IP}
+fi
+
 cat >/etc/cube/kubeadm/init.config <<EOF
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: ${KUBERNETES_VERSION}
-apiServer:
-  extraArgs:
-    advertise-address: ${LOCAL_IP}
-${COMMON_CONF}
----
-${KUBE_PROXY_CONF}
-EOF
-else
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m VIP is set: ${CONTROL_PLANE_ENDPOINT}, use control plane mode \033[0m"
-cat >/etc/cube/kubeadm/init.config <<EOF
-apiVersion: kubeadm.k8s.io/v1beta2
-kind: ClusterConfiguration
-kubernetesVersion: ${KUBERNETES_VERSION}
-#masterip和端口，这里也可以设置域名或者VIP
 controlPlaneEndpoint: ${CONTROL_PLANE_ENDPOINT}
-apiServer:
-  extraArgs:
-${COMMON_CONF}
+${API_SERVER_CONF}
 ---
 ${KUBE_PROXY_CONF}
 EOF
+}
+
+function set_node_role() {
+if [ ${NODE_MODE} = "node-join-master" ]; then
+  kubectl label nodes $(hostname) node-role.kubernetes.io/node= > /dev/null
 fi
 }
 
