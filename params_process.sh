@@ -9,7 +9,7 @@ then
   exit 1
 else
   NODE_MODE_LEGAL="false"
-  for v in "control-plane-master" "master" "node-join-control-planer" "node-join-master"
+  for v in "control-plane-master" "master" "node-join-control-plane" "node-join-master"
   do
     if [ ${NODE_MODE} = $v ];then
       NODE_MODE_LEGAL="true"
@@ -18,7 +18,7 @@ else
   done
   if [ ${NODE_MODE_LEGAL} = "false" ]; then
     echo -e "\033[32m NODE_MODE illegal! must be one of: \033[0m"
-    echo -e "\033[32m control-plane-master,master,node-join-control-planer,node-join-master \033[0m"
+    echo -e "\033[32m control-plane-master,master,node-join-control-plane,node-join-master \033[0m"
     exit 1
   fi
 fi

@@ -368,8 +368,8 @@ if [ ! -z ${ACCESS_PASSWORD} ]; then
       CertificateKey=$(sshpass -p ${ACCESS_PASSWORD} ssh -p 22 root@${MASTER_IP} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
   fi
 elif [ ! -z ${ACCESS_PRIVATE_KEY_PATH} ]; then
-  TOKEN=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} root@${MASTER_IP} "kubeadm token create --ttl=10m")
-  Hash=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} root@${MASTER_IP} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
+  TOKEN=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" root@${MASTER_IP} "kubeadm token create --ttl=10m")
+  Hash=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" root@${MASTER_IP} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
   if [ ! -z ${CONTROL_PLANE_ENDPOINT} ]; then
       CertificateKey=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} root@${MASTER_IP} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
   fi
@@ -385,6 +385,10 @@ if [ ${NODE_MODE} = "node-join-control-plane" ]; then
 elif [ ${NODE_MODE} = "node-join-master" ]; then
   kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash}
 fi
+
+mkdir -p ${HOME}/.kube
+cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
+chown $(id -u):$(id -g) ${HOME}/.kube/config
 }
 
 function Main() {
@@ -413,6 +417,8 @@ function Main() {
   elif [ ${NODE_MODE} = "node-join-control-plane" -o ${NODE_MODE} = "node-join-master" ]; then
     Install_Kubernetes_Node
   fi
+
+  set_node_role
 }
 
 Main
