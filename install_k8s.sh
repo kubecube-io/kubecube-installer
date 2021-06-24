@@ -248,17 +248,7 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Make ClusterConfiguration For Kubeadm \033[0m"
 mkdir -p /etc/cube/kubeadm
 
-if [ -z ${CONTROL_PLANE_ENDPOINT} ]
-then
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m VIP not be set, use single master mode \033[0m"
-cat >/etc/cube/kubeadm/init.config <<EOF
-apiVersion: kubeadm.k8s.io/v1beta2
-kind: ClusterConfiguration
-kubernetesVersion: ${KUBERNETES_VERSION}
-apiServer:
-  extraArgs:
-    advertise-address: ${LOCAL_IP}
+COMMON_CONF=$(cat <<- EOF
     authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
     audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
     audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
@@ -278,7 +268,38 @@ apiServer:
     mountPath: "/var/log/audit"
     readOnly: false
     pathType: DirectoryOrCreate
+# set control plane components listen on LOCAL_IP
+controllerManager:
+  extraArgs:
+    bind-address: ${LOCAL_IP}
+scheduler:
+  extraArgs:
+    bind-address: ${LOCAL_IP}
 imageRepository: "hub.c.163.com/kubecube"
+EOF
+)
+# enable metrics endpoint on all interfaces
+KUBE_PROXY_CONF=$(cat <<- EOF
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+metricsBindAddress: 0.0.0.0:10249
+EOF
+)
+
+if [ -z ${CONTROL_PLANE_ENDPOINT} ]
+then
+echo -e "\033[32m================================================\033[0m"
+echo -e "\033[32m VIP not be set, use single master mode \033[0m"
+cat >/etc/cube/kubeadm/init.config <<EOF
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: ${KUBERNETES_VERSION}
+apiServer:
+  extraArgs:
+    advertise-address: ${LOCAL_IP}
+${COMMON_CONF}
+---
+${KUBE_PROXY_CONF}
 EOF
 else
 echo -e "\033[32m================================================\033[0m"
@@ -291,26 +312,9 @@ kubernetesVersion: ${KUBERNETES_VERSION}
 controlPlaneEndpoint: ${CONTROL_PLANE_ENDPOINT}
 apiServer:
   extraArgs:
-    authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
-    audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
-    audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
-    audit-log-path: "/var/log/audit"
-    audit-log-maxage: "10"
-    audit-log-maxsize: "100"
-    audit-log-maxbackup: "10"
-    audit-log-format: "json"
-  extraVolumes:
-  - name: "cube"
-    hostPath: "/etc/cube"
-    mountPath: "/etc/cube"
-    readOnly: true
-    pathType: DirectoryOrCreate
-  - name: audit-log
-    hostPath: "/var/log/audit"
-    mountPath: "/var/log/audit"
-    readOnly: false
-    pathType: DirectoryOrCreate
-imageRepository: "hub.c.163.com/kubecube"
+${COMMON_CONF}
+---
+${KUBE_PROXY_CONF}
 EOF
 fi
 }

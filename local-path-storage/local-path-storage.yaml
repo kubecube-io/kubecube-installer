@@ -87,6 +87,8 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  annotation:
+    storageclass.kubernetes.io/is-default-class: "true"
   name: local-path
 provisioner: rancher.io/local-path
 volumeBindingMode: WaitForFirstConsumer
