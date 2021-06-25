@@ -8,10 +8,6 @@ echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Make Configurations for k8s api-server...\033[0m"
 source ./manifests/make_config.sh
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Copy third part helm charts to /etc/cube/helm-pkg \033[0m"
-cp -r ./manifests/third-charts /etc/cube/helm-pkg
-
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m Installing Kubernetes...\033[0m"

@@ -305,12 +305,6 @@ ${KUBE_PROXY_CONF}
 EOF
 }
 
-function set_node_role() {
-if [ ${NODE_MODE} = "node-join-master" ]; then
-  kubectl label nodes $(hostname) node-role.kubernetes.io/node= > /dev/null
-fi
-}
-
 function Install_Kubernetes_Master (){
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m Init Kubernetes, Version${KUBERNETES_VERSION}\033[0m"
@@ -376,10 +370,15 @@ if [ ${NODE_MODE} = "node-join-control-plane" ]; then
   kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash} --control-plane --certificate-key ${CertificateKey}
 elif [ ${NODE_MODE} = "node-join-master" ]; then
   kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash}
+  if [ ! -z ${ACCESS_PASSWORD} ]; then
+    sshpass -p ${ACCESS_PASSWORD} ssh -p 22 root@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+  else
+    ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" root@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+  fi
 fi
 
 mkdir -p ${HOME}/.kube
-cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
+cp -i /etc/kubernetes/kubelet.conf ${HOME}/.kube/config
 chown $(id -u):$(id -g) ${HOME}/.kube/config
 }
 
@@ -409,8 +408,6 @@ function Main() {
   elif [ ${NODE_MODE} = "node-join-control-plane" -o ${NODE_MODE} = "node-join-master" ]; then
     Install_Kubernetes_Node
   fi
-
-  set_node_role
 }
 
 Main

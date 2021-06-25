@@ -82,6 +82,8 @@ spec:
           env:
             - name: WARDEN_IMAGE
               value: {{ .Values.kubecube.env.wardenImage }}
+            - name: WARDEN_INIT_IMAGE
+              value: {{ .Values.kubecube.env.wardenInitImage }}
             - name: PIVOT_CUBE_CLUSTER_IP_SVC
               value: {{ .Values.kubecube.env.pivotCubeSvc }}
             - name: PIVOT_CUBE_HOST
