@@ -50,8 +50,13 @@ init_etcd_secret
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m installing helm...\033[0m"
-tar -zxvf manifests/helm/helm-v3.5.4-linux-amd64.tar.gz
-mv linux-amd64/helm /usr/local/bin/helm
+if [[ $(arch) == x86_64 ]]; then
+  tar -zxvf manifests/helm/helm-v3.5.4-linux-amd64.tar.gz
+  mv linux-amd64/helm /usr/local/bin/helm
+else
+  tar -zxvf manifests/helm/helm-v3.6.2-linux-arm64.tar.gz
+  mv linux-arm64/helm /usr/local/bin/helm
+fi
 
 echo -e "\033[32m================================================\033[0m"
 echo -e "\033[32m third dependence install success\033[0m"

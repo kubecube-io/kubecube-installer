@@ -62,7 +62,7 @@ spec:
       serviceAccountName: local-path-provisioner-service-account
       containers:
         - name: local-path-provisioner
-          image: hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19
+          image: rancher/local-path-provisioner:v0.0.19  #hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19
           imagePullPolicy: IfNotPresent
           command:
             - local-path-provisioner
