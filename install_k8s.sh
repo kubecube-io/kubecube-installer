@@ -1,42 +1,57 @@
 #!/bin/bash
 
+set -o errexit
+
 DOCKER_VER=19.03.8
+OFFLINE_INSTALL="true"
+BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
 
-source ./manifests/utils.sh
+source /etc/kubecube/manifests/utils.sh
 
-function docker_bin_download() {
-  if [[ $(arch) == aarch64 ]]; then
-    if [[ "$ZONE" == cn ]];then
-      DOCKER_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz"
-    else
-      DOCKER_URL="https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VER}.tgz"
-    fi
+function offline_pkg_download() {
+  if [ -e "${BASE}/packages" ]; then
+    clog warn "offline packages already existed"
   else
-    if [[ ${ZONE} == cn ]];then
-      DOCKER_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz"
-    else
-      DOCKER_URL="https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz"
-    fi
+    clog info "download offline packages"
+    wget https://gitee.com/kubecube/packages/repository/archive/master.zip -O packages.zip
+    unzip packages.zip -d ${BASE}/ > /dev/null
   fi
+}
 
+function docker_bin_get() {
   if [[ -f "$BASE/down/docker-${DOCKER_VER}.tgz" ]];then
     clog warn "docker binaries already existed"
   else
-    clog info "downloading docker binaries, version $DOCKER_VER"
-    if [[ -e /usr/bin/curl ]];then
-      curl -C- -O --retry 3 "$DOCKER_URL" || { clog error "downloading docker failed"; exit 1; }
+    if [[ "$OFFLINE_INSTALL" == "true" ]]; then
+      clog info "get docker binary from local"
+      /bin/mv -f "${BASE}/packages/docker-ce/linux/static/stable/x86_64/docker-$DOCKER_VER.tgz" "$BASE/down"
     else
-      wget -c "$DOCKER_URL" || { clog error "downloading docker failed"; exit 1; }
+      docker_bin_download
     fi
-    /bin/mv -f "./docker-$DOCKER_VER.tgz" "$BASE/down"
   fi
 
   tar zxf "$BASE/down/docker-$DOCKER_VER.tgz" -C "$BASE/down" && \
   /bin/cp -f "$BASE"/down/docker/* "$BASE/bin" && \
-  /bin/mv -f "$BASE"/down/docker/* /usr/bin && \
-  ln -sf /usr/bin/docker /bin/docker
+  /bin/mv -f "$BASE"/down/docker/* /usr/bin
+#  ln -sf /usr/bin/docker /bin/docker
+}
+
+function docker_bin_download() {
+  if [[ "$ZONE" == cn ]];then
+    DOCKER_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/$(arch)/docker-${DOCKER_VER}.tgz"
+  else
+    DOCKER_URL="https://download.docker.com/linux/static/stable/$(arch)/docker-${DOCKER_VER}.tgz"
+  fi
+
+  clog info "downloading docker binaries, version $DOCKER_VER"
+  if [[ -e /usr/bin/curl ]];then
+    curl -C- -O --retry 3 "$DOCKER_URL" || { clog error "downloading docker failed"; exit 1; }
+  else
+    wget -c "$DOCKER_URL" || { clog error "downloading docker failed"; exit 1; }
+  fi
+  /bin/mv -f "./docker-$DOCKER_VER.tgz" "$BASE/down"
 }
 
 function install_docker() {
@@ -219,41 +234,83 @@ EOF
   systemctl daemon-reload && systemctl restart docker && sleep 4
 }
 
-function k8s_bin_download() {
-  [[ -f "/usr/local/bin/kubelet" ]] && { clog warn "kubernetes binaries existed"; return 0; }
+function k8s_bin_get() {
+  [[ (-f "/usr/local/bin/kubelet") && (-f "/usr/local/bin/kubeadm") && (-f "/usr/local/bin/kubectl") && (-f "/usr/local/bin/crictl") ]] && { clog warn "kubernetes binaries existed"; return 0; }
 
+  os_arch="amd64"
+  if [[ $(arch) == aarch64 ]]; then
+      os_arch="arm64"
+  fi
+
+  CNI_VERSION="v0.8.2"
+  DOWNLOAD_DIR=/usr/local/bin
+  CRICTL_VERSION="v1.17.0"
+  RELEASE=v${KUBERNETES_VERSION}
+  RELEASE_VERSION="v0.4.0"
+
+  sudo mkdir -p /opt/cni/bin
+  sudo mkdir -p $DOWNLOAD_DIR
+  sudo mkdir -p /etc/systemd/system/kubelet.service.d
+
+  if [[ "$OFFLINE_INSTALL" == "true" ]]; then
+    k8s_bin_local
+  else
+    k8s_bin_download
+  fi
+}
+
+function k8s_bin_local() {
+  clog info "get k8s bin from local"
+
+  clog debug "get cni plugin"
+  tar -zxvf ${BASE}/packages/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz -C /opt/cni/bin > /dev/null
+
+  clog debug "get crictl"
+  tar -zxvf ${BASE}/packages/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz -C $DOWNLOAD_DIR > /dev/null
+
+  clog debug "get kubeadm,kubelet,kubectl"
+  sudo mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubeadm $DOWNLOAD_DIR
+  sudo mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubelet $DOWNLOAD_DIR
+  sudo mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubectl $DOWNLOAD_DIR
+  sudo chmod +x {$DOWNLOAD_DIR/kubeadm,$DOWNLOAD_DIR/kubelet,$DOWNLOAD_DIR/kubectl}
+
+  clog debug "config for kubelet service"
+  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service
+  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+}
+
+function k8s_bin_download() {
   clog info "downloading kubernetes: ${KUBERNETES_VERSION} binaries"
 
   clog debug "downloading cni plugin"
-  CNI_VERSION="v0.8.2"
-  sudo mkdir -p /opt/cni/bin
-  curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-amd64-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
+
+#  curl -L "https://gitee.com/kubecube/packages/raw/master/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
+  curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
 
   clog debug "downloading crictl"
-  DOWNLOAD_DIR=/usr/local/bin
-  sudo mkdir -p $DOWNLOAD_DIR
-  CRICTL_VERSION="v1.17.0"
-  curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
+#  curl -L "https://gitee.com/kubecube/packages/raw/master/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
+  curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
 
   clog debug "downloading kubeadm,kubelet,kubectl"
   RELEASE=v${KUBERNETES_VERSION}
   cd $DOWNLOAD_DIR
-  sudo curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}
+  sudo curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
   sudo chmod +x {kubeadm,kubelet,kubectl}
 
   clog debug "config for kubelet service"
   RELEASE_VERSION="v0.4.0"
   curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service
-  sudo mkdir -p /etc/systemd/system/kubelet.service.d
   curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 }
 
 function images_download() {
     clog info "downloading images"
 
-    /usr/local/bin/kubeadm config images list >> ./manifests/images.list
+    /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
 
-    for image in $(cat ./manifests/images.list)
+    spin & spinpid=$!
+    clog debug "spin pid: ${spinpid}"
+    for image in $(cat /etc/kubecube/manifests/images.list)
     do
       if [[ "$ZONE" == cn ]];then
         if [[ ${image} =~ ${K8S_REGISTR} ]]; then
@@ -262,6 +319,8 @@ function images_download() {
       fi
       /usr/bin/docker pull ${image} > /dev/null
     done
+    kill "$spinpid"
+    echo
 }
 
 function preparation() {
@@ -293,6 +352,9 @@ EOF
   modprobe br_netfilter
   sysctl -p /etc/sysctl.d/k8s.conf
   echo "1" > /proc/sys/net/ipv4/ip_forward
+
+  clog info "enable kubelet service"
+  systemctl enable --now kubelet
 }
 
 function make_cluster_configuration (){
@@ -346,7 +408,7 @@ EOF
 )
 
 if [ -z ${CONTROL_PLANE_ENDPOINT} ]; then
-  clog info "vip not be set, use node ip"
+  clog debug "vip not be set, use node ip"
   CONTROL_PLANE_ENDPOINT=${LOCAL_IP}
 fi
 
@@ -375,10 +437,10 @@ function Install_Kubernetes_Master (){
   chown $(id -u):$(id -g) ${HOME}/.kube/config
 
   clog debug "installing calico"
-  kubectl apply -f ./manifests/calico/calico.yaml
+  kubectl apply -f /etc/kubecube/manifests/calico/calico.yaml
 
   sleep 20 >/dev/null
-  clog debug inspect node
+  clog debug "inspect node"
   kubectl get node
 
   sleep 20 >/dev/null
@@ -432,14 +494,13 @@ function Install_Kubernetes_Node (){
 }
 
 function Main() {
-  BASE="/etc/kubecube"
   mkdir -p /etc/kubecube/down
   mkdir -p /etc/kubecube/bin
 
-  system_info
   params_process
-  docker_bin_download
-  k8s_bin_download
+  offline_pkg_download
+  docker_bin_get
+  k8s_bin_get
   install_docker
   images_download
   preparation
@@ -457,6 +518,5 @@ function Main() {
 Main
 
 # todo:
-# 1. fix path problem
 # 2. verify on arm64 and linux
 # 3. fix images problem

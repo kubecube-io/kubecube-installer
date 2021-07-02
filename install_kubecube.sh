@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source ./manifests/cube.conf
-source ./manifests/utils.sh
+source /etc/kubecube/manifests/cube.conf
+source /etc/kubecube/manifests/utils.sh
 
 function sign_cert() {
   clog info "signing cert for kubecube"
@@ -83,27 +83,29 @@ EOF
 }
 
 clog debug "create namespace for kubecube"
-kubectl apply -f manifests/ns/ns.yaml
+kubectl apply -f /etc/kubecube/manifests/ns/ns.yaml
 
 clog info "deploy frontend for kubecube"
-kubectl apply -f manifests/frontend/frontend.yaml
+kubectl apply -f /etc/kubecube/manifests/frontend/frontend.yaml
 
 clog info "deploy audit server for kubecube"
-kubectl apply -f manifests/audit/audit.yaml
+kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
 
 sign_cert
 render_values
 
 clog info "deploy kubecube"
-/usr/local/bin/helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
+/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v0.0.1
 
 clog info "waiting for kubecube ready"
-echo
+spin & spinpid=$!
+clog debug "spin pid: ${spinpid}"
 while true
 do
   cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
   warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
+    echo
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m              Welcome to KubeCube!                   \033[0m"
@@ -112,9 +114,9 @@ do
     echo -e "\033[32m        You must change password after login         \033[0m"
     echo -e "\033[32m=============================================================\033[0m"
     echo -e "\033[32m=============================================================\033[0m"
+    kill "$spinpid"
     exit 0
   fi
-  echo -e "\033[32m ...... \033[0m"
   sleep 7 > /dev/null
 done
 

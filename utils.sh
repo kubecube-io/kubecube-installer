@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./manifests/install.conf
+source /etc/kubecube/manifests/install.conf
 
 IPADDR=$(hostname -I |awk '{print $1}')
 Uptime_day=$(uptime |awk '{print $3,$4}')
@@ -50,8 +50,6 @@ function clog() {
 }
 
 function params_process() {
-  clog info "checking and processing params"
-
   if [ -z ${NODE_MODE} ]
   then
     clog error "NODE_MODE can not be empty!"
@@ -81,7 +79,6 @@ function params_process() {
   fi
 
   if [ -z ${LOCAL_IP} ]; then
-    clog info "empty LOCAL_IP, exact ip by default"
     LOCAL_IP=$(hostname -I |awk '{print $1}')
   fi
 
@@ -129,6 +126,7 @@ function env_check() {
 
     if [ ${env_ok} = false ]; then
         clog error "lack of dependencies, ensure them"
+        exit 1
     fi
 }
 
@@ -230,4 +228,15 @@ function alert_modify_apiserver() {
   echo -e "\033[32m================================================================================================\033[0m"
   echo -e "\033[32m Please enter 'exit' to modify args of k8s api-server \033[0m"
   echo -e "\033[32m After modify is done, please redo script and enter 'confirm' to continue \033[0m"
+}
+
+function spin() {
+  sp='/-\|'
+  printf ' '
+  sleep 0.5
+  while true; do
+    printf '\b%.1s' "$sp"
+    sp=${sp#?}${sp%???}
+    sleep 0.5
+  done
 }

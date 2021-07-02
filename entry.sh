@@ -5,30 +5,33 @@ if [ ${UID} -ne 0 ];then
   exit 1
 fi
 
-mkdir kubecube
-cd kubecube
+mkdir -p /etc/kubecube
+mkdir -p /etc/kubecube/down
+mkdir -p /etc/kubecube/bin
+cd /etc/kubecube
 
-echo -e "\033[32m downloading manifests for kubecube\033[0m"
-wget https://gitee.com/kubecube/manifests/repository/archive/master.zip
+echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading manifests for kubecube"
+#wget https://gitee.com/kubecube/manifests/repository/archive/master.zip -O manifests.zip
 
-source ./manifests/utils.sh
+source /etc/kubecube/manifests/utils.sh
 
+system_info
 env_check
 
-unzip master.zip > /dev/null
+#unzip manifests.zip > /dev/null
 
 if [[ ${CUSTOMIZE} = "true" ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m Please make sure under kubecube folder         \033[0m"
-  echo -e "\033[32m 'cd ./kubecube'                                \033[0m"
-  echo -e "\033[32m Please modify ./manifests/install.conf         \033[0m"
-  echo -e "\033[32m 'vi ./manifests/install.conf'                  \033[0m"
-  echo -e "\033[32m Please modify ./manifests/cube.conf            \033[0m"
-  echo -e "\033[32m 'vi ./manifests/cube.conf'                     \033[0m"
+  echo -e "\033[32m 'cd /etc/kubecube/manifests'                   \033[0m"
+  echo -e "\033[32m Please modify install.conf                     \033[0m"
+  echo -e "\033[32m 'vi install.conf'                              \033[0m"
+  echo -e "\033[32m Please modify cube.conf                        \033[0m"
+  echo -e "\033[32m 'vi cube.conf'                                 \033[0m"
   echo -e "\033[32m Confirm every args then do command below:      \033[0m"
-  echo -e "\033[32m '/bin/bash ./manifests/install.sh'             \033[0m"
+  echo -e "\033[32m '/bin/bash install.sh'                         \033[0m"
   echo -e "\033[32m================================================\033[0m"
   exit 0
 fi
 
-/bin/bash ./manifests/install.sh
+/bin/bash /etc/kubecube/manifests/install.sh

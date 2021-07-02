@@ -1,12 +1,12 @@
 #!/bin/bash
 
-source ./manifests/utils.sh
+source /etc/kubecube/manifests/utils.sh
 
 params_process
 configs_for_apiserver
 
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
-  /bin/bash ./manifests/install_k8s.sh
+  /bin/bash /etc/kubecube/manifests/install_k8s.sh
   if [ "$?" -ne 0 ]; then
     clog error "install kubernetes failed"
       exit 1
@@ -26,13 +26,13 @@ else
 fi
 
 if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
-  /bin/bash ./manifests/install_third_dependence.sh
+  /bin/bash /etc/kubecube/manifests/install_third_dependence.sh
   if [ "$?" -ne 0 ]; then
     clog error "install third dependence failed"
     exit 1
   fi
 
-  /bin/bash ./manifests/install_kubecube.sh
+  /bin/bash /etc/kubecube/manifests/install_kubecube.sh
   if [ "$?" -ne 0 ]; then
       clog error "install kubecube failed"
       exit 1
@@ -40,7 +40,7 @@ if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
 fi
 
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
-/bin/bash ./manifests/install_third_dependence.sh
+/bin/bash /etc/kubecube/manifests/install_third_dependence.sh
 if [ "$?" -ne 0 ]; then
     clog error "install third dependence failed"
     exit 1
