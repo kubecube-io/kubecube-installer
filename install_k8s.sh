@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -o errexit
-
 DOCKER_VER=19.03.8
 OFFLINE_INSTALL="true"
 BASE="/etc/kubecube"
@@ -516,7 +514,3 @@ function Main() {
 }
 
 Main
-
-# todo:
-# 2. verify on arm64 and linux
-# 3. fix images problem
