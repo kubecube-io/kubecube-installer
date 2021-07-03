@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ${UID} -ne 0 ];then
-  echo -e "\033[32m please use root to execute install shell\033[0m"
+  echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m please use root to execute install shell"
   exit 1
 fi
 
@@ -13,9 +13,6 @@ cd /etc/kubecube
 echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading manifests for kubecube"
 wget https://gitee.com/kubecube/manifests/repository/archive/master.zip -O manifests.zip
 
-source /etc/kubecube/manifests/utils.sh
-
-system_info
 env_check
 
 unzip manifests.zip > /dev/null
@@ -35,3 +32,41 @@ if [[ ${CUSTOMIZE} = "true" ]]; then
 fi
 
 /bin/bash /etc/kubecube/manifests/install.sh
+
+function env_check() {
+    echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m environment checking"
+
+    env_ok=true
+    sshpass_has="✓"
+    conntrack_has="✓"
+    unzip_has="✓"
+
+    which sshpass > /dev/null
+    if [ $? != 0 ]; then
+      sshpass_has="x"
+      env_ok=false
+    fi
+
+    which conntrack > /dev/null
+    if [ $? != 0 ]; then
+      conntrack_has="x"
+      env_ok=false
+    fi
+
+    which unzip > /dev/null
+    if [ $? != 0 ]; then
+      unzip_has="x"
+      env_ok=false
+    fi
+
+    echo -e "\033[32m|---------------------------------------------------|\033[0m"
+    echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |\033[0m"
+    echo -e "\033[32m|---------------------------------------------------|\033[0m"
+    echo -e "\033[32m|     ${sshpass_has}           |    ${conntrack_has}            |      ${unzip_has}        |\033[0m"
+    echo -e "\033[32m|---------------------------------------------------|\033[0m"
+
+    if [ ${env_ok} = false ]; then
+        echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m lack of dependencies, ensure them"
+        exit 1
+    fi
+}
