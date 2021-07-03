@@ -307,7 +307,9 @@ function images_download() {
     /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
 
     spin & spinpid=$!
+    echo
     clog debug "spin pid: ${spinpid}"
+    trap 'kill ${spinpid}' SIGINT
     for image in $(cat /etc/kubecube/manifests/images.list)
     do
       if [[ "$ZONE" == cn ]];then
@@ -317,8 +319,7 @@ function images_download() {
       fi
       /usr/bin/docker pull ${image} > /dev/null
     done
-    kill "$spinpid"
-    echo
+    kill "$spinpid" > /dev/null
 }
 
 function preparation() {
@@ -435,7 +436,7 @@ function Install_Kubernetes_Master (){
   chown $(id -u):$(id -g) ${HOME}/.kube/config
 
   clog debug "installing calico"
-  kubectl apply -f /etc/kubecube/manifests/calico/calico.yaml
+  kubectl apply -f /etc/kubecube/manifests/calico/calico.yaml > /dev/null
 
   sleep 20 >/dev/null
   clog debug "inspect node"

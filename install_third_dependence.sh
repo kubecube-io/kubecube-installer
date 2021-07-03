@@ -17,10 +17,12 @@ then
 fi
 
 clog info "deploy hnc-manager, and wait for ready"
-kubectl apply -f /etc/kubecube/manifests/hnc/hnc.yaml
+kubectl apply -f /etc/kubecube/manifests/hnc/hnc.yaml > /dev/null
 
 spin & spinpid=$!
+echo
 clog debug "spin pid: ${spinpid}"
+trap 'kill ${spinpid}' SIGINT
 hnc_ready="0/2"
 while [ ${hnc_ready} != "2/2" ]
 do
@@ -28,16 +30,16 @@ do
   hnc_ready=$(kubectl get pod -n hnc-system | awk '{print $2}' | sed -n '2p')
 done
 sleep 7 > /dev/null
-kill "$spinpid"
+kill "$spinpid" > /dev/null
 
 clog info "deploy local-path-storage"
-kubectl apply -f /etc/kubecube/manifests/local-path-storage/local-path-storage.yaml
+kubectl apply -f /etc/kubecube/manifests/local-path-storage/local-path-storage.yaml > /dev/null
 
 clog info "deploy metrics-server"
-kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml
+kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml > /dev/null
 
 clog info "deploy nginx ingress controller"
-kubectl apply -f /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml
+kubectl apply -f /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml /dev/null
 
 clog info "init etcd-certs secret for etcd monitoring"
 init_etcd_secret
