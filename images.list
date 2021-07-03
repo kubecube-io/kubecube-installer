@@ -1,0 +1,15 @@
+hub.c.163.com/kubecube/audit:v0.0.1
+hub.c.163.com/kubecube/frontend:0.1.0-deploy
+hub.c.163.com/kubecube/cube-multi-arch:v0.0.1
+hub.c.163.com/kubecube/warden-multi-arch:v0.0.1
+hub.c.163.com/kubecube/warden-init-multi-arch:v0.0.1
+hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0
+docker.io/calico/cni:v3.19.1
+docker.io/calico/pod2daemon-flexvol:v3.19.1
+docker.io/calico/node:v3.19.1
+docker.io/calico/kube-controllers:v3.19.1
+docker.io/jettech/kube-webhook-certgen:v1.5.1
+carlosedp/kube-rbac-proxy:v0.4.1
+rancher/local-path-provisioner:v0.0.19
+busybox
+rancher/metrics-server:v0.4.1

@@ -1,60 +1,18 @@
 #!/bin/bash
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Processing params... \033[0m"
-source ./manifests/params_process.sh
+source /etc/kubecube/manifests/utils.sh
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Make Configurations for k8s api-server...\033[0m"
-source ./manifests/make_config.sh
+params_process
+configs_for_apiserver
 
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
-  echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m Installing Kubernetes...\033[0m"
-  /bin/bash ./manifests/install_k8s.sh
+  /bin/bash /etc/kubecube/manifests/install_k8s.sh
   if [ "$?" -ne 0 ]; then
-      echo -e "\033[32m================================================\033[0m"
-      echo -e "\033[32m [ERROR] Install Kubernetes Failed \033[0m"
+    clog error "install kubernetes failed"
       exit 1
   fi
 else
-  echo -e "\033[32m================================================================================================\033[0m"
-  echo -e "\033[32m IMPORTANT !!!                                                                                  \033[0m"
-  echo -e "\033[32m You must change the args of k8s api-server before installing kubecube, steps below:            \033[0m"
-  echo -e "\033[32m 1. find the manifests folder contains kube-apiserver.yaml                                      \033[0m"
-  echo -e "\033[32m    generally in /etc/kubernetes/manifests of master node.                                      \033[0m"
-  echo -e "\033[32m 2. add patches as below:                                                                       \033[0m"
-  echo -e "\033[32m================================================================================================\033[0m"
-  echo -e "\033[32m spec:                                                                                          \033[0m"
-  echo -e "\033[32m   containers:                                                                                  \033[0m"
-  echo -e "\033[32m     - command:                                                                                 \033[0m"
-  echo -e "\033[32m         - kube-apiserver                                                                       \033[0m"
-  echo -e "\033[32m         - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config                     \033[0m"
-  echo -e "\033[32m         - --audit-policy-file=/etc/cube/audit/audit-policy.yaml                                \033[0m"
-  echo -e "\033[32m         - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config           \033[0m"
-  echo -e "\033[32m         - --audit-log-format=json                                                              \033[0m"
-  echo -e "\033[32m         - --audit-log-maxage=10                                                                \033[0m"
-  echo -e "\033[32m         - --audit-log-maxbackup=10                                                             \033[0m"
-  echo -e "\033[32m         - --audit-log-maxsize=100                                                              \033[0m"
-  echo -e "\033[32m         - --audit-log-path=/var/log/audit                                                      \033[0m"
-  echo -e "\033[32m       volumeMounts:                                                                            \033[0m"
-  echo -e "\033[32m       - mountPath: /var/log/audit                                                              \033[0m"
-  echo -e "\033[32m         name: audit-log                                                                        \033[0m"
-  echo -e "\033[32m       - mountPath: /etc/cube                                                                   \033[0m"
-  echo -e "\033[32m         name: cube                                                                             \033[0m"
-  echo -e "\033[32m         readOnly: true                                                                         \033[0m"
-  echo -e "\033[32m   volumes:                                                                                     \033[0m"
-  echo -e "\033[32m     - hostPath                                                                                 \033[0m"
-  echo -e "\033[32m         path: /var/log/audit                                                                   \033[0m"
-  echo -e "\033[32m         type: DirectoryOrCreate                                                                \033[0m"
-  echo -e "\033[32m       name: audit-log                                                                          \033[0m"
-  echo -e "\033[32m     - hostPath                                                                                 \033[0m"
-  echo -e "\033[32m         path: /etc/cube                                                                        \033[0m"
-  echo -e "\033[32m         type: DirectoryOrCreate                                                                \033[0m"
-  echo -e "\033[32m       name: cube                                                                               \033[0m"
-  echo -e "\033[32m================================================================================================\033[0m"
-  echo -e "\033[32m Please enter 'exit' to modify args of k8s api-server \033[0m"
-  echo -e "\033[32m After modify is done, please redo script and enter 'confirm' to continue \033[0m"
+  alert_modify_apiserver
   while read confirm
   do
     if [[ ${confirm} = "confirm" ]]; then
@@ -68,32 +26,23 @@ else
 fi
 
 if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
-  echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m>>>>>>	Installing Third Dependence...\033[0m"
-  /bin/bash ./manifests/install_third_dependence.sh
+  /bin/bash /etc/kubecube/manifests/install_third_dependence.sh
   if [ "$?" -ne 0 ]; then
-      echo -e "\033[32m================================================\033[0m"
-      echo -e "\033[32m [ERROR] Install Third Dependence Failed \033[0m"
-      exit 1
+    clog error "install third dependence failed"
+    exit 1
   fi
 
-  echo -e "\033[32m================================================\033[0m"
-  echo -e "\033[32m	Installing KubeCube...\033[0m"
-  /bin/bash ./manifests/install_kubecube.sh
+  /bin/bash /etc/kubecube/manifests/install_kubecube.sh
   if [ "$?" -ne 0 ]; then
-      echo -e "\033[32m================================================\033[0m"
-      echo -e "\033[32m [ERROR] Install KubeCube Failed \033[0m"
+      clog error "install kubecube failed"
       exit 1
   fi
 fi
 
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m	Installing Third Dependence...\033[0m"
-/bin/bash ./manifests/install_third_dependence.sh
+/bin/bash /etc/kubecube/manifests/install_third_dependence.sh
 if [ "$?" -ne 0 ]; then
-    echo -e "\033[32m================================================\033[0m"
-    echo -e "\033[32m [ERROR] Install Third Dependence Failed \033[0m"
+    clog error "install third dependence failed"
     exit 1
 fi
 

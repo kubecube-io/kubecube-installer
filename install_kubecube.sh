@@ -1,24 +1,21 @@
 #!/bin/bash
 
-source ./manifests/cube.conf
-
-IPADDR=$(hostname -I |awk '{print $1}')
+source /etc/kubecube/manifests/cube.conf
+source /etc/kubecube/manifests/utils.sh
 
 function sign_cert() {
-mkdir -p ca
-cd ca
+  clog info "signing cert for kubecube"
+  mkdir -p ca
+  cd ca
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Generate ca key and ca cert...[0m"
-openssl genrsa -out ca.key 2048
-openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system" -days 10000 -out ca.crt
+  clog debug "generate ca key and ca cert"
+  openssl genrsa -out ca.key 2048
+  openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system" -days 10000 -out ca.crt
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Generate tls key...\033[0m"
-openssl genrsa -out tls.key 2048
+  clog debug "generate tls key"
+  openssl genrsa -out tls.key 2048
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Make tls csr...\033[0m"
+  clog debug "make tls csr"
 cat << EOF >csr.conf
 [ req ]
 default_bits = 2048
@@ -51,26 +48,21 @@ keyUsage=keyEncipherment,dataEncipherment
 extendedKeyUsage=serverAuth,clientAuth
 subjectAltName=@alt_names
 EOF
-openssl req -new -key tls.key -out tls.csr -config csr.conf
+  openssl req -new -key tls.key -out tls.csr -config csr.conf
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Generate tls cert...\033[0m"
-openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt -days 10000 -extensions v3_ext -extfile csr.conf
-cd ..
+  clog debug "generate tls cert"
+  openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt -days 10000 -extensions v3_ext -extfile csr.conf
+  cd ..
 }
 
 function render_values() {
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Render Values of KubeCube...\033[0m"
+  clog info "render values for kubecube helm chart"
 cat >values.yaml <<EOF
 kubecube:
   replicas: ${kubecube_replicas}
   args:
     logLevel: ${kubecube_args_logLevel}
-    securePort: ${kubecube_args_securePort}
-    webhookServerPort: ${kubecube_args_webhookServerPort}
   env:
-    jwtSecret: ${kubecube_env_jwtSecret}
     pivotCubeHost: ${IPADDR}:30443
 
 webhook:
@@ -90,43 +82,43 @@ pivotCluster:
 EOF
 }
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Create namespace for kubecube...\033[0m"
-kubectl apply -f manifests/ns/ns.yaml
+clog debug "create namespace for kubecube"
+kubectl apply -f /etc/kubecube/manifests/ns/ns.yaml
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Deploy frontend for kubecube...\033[0m"
-kubectl apply -f manifests/frontend/frontend.yaml
+clog info "deploy frontend for kubecube"
+kubectl apply -f /etc/kubecube/manifests/frontend/frontend.yaml
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Deploy audit server for kubecube...\033[0m"
-kubectl apply -f manifests/audit/audit.yaml
+clog info "deploy audit server for kubecube"
+kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
 
 sign_cert
 render_values
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Deploying KubeCube...\033[0m"
-/usr/local/bin/helm install -f values.yaml kubecube manifests/kubecube/v0.0.1
 
-echo -e "\033[32m================================================\033[0m"
-echo -e "\033[32m Waiting For KubeCube ready...\033[0m"
+clog info "deploy kubecube"
+/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v0.0.1
+
+clog info "waiting for kubecube ready"
+spin & spinpid=$!
 echo
+clog debug "spin pid: ${spinpid}"
+trap 'kill ${spinpid}' SIGINT
 while true
 do
   cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
   warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
-    echo -e "\033[32m=============================================================\033[0m"
-    echo -e "\033[32m=============================================================\033[0m"
-    echo -e "\033[32m              Welcome to KubeCube!                   \033[0m"
-    echo -e "\033[32m        Please use 'admin/admin123' to access        \033[0m"
-    echo -e "\033[32m                '${IPADDR}:30080'                    \033[0m"
-    echo -e "\033[32m        You must change password after login         \033[0m"
-    echo -e "\033[32m=============================================================\033[0m"
-    echo -e "\033[32m=============================================================\033[0m"
+    echo
+    echo -e "\033[32m========================================================\033[0m"
+    echo -e "\033[32m========================================================\033[0m"
+    echo -e "\033[32m=              Welcome to KubeCube!                    =\033[0m"
+    echo -e "\033[32m=        Please use 'admin/admin123' to access         =\033[0m"
+    echo -e "\033[32m=                '${IPADDR}:30080'                     =\033[0m"
+    echo -e "\033[32m=        You must change password after login          =\033[0m"
+    echo -e "\033[32m========================================================\033[0m"
+    echo -e "\033[32m========================================================\033[0m"
+    kill "$spinpid" > /dev/null
     exit 0
   fi
-  echo -e "\033[32m ...... \033[0m"
   sleep 7 > /dev/null
 done
 

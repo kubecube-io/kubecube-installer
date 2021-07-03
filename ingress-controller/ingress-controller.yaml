@@ -333,7 +333,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0 #k8s.gcr.io/ingress-nginx/controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba97e8d52b5d32299fbc03cc0f6c7b9ff036b61a
+          image: k8s.gcr.io/ingress-nginx/controller:v0.46.0@sha256:52f0058bed0a17ab0fb35628ba97e8d52b5d32299fbc03cc0f6c7b9ff036b61a #hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -598,7 +598,7 @@ spec:
     spec:
       containers:
         - name: create
-          image: hub.c.163.com/kubecube/jettech/kube-webhook-certgen:v1.5.1 #docker.io/jettech/kube-webhook-certgen:v1.5.1
+          image: docker.io/jettech/kube-webhook-certgen:v1.5.1 #hub.c.163.com/kubecube/jettech/kube-webhook-certgen:v1.5.1
           imagePullPolicy: IfNotPresent
           args:
             - create
@@ -646,7 +646,7 @@ spec:
     spec:
       containers:
         - name: patch
-          image: hub.c.163.com/kubecube/jettech/kube-webhook-certgen:v1.5.1 #docker.io/jettech/kube-webhook-certgen:v1.5.1
+          image: docker.io/jettech/kube-webhook-certgen:v1.5.1 #hub.c.163.com/kubecube/jettech/kube-webhook-certgen:v1.5.1
           imagePullPolicy: IfNotPresent
           args:
             - patch
