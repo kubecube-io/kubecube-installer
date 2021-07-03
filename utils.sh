@@ -92,44 +92,6 @@ function params_process() {
   fi
 }
 
-function env_check() {
-    clog info "environment checking"
-
-    env_ok=true
-    sshpass_has="✓"
-    conntrack_has="✓"
-    unzip_has="✓"
-
-    which sshpass > /dev/null
-    if [ $? != 0 ]; then
-      sshpass_has="x"
-      env_ok=false
-    fi
-
-    which conntrack > /dev/null
-    if [ $? != 0 ]; then
-      conntrack_has="x"
-      env_ok=false
-    fi
-
-    which unzip > /dev/null
-    if [ $? != 0 ]; then
-      unzip_has="x"
-      env_ok=false
-    fi
-
-    echo -e "\033[32m|---------------------------------------------------|\033[0m"
-    echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |\033[0m"
-    echo -e "\033[32m|---------------------------------------------------|\033[0m"
-    echo -e "\033[32m|     ${sshpass_has}           |    ${conntrack_has}            |      ${unzip_has}        |\033[0m"
-    echo -e "\033[32m|---------------------------------------------------|\033[0m"
-
-    if [ ${env_ok} = false ]; then
-        clog error "lack of dependencies, ensure them"
-        exit 1
-    fi
-}
-
 function configs_for_apiserver() {
   clog info "make configs for k8s api-server"
 

@@ -2,6 +2,7 @@
 
 source /etc/kubecube/manifests/utils.sh
 
+system_info
 params_process
 configs_for_apiserver
 
