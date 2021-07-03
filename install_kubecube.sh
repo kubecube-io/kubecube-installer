@@ -99,7 +99,6 @@ clog info "deploy kubecube"
 
 clog info "waiting for kubecube ready"
 spin & spinpid=$!
-echo
 clog debug "spin pid: ${spinpid}"
 trap 'kill ${spinpid}' SIGINT
 while true
@@ -110,10 +109,10 @@ do
     echo
     echo -e "\033[32m========================================================\033[0m"
     echo -e "\033[32m========================================================\033[0m"
-    echo -e "\033[32m=              Welcome to KubeCube!                    =\033[0m"
-    echo -e "\033[32m=        Please use 'admin/admin123' to access         =\033[0m"
-    echo -e "\033[32m=                '${IPADDR}:30080'                     =\033[0m"
-    echo -e "\033[32m=        You must change password after login          =\033[0m"
+    echo -e "\033[32m               Welcome to KubeCube!                   \033[0m"
+    echo -e "\033[32m         Please use 'admin/admin123' to access        \033[0m"
+    echo -e "\033[32m                '${IPADDR}:30080'                     \033[0m"
+    echo -e "\033[32m         You must change password after login         \033[0m"
     echo -e "\033[32m========================================================\033[0m"
     echo -e "\033[32m========================================================\033[0m"
     kill "$spinpid" > /dev/null
