@@ -326,18 +326,10 @@ function preparation() {
   clog info "doing previous preparation"
 
   clog debug "close firewall and selinux"
-  SYSTEM_VERSION=$(awk -F. '{print $1}' /etc/redhat-release |awk '{print $NF}')
-  if [ ${SYSTEM_VERSION} -eq 6 ];then
-   service iptables stop
-   chkconfig iptables off
-   sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-   setenforce 0 >/dev/null
-  else
-   systemctl stop firewalld.service
-   systemctl disable firewalld.service
-   sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-   setenforce 0 >/dev/null
-  fi
+  systemctl stop firewalld.service
+  systemctl disable firewalld.service
+  sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+  setenforce 0 >/dev/null
 
   clog debug "closing swap"
   swapoff -a
