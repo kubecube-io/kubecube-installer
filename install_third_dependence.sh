@@ -21,7 +21,7 @@ kubectl apply -f /etc/kubecube/manifests/hnc/hnc.yaml > /dev/null
 
 spin & spinpid=$!
 clog debug "spin pid: ${spinpid}"
-trap 'kill ${spinpid}' SIGINT
+trap 'kill ${spinpid} && exit 1' SIGINT
 hnc_ready="0/2"
 while [ ${hnc_ready} != "2/2" ]
 do

@@ -311,7 +311,7 @@ function images_download() {
     spin & spinpid=$!
     echo
     clog debug "spin pid: ${spinpid}"
-    trap 'kill ${spinpid}' SIGINT
+    trap 'kill ${spinpid} && exit 1' SIGINT
     for image in $(cat /etc/kubecube/manifests/images.list)
     do
       if [[ "$ZONE" == cn ]];then

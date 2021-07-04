@@ -100,6 +100,7 @@ clog info "deploy kubecube"
 clog info "waiting for kubecube ready"
 spin & spinpid=$!
 clog debug "spin pid: ${spinpid}"
+trap 'kill ${spinpid} && exit 1' SIGINT
 while true
 do
   cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
