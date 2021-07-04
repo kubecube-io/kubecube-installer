@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DOCKER_VER=19.03.8
 OFFLINE_INSTALL="true"
 BASE="/etc/kubecube"
@@ -329,7 +331,7 @@ function preparation() {
   systemctl stop firewalld.service
   systemctl disable firewalld.service
   sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-  setenforce 0 >/dev/null
+  setenforce 0 || true # ignore error
 
   clog debug "closing swap"
   swapoff -a
