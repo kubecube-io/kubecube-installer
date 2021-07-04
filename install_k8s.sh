@@ -24,7 +24,7 @@ function docker_bin_get() {
   else
     if [[ "$OFFLINE_INSTALL" == "true" ]]; then
       clog info "get docker binary from local"
-      /bin/mv -f "${BASE}/packages/docker-ce/linux/static/stable/x86_64/docker-$DOCKER_VER.tgz" "$BASE/down"
+      /bin/mv -f "${BASE}/packages/docker-ce/linux/static/stable/$(arch)/docker-$DOCKER_VER.tgz" "$BASE/down"
     else
       docker_bin_download
     fi
