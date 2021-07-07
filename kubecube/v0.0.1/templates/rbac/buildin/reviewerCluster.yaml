@@ -6,6 +6,10 @@ metadata:
   name: reviewer-cluster
   annotations:
     kubecube.io/sync: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        kubecube.io/aggregate-to-reviewer-cluster: "true"
 rules:
   - apiGroups:
       - ""

@@ -6,6 +6,10 @@ metadata:
   name: tenant-admin-cluster
   annotations:
     kubecube.io/sync: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        kubecube.io/aggregate-to-tenant-admin-cluster: "true"
 rules:
   # only has read authority of namespace cause
   # subNamespace will replace it

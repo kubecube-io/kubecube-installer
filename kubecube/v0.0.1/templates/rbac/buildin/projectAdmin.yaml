@@ -9,6 +9,10 @@ metadata:
     kubecube.io/role: "project"
   annotations:
     kubecube.io/sync: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        kubecube.io/aggregate-to-project-admin: "true"
 rules:
   - apiGroups:
       - "*"
