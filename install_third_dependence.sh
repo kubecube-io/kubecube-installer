@@ -3,8 +3,8 @@
 source /etc/kubecube/manifests/utils.sh
 
 function init_etcd_secret (){
-  kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
-  kubectl create secret generic etcd-certs -nmonitoring --dry-run=client -o yaml \
+  kubectl create namespace kubecube-monitoring --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic etcd-certs -n kubecube-monitoring --dry-run=client -o yaml \
   --from-file=ca.crt=/etc/kubernetes/pki/ca.crt \
   --from-file=client.crt=/etc/kubernetes/pki/apiserver-etcd-client.crt \
   --from-file=client.key=/etc/kubernetes/pki/apiserver-etcd-client.key | kubectl apply -f -
