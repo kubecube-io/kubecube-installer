@@ -145,6 +145,10 @@ spec:
 EOF
 }
 
+make_hotplug
+sign_cert
+render_values
+
 clog debug "create previous for kubecube"
 kubectl apply -f /etc/kubecube/manifests/previous/previous.yaml
 kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml
@@ -157,9 +161,6 @@ kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
 
 clog info "deploy webconsole and cloudshell"
 kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
-
-sign_cert
-render_values
 
 clog info "deploy kubecube"
 /usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v0.0.1
