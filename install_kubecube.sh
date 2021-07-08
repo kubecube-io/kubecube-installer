@@ -82,14 +82,17 @@ pivotCluster:
 EOF
 }
 
-clog debug "create namespace for kubecube"
-kubectl apply -f /etc/kubecube/manifests/ns/ns.yaml
+clog debug "create previous for kubecube"
+kubectl apply -f /etc/kubecube/manifests/previous/previous.yaml
 
 clog info "deploy frontend for kubecube"
 kubectl apply -f /etc/kubecube/manifests/frontend/frontend.yaml
 
 clog info "deploy audit server for kubecube"
 kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
+
+clog info "deploy webconsole and cloudshell"
+kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
 
 sign_cert
 render_values

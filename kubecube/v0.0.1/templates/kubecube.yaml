@@ -104,6 +104,8 @@ spec:
               mountPath: "/etc/logs/cube"
             - name: helm-pkg
               mountPath: "/root/helmchartpkg"
+            - name: localtime
+              mountPath: /etc/localtime
       volumes:
         - name: cube-tls
           secret:
@@ -116,3 +118,7 @@ spec:
           hostPath:
             path: /etc/cube/logs
             type: DirectoryOrCreate
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+

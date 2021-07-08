@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webconsole
+  namespace: kubecube-system
+spec:
+  type: ClusterIP
+  selector:
+    kubecube.io/app: kubecube-webconsole
+  ports:
+    - name: http
+      port: 9081
+      targetPort: 9081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webconsole
+  namespace: kubecube-system
+  labels:
+    kubecube.io/app: kubecube-webconsole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kubecube.io/app: kubecube-webconsole
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: kubecube-webconsole
+    spec:
+      containers:
+        - env:
+            - name: JWT_SECRET
+              value: 56F0D8DB90241C6E
+          name: kubecube-webconsole
+          image: hub.c.163.com/kubecube/kubecube:webconsole-0.0.3
+          ports:
+            - containerPort: 9081
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "cloud-shell"
+  namespace: "kubecube-system"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kubecube.io/app: "kubecube-cloud-shell"
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: "kubecube-cloud-shell"
+    spec:
+      volumes:
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+      containers:
+        - name: cloud-shell
+          image: hub.c.163.com/kubecube/kubecube:cloudshell-0.0.1
+          terminationMessagePath: "/dev/termination-log"
+          terminationMessagePolicy: "File"
+          imagePullPolicy: "IfNotPresent"
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+          resources:
+            limits:
+              cpu: "2"
+              memory: 1G
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          livenessProbe:
+            exec:
+              command:
+                - /bin/ls
+            timeoutSeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/ls
+            timeoutSeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 120
+      restartPolicy: "Always"
+

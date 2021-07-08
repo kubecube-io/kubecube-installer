@@ -1,0 +1,57 @@
+apiVersion: hotplug.kubecube.io/v1
+kind: Hotplug
+metadata:
+  annotations:
+    kubecube.io/sync: "true"
+  name: common
+spec:
+  component:
+    - name: audit
+      status: enabled
+    - name: logseer
+      namespace: logseer
+      pkgName: logseer-v1.0.0.tgz
+      status: disabled
+    - env: |
+        clustername: "{{.cluster}}"
+      name: logagent
+      namespace: logagent
+      pkgName: logagent-v1.0.0.tgz
+      status: enabled
+    - env: |
+        grafana:
+          enabled: false
+        prometheus:
+          prometheusSpec:
+            externalLabels:
+              cluster: "{{.cluster}}"
+            remoteWrite:
+            - url: http://10.173.32.42:31291/api/v1/receive
+      name: kubecube-monitoring
+      namespace: kubecube-monitoring
+      pkgName: kubecube-monitoring-15.4.7.tgz
+      status: enabled
+    - name: thanos
+      namespace: kubecube-monitoring
+      pkgName: thanos-3.18.0.tgz
+      status: disabled
+---
+apiVersion: hotplug.kubecube.io/v1
+kind: Hotplug
+metadata:
+  annotations:
+    kubecube.io/sync: "true"
+  name: pivot-cluster
+spec:
+  component:
+    - name: logseer
+      status: enabled
+    - env: "grafana:\n  enabled: true \nprometheus:\n  prometheusSpec:\n    externalLabels:\n
+      \     cluster: \"{{.cluster}}\"\n    remoteWrite:\n    - url: http://thanos-receive:19291/api/v1/receive\n"
+      name: kubecube-monitoring
+    - env: |
+        receive:
+          replicaCount: 1
+          replicationFactor: 1
+      name: kubecube-thanos
+      status: enabled
