@@ -9,10 +9,10 @@ metadata:
     kubecube.io/role: "tenant"
   annotations:
     kubecube.io/sync: "true"
-aggregationRule:
-  clusterRoleSelectors:
-    - matchLabels:
-        kubecube.io/aggregate-to-tenant-admin: "true"
+#aggregationRule:
+#  clusterRoleSelectors:
+#    - matchLabels:
+#        kubecube.io/aggregate-to-tenant-admin: "true"
 rules:
   - apiGroups:
       - "*"

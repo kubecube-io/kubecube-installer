@@ -94,7 +94,7 @@ metadata:
 spec:
   component:
     - name: audit
-      status: enabled
+      status: disabled
     - name: logseer
       namespace: logseer
       pkgName: logseer-v1.0.0.tgz
@@ -104,7 +104,7 @@ spec:
       name: logagent
       namespace: logagent
       pkgName: logagent-v1.0.0.tgz
-      status: enabled
+      status: disabled
     - env: |
         grafana:
           enabled: false
@@ -132,7 +132,7 @@ metadata:
 spec:
   component:
     - name: logseer
-      status: enabled
+      status: disabled
     - env: "grafana:\n  enabled: true \nprometheus:\n  prometheusSpec:\n    externalLabels:\n
       \     cluster: \"{{.cluster}}\"\n    remoteWrite:\n    - url: http://thanos-receive:19291/api/v1/receive\n"
       name: kubecube-monitoring

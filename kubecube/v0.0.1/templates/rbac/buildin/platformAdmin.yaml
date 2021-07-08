@@ -9,10 +9,10 @@ metadata:
     kubecube.io/role: "platform"
   annotations:
     kubecube.io/sync: "true"
-aggregationRule:
-  clusterRoleSelectors:
-    - matchLabels:
-        kubecube.io/aggregate-to-platform-admin: "true"
+#aggregationRule:
+#  clusterRoleSelectors:
+#    - matchLabels:
+#        kubecube.io/aggregate-to-platform-admin: "true"
 rules:
   - apiGroups:
       - "*"
