@@ -151,7 +151,6 @@ render_values
 
 clog debug "create previous for kubecube"
 kubectl apply -f /etc/kubecube/manifests/previous/previous.yaml
-kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml
 
 clog info "deploy frontend for kubecube"
 kubectl apply -f /etc/kubecube/manifests/frontend/frontend.yaml
@@ -164,6 +163,7 @@ kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
 
 clog info "deploy kubecube"
 /usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v0.0.1
+kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml > /dev/null
 
 clog info "waiting for kubecube ready"
 spin & spinpid=$!
