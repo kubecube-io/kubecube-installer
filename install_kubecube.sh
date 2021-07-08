@@ -65,10 +65,6 @@ kubecube:
   env:
     pivotCubeHost: ${IPADDR}:30443
 
-hotplug:
-  prometheus:
-    remoteURL: http://${IPADDR}:31291/api/v1/receive
-
 webhook:
   caBundle: $(cat ca/ca.crt | base64 -w 0)
 
@@ -86,8 +82,72 @@ pivotCluster:
 EOF
 }
 
+function make_hotplug() {
+  clog info "render hotplug value"
+cat >/etc/kubecube/manifests/previous/hotplug.yaml <<EOF
+apiVersion: hotplug.kubecube.io/v1
+kind: Hotplug
+metadata:
+  annotations:
+    kubecube.io/sync: "true"
+  name: common
+spec:
+  component:
+    - name: audit
+      status: enabled
+    - name: logseer
+      namespace: logseer
+      pkgName: logseer-v1.0.0.tgz
+      status: disabled
+    - env: |
+        clustername: "{{.cluster}}"
+      name: logagent
+      namespace: logagent
+      pkgName: logagent-v1.0.0.tgz
+      status: enabled
+    - env: |
+        grafana:
+          enabled: false
+        prometheus:
+          prometheusSpec:
+            externalLabels:
+              cluster: "{{.cluster}}"
+            remoteWrite:
+            - url: http://${IPADDR}:31291/api/v1/receive
+      name: kubecube-monitoring
+      namespace: kubecube-monitoring
+      pkgName: kubecube-monitoring-15.4.7.tgz
+      status: enabled
+    - name: thanos
+      namespace: kubecube-monitoring
+      pkgName: thanos-3.18.0.tgz
+      status: disabled
+---
+apiVersion: hotplug.kubecube.io/v1
+kind: Hotplug
+metadata:
+  annotations:
+    kubecube.io/sync: "true"
+  name: pivot-cluster
+spec:
+  component:
+    - name: logseer
+      status: enabled
+    - env: "grafana:\n  enabled: true \nprometheus:\n  prometheusSpec:\n    externalLabels:\n
+      \     cluster: \"{{.cluster}}\"\n    remoteWrite:\n    - url: http://thanos-receive:19291/api/v1/receive\n"
+      name: kubecube-monitoring
+    - env: |
+        receive:
+          replicaCount: 1
+          replicationFactor: 1
+      name: kubecube-thanos
+      status: enabled
+EOF
+}
+
 clog debug "create previous for kubecube"
 kubectl apply -f /etc/kubecube/manifests/previous/previous.yaml
+kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml
 
 clog info "deploy frontend for kubecube"
 kubectl apply -f /etc/kubecube/manifests/frontend/frontend.yaml
@@ -110,7 +170,7 @@ clog debug "spin pid: ${spinpid}"
 trap 'kill ${spinpid} && exit 1' SIGINT
 while true
 do
-  cube_healthz=$(curl -s -k https://${IPADDR}:30443/healthz)
+  cube_healthz=$(curl -s -k https://${IPADDR}:30007/healthz)
   warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
     echo
