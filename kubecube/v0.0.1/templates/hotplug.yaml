@@ -26,7 +26,7 @@ spec:
             externalLabels:
               cluster: "{{.cluster}}"
             remoteWrite:
-            - url: http://10.173.32.42:31291/api/v1/receive
+            - url: {{ .Values.hotplug.prometheus.remoteURL }}
       name: kubecube-monitoring
       namespace: kubecube-monitoring
       pkgName: kubecube-monitoring-15.4.7.tgz

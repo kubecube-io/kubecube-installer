@@ -17,6 +17,10 @@ kubecube:
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
 
+hotplug:
+  prometheus:
+    remoteURL: "Cg=="
+
 webhook:
   caBundle: "Cg=="
 

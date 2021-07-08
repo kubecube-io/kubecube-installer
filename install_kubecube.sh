@@ -65,6 +65,10 @@ kubecube:
   env:
     pivotCubeHost: ${IPADDR}:30443
 
+hotplug:
+  prometheus:
+    remoteURL: http://${IPADDR}:31291/api/v1/receive
+
 webhook:
   caBundle: $(cat ca/ca.crt | base64 -w 0)
 
