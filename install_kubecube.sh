@@ -171,7 +171,7 @@ clog debug "spin pid: ${spinpid}"
 trap 'kill ${spinpid} && exit 1' SIGINT
 while true
 do
-  cube_healthz=$(curl -s -k https://${IPADDR}:30007/healthz)
+  cube_healthz=$(curl -s http://${IPADDR}:30007/healthz)
   warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
   if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
     echo
