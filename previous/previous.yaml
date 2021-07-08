@@ -3,6 +3,25 @@ kind: Namespace
 metadata:
   name: kubecube-system
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webconsole
+  namespace: kubecube-system
+spec:
+  type: ClusterIP
+  selector:
+    kubecube.io/app: kubecube-webconsole
+  ports:
+    - name: http
+      port: 9081
+      targetPort: 9081
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logseer
+---
 # logseer svc should be created previous for nginx config
 apiVersion: v1
 kind: Service
@@ -23,6 +42,11 @@ spec:
   selector:
     app: logseer
   type: NodePort
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubecube-monitoring
 ---
 # monitor svc should be created previous for nginx config
 apiVersion: v1
