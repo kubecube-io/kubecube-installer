@@ -12,7 +12,7 @@ kubecube:
 
   env:
     wardenImage: hub.c.163.com/kubecube/warden:0.2.6-deploy
-    wardenInitImage: hub.c.163.com/kubecube/warden-init-multi-arch:v0.0.1 #hub.c.163.com/kubecube/warden-init:0.0.1
+    wardenInitImage: hub.c.163.com/kubecube/warden-init:0.0.2
     pivotCubeSvc: kubecube.kubecube-system:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
