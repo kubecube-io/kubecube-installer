@@ -1,8 +1,10 @@
-hub.c.163.com/kubecube/audit:v0.0.1
-hub.c.163.com/kubecube/frontend:0.1.0-deploy
-hub.c.163.com/kubecube/cube-multi-arch:v0.0.1
-hub.c.163.com/kubecube/warden-multi-arch:v0.0.1
-hub.c.163.com/kubecube/warden-init-multi-arch:v0.0.1
+hub.c.163.com/kubecube/audit:v0.0.1-all
+hub.c.163.com/kubecube/webconsole:cloudshell-v1-all
+hub.c.163.com/kubecube/webconsole:v0.0.1-all
+hub.c.163.com/kubecube/frontend:0.1.7-deploy
+hub.c.163.com/kubecube/kubecube:0.3.3-deploy
+hub.c.163.com/kubecube/warden:0.2.6-deploy
+hub.c.163.com/kubecube/warden-init:0.0.2
 hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0
 docker.io/calico/cni:v3.19.1
 docker.io/calico/pod2daemon-flexvol:v3.19.1

@@ -2,7 +2,7 @@
 
 kubecube:
   replicas: 1
-  image: hub.c.163.com/kubecube/kubecube:0.3.2-deploy
+  image: hub.c.163.com/kubecube/kubecube:0.3.3-deploy
 
   args:
     logLevel: info
