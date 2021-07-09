@@ -542,12 +542,16 @@ spec:
             - --cert-restart-on-secret-refresh
           command:
             - /manager
-          image: harshthakur/hnc-manager:multi-arch    #hub.c.163.com/kubecube/hnc/hnc-manager:v0.8.0
+          image: hub.c.163.com/kubecube/hnc:v0.8.0 #harshthakur/hnc-manager:multi-arch
           name: manager
           ports:
             - containerPort: 9443
               name: webhook-server
               protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
           resources:
             limits:
               cpu: 100m
