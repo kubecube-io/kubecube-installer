@@ -116,7 +116,7 @@ spec:
             - url: http://${IPADDR}:31291/api/v1/receive
       name: kubecube-monitoring
       namespace: kubecube-monitoring
-      pkgName: kubecube-monitoring-15.4.7.tgz
+      pkgName: kubecube-monitoring-15.4.8.tgz
       status: enabled
     - name: thanos
       namespace: kubecube-monitoring
@@ -133,8 +133,15 @@ spec:
   component:
     - name: logseer
       status: disabled
-    - env: "grafana:\n  enabled: true \nprometheus:\n  prometheusSpec:\n    externalLabels:\n
-      \     cluster: \"{{.cluster}}\"\n    remoteWrite:\n    - url: http://thanos-receive:19291/api/v1/receive\n"
+    - env: |
+        grafana:
+          enabled: true
+        prometheus:
+          prometheusSpec:
+            externalLabels:
+              cluster: "{{.cluster}}"
+            remoteWrite:
+            - url: http://kubecube-thanos-receive:19291/api/v1/receive
       name: kubecube-monitoring
     - env: |
         receive:
