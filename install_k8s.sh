@@ -327,11 +327,11 @@ function images_download() {
 function preparation() {
   clog info "doing previous preparation"
 
-  clog debug "close firewall and selinux"
-  systemctl stop firewalld.service
-  systemctl disable firewalld.service
-  sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-  setenforce 0 || true # ignore error
+#  clog debug "close firewall and selinux"
+#  systemctl stop firewalld.service
+#  systemctl disable firewalld.service
+#  sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+#  setenforce 0 || true # ignore error
 
   clog debug "closing swap"
   swapoff -a

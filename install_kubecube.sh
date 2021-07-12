@@ -170,7 +170,6 @@ kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
 
 clog info "deploy kubecube"
 /usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v0.0.1
-kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml > /dev/null
 
 clog info "waiting for kubecube ready"
 spin & spinpid=$!
@@ -195,5 +194,7 @@ do
   fi
   sleep 7 > /dev/null
 done
+
+kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml > /dev/null
 
 

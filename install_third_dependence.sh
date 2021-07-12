@@ -28,7 +28,7 @@ do
   sleep 5 > /dev/null
   hnc_ready=$(kubectl get pod -n hnc-system | awk '{print $2}' | sed -n '2p')
 done
-sleep 7 > /dev/null
+sleep 20 > /dev/null
 kill "$spinpid" > /dev/null
 
 clog info "deploy local-path-storage"
