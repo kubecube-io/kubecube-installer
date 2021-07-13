@@ -38,7 +38,7 @@ kubectl apply -f /etc/kubecube/manifests/local-path-storage/local-path-storage.y
 #kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml > /dev/null
 
 clog info "deploy nginx ingress controller"
-kubectl apply -f /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml /dev/null
+kubectl apply -f /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml > /dev/null
 
 clog info "init etcd-certs secret for etcd monitoring"
 init_etcd_secret

@@ -552,6 +552,12 @@ spec:
             httpGet:
               path: /readyz
               port: 8081
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            failureThreshold: 30
+            periodSeconds: 10
           resources:
             limits:
               cpu: 100m
