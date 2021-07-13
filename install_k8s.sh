@@ -248,9 +248,9 @@ function k8s_bin_get() {
   RELEASE=v${KUBERNETES_VERSION}
   RELEASE_VERSION="v0.4.0"
 
-  sudo mkdir -p /opt/cni/bin
-  sudo mkdir -p $DOWNLOAD_DIR
-  sudo mkdir -p /etc/systemd/system/kubelet.service.d
+  mkdir -p /opt/cni/bin
+  mkdir -p $DOWNLOAD_DIR
+  mkdir -p /etc/systemd/system/kubelet.service.d
 
   if [[ "$OFFLINE_INSTALL" == "true" ]]; then
     k8s_bin_local
@@ -269,14 +269,14 @@ function k8s_bin_local() {
   tar -zxvf ${BASE}/packages/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz -C $DOWNLOAD_DIR > /dev/null
 
   clog debug "get kubeadm,kubelet,kubectl"
-  sudo mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubeadm $DOWNLOAD_DIR
-  sudo mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubelet $DOWNLOAD_DIR
-  sudo mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubectl $DOWNLOAD_DIR
-  sudo chmod +x {$DOWNLOAD_DIR/kubeadm,$DOWNLOAD_DIR/kubelet,$DOWNLOAD_DIR/kubectl}
+  mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubeadm $DOWNLOAD_DIR
+  mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubelet $DOWNLOAD_DIR
+  mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubectl $DOWNLOAD_DIR
+  chmod +x {$DOWNLOAD_DIR/kubeadm,$DOWNLOAD_DIR/kubelet,$DOWNLOAD_DIR/kubectl}
 
   clog debug "config for kubelet service"
-  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service
-  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
+  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 }
 
 function k8s_bin_download() {
@@ -284,23 +284,23 @@ function k8s_bin_download() {
 
   clog debug "downloading cni plugin"
 
-#  curl -L "https://gitee.com/kubecube/packages/raw/master/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
-  curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
+#  curl -L "https://gitee.com/kubecube/packages/raw/master/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
+  curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
 
   clog debug "downloading crictl"
-#  curl -L "https://gitee.com/kubecube/packages/raw/master/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
-  curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
+#  curl -L "https://gitee.com/kubecube/packages/raw/master/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
+  curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
 
   clog debug "downloading kubeadm,kubelet,kubectl"
   RELEASE=v${KUBERNETES_VERSION}
   cd $DOWNLOAD_DIR
-  sudo curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
-  sudo chmod +x {kubeadm,kubelet,kubectl}
+  curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
+  chmod +x {kubeadm,kubelet,kubectl}
 
   clog debug "config for kubelet service"
   RELEASE_VERSION="v0.4.0"
-  curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service
-  curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
+  curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 }
 
 function images_download() {
