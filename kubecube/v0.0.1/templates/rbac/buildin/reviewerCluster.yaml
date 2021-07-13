@@ -68,3 +68,10 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "*" #storage.kubecube.io
+    resources:
+      - cephs
+    verbs:
+      - get
+      - list

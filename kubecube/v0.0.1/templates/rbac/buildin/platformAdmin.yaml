@@ -473,3 +473,16 @@ rules:
       - deletecollection
       - patch
       - update
+  - apiGroups:
+      - "*" #storage.kubecube.io
+    resources:
+      - cephs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
