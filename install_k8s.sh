@@ -432,15 +432,15 @@ function Install_Kubernetes_Master (){
   clog debug "installing calico"
   kubectl apply -f /etc/kubecube/manifests/calico/calico.yaml > /dev/null
 
-  sleep 20 >/dev/null
+  sleep 7 >/dev/null
   clog debug "inspect node"
   kubectl get node
 
-  sleep 20 >/dev/null
+  sleep 7 >/dev/null
   clog debug "inspect pod"
   kubectl get pod --all-namespaces
 
-  sleep 20 >/dev/null
+  sleep 7 >/dev/null
   clog deub "inspect service"
   kubectl get svc --all-namespaces
 
