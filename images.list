@@ -1,7 +1,7 @@
 hub.c.163.com/kubecube/audit:v0.0.1-all
 hub.c.163.com/kubecube/webconsole:cloudshell-v1-all
 hub.c.163.com/kubecube/webconsole:v0.0.1-all
-hub.c.163.com/kubecube/frontend:0.1.7-deploy
+hub.c.163.com/kubecube/frontend:0.1.76-deploy
 hub.c.163.com/kubecube/kubecube:0.3.3-deploy
 hub.c.163.com/kubecube/warden:0.2.6-deploy
 hub.c.163.com/kubecube/warden-init:0.0.2
@@ -23,4 +23,3 @@ docker.io/jettech/kube-webhook-certgen:v1.5.1
 carlosedp/kube-rbac-proxy:v0.4.1
 rancher/local-path-provisioner:v0.0.19
 busybox
-rancher/metrics-server:v0.4.1
