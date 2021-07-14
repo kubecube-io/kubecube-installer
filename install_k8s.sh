@@ -308,10 +308,10 @@ function images_download() {
 
     /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
 
-    spin & spinpid=$!
-    echo
-    clog debug "spin pid: ${spinpid}"
-    trap 'kill ${spinpid} && exit 1' SIGINT
+#    spin & spinpid=$!
+#    echo
+#    clog debug "spin pid: ${spinpid}"
+#    trap 'kill ${spinpid} && exit 1' SIGINT
     for image in $(cat /etc/kubecube/manifests/images.list)
     do
       if [[ "$ZONE" == cn ]];then
@@ -319,9 +319,9 @@ function images_download() {
           image=${image/$K8S_REGISTR/$CN_K8S_REGISTR}
         fi
       fi
-      /usr/bin/docker pull ${image} > /dev/null
+      /usr/bin/docker pull ${image}
     done
-    kill "$spinpid" > /dev/null
+#    kill "$spinpid" > /dev/null
 }
 
 function preparation() {
