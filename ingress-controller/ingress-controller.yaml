@@ -331,6 +331,7 @@ spec:
         app.kubernetes.io/component: controller
     spec:
       dnsPolicy: ClusterFirst
+      hostNetwork: true
       containers:
         - name: controller
           image: hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0
