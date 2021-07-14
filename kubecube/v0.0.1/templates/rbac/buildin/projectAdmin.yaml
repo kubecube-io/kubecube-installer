@@ -311,3 +311,19 @@ rules:
       - deletecollection
       - patch
       - update
+  - apiGroups:
+      - "*" #monitoring.coreos.com
+    resources:
+      - alertmanagerconfigs
+      - podmonitors
+      - prometheusrules
+      - servicemonitors
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
