@@ -306,13 +306,13 @@ function k8s_bin_download() {
 function images_download() {
     clog info "downloading images"
 
-    /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
+#    /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
 
 #    spin & spinpid=$!
 #    echo
 #    clog debug "spin pid: ${spinpid}"
 #    trap 'kill ${spinpid} && exit 1' SIGINT
-    for image in $(cat /etc/kubecube/manifests/images.list)
+    for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
     do
       if [[ "$ZONE" == cn ]];then
         if [[ ${image} =~ ${K8S_REGISTR} ]]; then
