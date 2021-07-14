@@ -116,7 +116,7 @@ spec:
             - url: http://${IPADDR}:31291/api/v1/receive
       name: kubecube-monitoring
       namespace: kubecube-monitoring
-      pkgName: kubecube-monitoring-15.4.8.tgz
+      pkgName: kubecube-monitoring-15.4.9.tgz
       status: enabled
     - name: thanos
       namespace: kubecube-monitoring
