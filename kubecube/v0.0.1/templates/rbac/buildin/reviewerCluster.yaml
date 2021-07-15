@@ -72,6 +72,8 @@ rules:
       - "*" #storage.kubecube.io
     resources:
       - cephs
+      - nfs
     verbs:
       - get
       - list
+      - watch

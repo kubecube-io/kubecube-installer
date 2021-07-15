@@ -225,3 +225,12 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "*" #storage.kubecube.io
+    resources:
+      - cephs
+      - nfs
+    verbs:
+      - get
+      - list
+      - watch
