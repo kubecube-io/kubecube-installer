@@ -56,7 +56,8 @@ else
   echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading manifests for kubecube"
   wget https://gitee.com/kubecube/manifests/repository/archive/master.zip -O manifests.zip
 
-  unzip manifests.zip -d manifests > /dev/null
+  unzip manifests.zip > /dev/null
+  mv manifests-master manifests
 fi
 
 if [[ ${CUSTOMIZE} = "true" ]]; then
