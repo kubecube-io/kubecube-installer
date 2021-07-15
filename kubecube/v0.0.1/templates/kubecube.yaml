@@ -55,16 +55,16 @@ spec:
       labels:
         kubecube.io/app: kubecube
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "kubecube.io/app"
-                    operator: In
-                    values:
-                      - kubecube
-              topologyKey: "node-role.kubernetes.io/node"
+#      affinity:
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            - labelSelector:
+#                matchExpressions:
+#                  - key: "kubecube.io/app"
+#                    operator: In
+#                    values:
+#                      - kubecube
+#              topologyKey: "node-role.kubernetes.io/node"
       containers:
         - name: kubecube
           image: {{ .Values.kubecube.image }}
