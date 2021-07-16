@@ -3,7 +3,7 @@
 set -e
 
 DOCKER_VER=19.03.8
-OFFLINE_INSTALL="true"
+OFFLINE_INSTALL="flase"
 BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
@@ -40,7 +40,8 @@ function docker_bin_get() {
 
 function docker_bin_download() {
   if [[ "$ZONE" == cn ]];then
-    DOCKER_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/$(arch)/docker-${DOCKER_VER}.tgz"
+    DOCKER_URL="https://kubecube.nos-eastchina1.126.net/docker-ce/linux/static/stable/$(arch)/docker-${DOCKER_VER}.tgz"
+    #DOCKER_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/static/stable/$(arch)/docker-${DOCKER_VER}.tgz"
   else
     DOCKER_URL="https://download.docker.com/linux/static/stable/$(arch)/docker-${DOCKER_VER}.tgz"
   fi
@@ -284,23 +285,26 @@ function k8s_bin_download() {
 
   clog debug "downloading cni plugin"
 
-#  curl -L "https://gitee.com/kubecube/packages/raw/master/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
-  curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
+  curl -L "https://kubecube.nos-eastchina1.126.net/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
+  #curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz" | tar -C /opt/cni/bin -xz
 
   clog debug "downloading crictl"
-#  curl -L "https://gitee.com/kubecube/packages/raw/master/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
-  curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
+  curl -L "https://kubecube.nos-eastchina1.126.net/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
+  #curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
 
   clog debug "downloading kubeadm,kubelet,kubectl"
   RELEASE=v${KUBERNETES_VERSION}
   cd $DOWNLOAD_DIR
-  curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
+  curl -L --remote-name-all https://kubecube.nos-eastchina1.126.net/kubernetes/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
+  #curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
   chmod +x {kubeadm,kubelet,kubectl}
 
   clog debug "config for kubelet service"
   RELEASE_VERSION="v0.4.0"
-  curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
-  curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  curl -sSL "https://kubecube.nos-eastchina1.126.net/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
+  #curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
+  curl -sSL "https://kubecube.nos-eastchina1.126.net/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  #curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 }
 
 function images_download() {
@@ -314,11 +318,11 @@ function images_download() {
 #    trap 'kill ${spinpid} && exit 1' SIGINT
     for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
     do
-      if [[ "$ZONE" == cn ]];then
-        if [[ ${image} =~ ${K8S_REGISTR} ]]; then
-          image=${image/$K8S_REGISTR/$CN_K8S_REGISTR}
-        fi
-      fi
+#      if [[ "$ZONE" == cn ]];then
+#        if [[ ${image} =~ ${K8S_REGISTR} ]]; then
+#          image=${image/$K8S_REGISTR/$CN_K8S_REGISTR}
+#        fi
+#      fi
       /usr/bin/docker pull ${image}
     done
 #    kill "$spinpid" > /dev/null
@@ -491,11 +495,16 @@ function Main() {
   mkdir -p /etc/kubecube/bin
 
   params_process
-  offline_pkg_download
+  #offline_pkg_download
   docker_bin_get
   k8s_bin_get
   install_docker
   images_download
+
+  if [[ ${PRE_DOWNLOAD} = "true" ]]; then
+    exit 0
+  fi
+
   preparation
   make_cluster_configuration
 

@@ -62,7 +62,7 @@ spec:
       serviceAccountName: local-path-provisioner-service-account
       containers:
         - name: local-path-provisioner
-          image: rancher/local-path-provisioner:v0.0.19  #hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19
+          image: hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19-m #rancher/local-path-provisioner:v0.0.19
           imagePullPolicy: IfNotPresent
           command:
             - local-path-provisioner
@@ -154,5 +154,5 @@ data:
     spec:
       containers:
       - name: helper-pod
-        image: busybox
+        image: hub.c.163.com/kubecube/busybox:latest-m
         imagePullPolicy: IfNotPresent

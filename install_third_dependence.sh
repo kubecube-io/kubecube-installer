@@ -16,6 +16,7 @@ then
   kubectl get nodes | grep -v "NAME" | awk '{print $1}' | sed -n '1p' | xargs -t -i kubectl taint node {} node-role.kubernetes.io/master-
 fi
 
+# hnc need build multi-arch image
 clog info "deploy hnc-manager, and wait for ready"
 kubectl apply -f /etc/kubecube/manifests/hnc/hnc.yaml > /dev/null
 
@@ -37,6 +38,7 @@ kubectl apply -f /etc/kubecube/manifests/local-path-storage/local-path-storage.y
 clog info "deploy metrics-server"
 kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml > /dev/null
 
+# nginx ingress controller doesn't support arm64
 clog info "deploy nginx ingress controller"
 kubectl apply -f /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml > /dev/null
 

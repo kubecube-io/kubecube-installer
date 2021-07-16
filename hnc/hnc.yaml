@@ -542,7 +542,7 @@ spec:
             - --cert-restart-on-secret-refresh
           command:
             - /manager
-          image: hub.c.163.com/kubecube/hnc:v0.8.0 #harshthakur/hnc-manager:multi-arch
+          image: hub.c.163.com/kubecube/hnc:v0.8.0
           name: manager
           ports:
             - containerPort: 9443
@@ -574,7 +574,7 @@ spec:
             - --secure-listen-address=0.0.0.0:8443
             - --logtostderr=true
             - --v=10
-          image: carlosedp/kube-rbac-proxy:v0.4.1  #hub.c.163.com/kubecube/hnc/kube-rbac-proxy:v0.4.0
+          image: hub.c.163.com/kubecube/carlosedp/kube-rbac-proxy:v0.4.1-m #carlosedp/kube-rbac-proxy:v0.4.1
           name: kube-rbac-proxy
           ports:
             - containerPort: 8443

@@ -9,3 +9,8 @@ curl -fsSL https://gitee.com/kubecube/manifests/raw/master/entry.sh | bash
 ```bash
 export CUSTOMIZE="true";curl -fsSL https://gitee.com/kubecube/manifests/raw/master/entry.sh | bash
 ```
+
+## Pre Download
+```bash
+export PRE_DOWNLOAD="true";curl -fsSL https://gitee.com/kubecube/manifests/raw/master/entry.sh | bash
+```

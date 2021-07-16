@@ -12,6 +12,11 @@ if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
     clog error "install kubernetes failed"
       exit 1
   fi
+
+  if [[ ${PRE_DOWNLOAD} = "true" ]]; then
+    clog info "offline manifests download success"
+    exit 0
+  fi
 else
   alert_modify_apiserver
   while read confirm
