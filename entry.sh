@@ -54,10 +54,9 @@ if [ -e "manifests.zip" ]; then
   echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m manifests already exist"
 else
   echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading manifests for kubecube"
-  wget https://gitee.com/kubecube/manifests/repository/archive/master.zip -O manifests.zip
+  wget https://kubecube.nos-eastchina1.126.net/kubecube-installer/v1.0.0/manifests.tar.gz -O manifests.tar.gz
 
-  unzip manifests.zip > /dev/null
-  mv manifests-master manifests
+  tar -xzvf manifests.tar.gz > /dev/null
 fi
 
 if [[ ${CUSTOMIZE} = "true" ]]; then
