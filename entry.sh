@@ -50,7 +50,7 @@ mkdir -p /etc/kubecube/down
 mkdir -p /etc/kubecube/bin
 cd /etc/kubecube
 
-if [ -e "manifests.zip" ]; then
+if [ -e "./manifests" ]; then
   echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m manifests already exist"
 else
   echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading manifests for kubecube"
