@@ -6,10 +6,10 @@ metadata:
   name: project-admin-cluster
   annotations:
     kubecube.io/sync: "true"
-#aggregationRule:
-#  clusterRoleSelectors:
-#    - matchLabels:
-#        kubecube.io/aggregate-to-project-admin-cluster: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        rbac.authorization.k8s.io/aggregate-to-project-admin-cluster: "true"
 rules:
   # only has read authority of namespace cause
   # subNamespace will replace it

@@ -9,10 +9,10 @@ metadata:
     kubecube.io/role: "reviewer"
   annotations:
     kubecube.io/sync: "true"
-#aggregationRule:
-#  clusterRoleSelectors:
-#    - matchLabels:
-#        kubecube.io/aggregate-to-reviewer: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        rbac.authorization.k8s.io/aggregate-to-reviewer: "true"
 rules:
   - apiGroups:
       - "*"
