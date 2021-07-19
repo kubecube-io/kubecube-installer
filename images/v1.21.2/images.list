@@ -1,7 +1,7 @@
-hub.c.163.com/kubecube/audit:v0.0.1-all
-hub.c.163.com/kubecube/webconsole:cloudshell-v1-all
-hub.c.163.com/kubecube/webconsole:v0.0.1-all
-hub.c.163.com/kubecube/frontend:0.01-beta
+hub.c.163.com/kubecube/audit:v1.0.0-rc0
+hub.c.163.com/kubecube/webconsole:v1.0.0-rc0
+hub.c.163.com/kubecube/webconsole:v1.0.0-rc0
+hub.c.163.com/kubecube/frontend:v1.0.0-rc0
 hub.c.163.com/kubecube/cube:v1.0.0-rc0
 hub.c.163.com/kubecube/warden:v1.0.0-rc0
 hub.c.163.com/kubecube/warden-init:v1.0.0-rc0

@@ -3,7 +3,7 @@ All manifests for deploying kubecube, deploy details please follow [doc](https:/
 ## Quick start
 set version
 ```bash
-KUBECUBE_VERSION=v1.0.0
+KUBECUBE_VERSION=v1.0.0-rc0
 ```
 
 ### All in one install
