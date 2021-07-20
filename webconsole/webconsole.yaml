@@ -20,7 +20,7 @@ spec:
             - name: JWT_SECRET
               value: 56F0D8DB90241C6E
           name: kubecube-webconsole
-          image: hub.c.163.com/kubecube/webconsole:v0.0.1-all
+          image: hub.c.163.com/kubecube/webconsole:v1.0.0-rc0
           ports:
             - containerPort: 9081
 ---
@@ -45,7 +45,7 @@ spec:
           name: localtime
       containers:
         - name: cloud-shell
-          image: hub.c.163.com/kubecube/webconsole:cloudshell-v1-all
+          image: hub.c.163.com/kubecube/cloudshell:v1.0.0-rc0
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: "File"
           imagePullPolicy: "IfNotPresent"
