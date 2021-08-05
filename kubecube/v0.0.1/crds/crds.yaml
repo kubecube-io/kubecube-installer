@@ -476,6 +476,8 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
+  labels:
+    kubecube.io/crds: "true"
   name: hotplugs.hotplug.kubecube.io
 spec:
   group: hotplug.kubecube.io
