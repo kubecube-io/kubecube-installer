@@ -173,7 +173,7 @@ clog info "deploy webconsole and cloudshell"
 kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
 
 clog info "deploy kubecube"
-/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v0.0.1
+/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v1.0.0
 
 clog info "waiting for kubecube ready"
 spin & spinpid=$!
