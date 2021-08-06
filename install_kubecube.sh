@@ -105,6 +105,10 @@ spec:
       namespace: logagent
       pkgName: logagent-v1.0.0.tgz
       status: disabled
+    - name: elasticsearch
+      namespace: elasticsearch
+      pkgName: elasticsearch-7.8.1.tgz
+      status: enabled
     - env: |
         grafana:
           enabled: false
