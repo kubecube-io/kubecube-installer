@@ -21,6 +21,8 @@ function offline_pkg_download() {
 }
 
 function docker_bin_get() {
+  systemctl status docker|grep Active|grep -q running && { clog warn "docker is already running."; return 0; }
+
   if [[ -f "$BASE/down/docker-${DOCKER_VER}.tgz" ]];then
     clog warn "docker binaries already existed"
   else
