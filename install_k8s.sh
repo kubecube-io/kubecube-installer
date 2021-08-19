@@ -323,22 +323,12 @@ function k8s_bin_download() {
 function images_download() {
     clog info "downloading images"
 
-#    /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
+    curl -sSL https://kubecube.nos-eastchina1.126.net/images/v${KUBERNETES_VERSION}/images.list > images.list
 
-#    spin & spinpid=$!
-#    echo
-#    clog debug "spin pid: ${spinpid}"
-#    trap 'kill ${spinpid} && exit 1' SIGINT
-    for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
+    for image in $(./images.list)
     do
-#      if [[ "$ZONE" == cn ]];then
-#        if [[ ${image} =~ ${K8S_REGISTR} ]]; then
-#          image=${image/$K8S_REGISTR/$CN_K8S_REGISTR}
-#        fi
-#      fi
       /usr/bin/docker pull ${image}
     done
-#    kill "$spinpid" > /dev/null
 }
 
 function preparation() {
