@@ -3,7 +3,7 @@
 set -e
 
 DOCKER_VER=19.03.8
-OFFLINE_INSTALL="flase"
+OFFLINE_INSTALL="false"
 BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
