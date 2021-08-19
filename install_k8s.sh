@@ -325,7 +325,7 @@ function images_download() {
 
     curl -sSL https://kubecube.nos-eastchina1.126.net/images/v${KUBERNETES_VERSION}/images.list > images.list
 
-    for image in $(./images.list)
+    for image in $(cat ./images.list)
     do
       /usr/bin/docker pull ${image}
     done
