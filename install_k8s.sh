@@ -325,9 +325,7 @@ function k8s_bin_download() {
 function images_download() {
     clog info "downloading images"
 
-    curl -sSL https://kubecube.nos-eastchina1.126.net/images/v${KUBERNETES_VERSION}/images.list > images.list
-
-    for image in $(cat ./images.list)
+    for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
     do
       /usr/bin/docker pull ${image}
     done
