@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubecube-auth-config
+  namespace: kubecube-system
+data:
+  github: |
+    enabled: false
+    clientId: ""
+    clientSecret: ""
