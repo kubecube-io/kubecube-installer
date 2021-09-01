@@ -35,6 +35,6 @@ pivotCluster:
 auth:
   github:
     enabled: false
-    clientId: "Cg=="
-    clientSecret: "Cg=="
+    clientId: ""
+    clientSecret: ""
 
