@@ -120,9 +120,9 @@ spec:
             - url: http://${IPADDR}:31291/api/v1/receive
       name: kubecube-monitoring
       namespace: kubecube-monitoring
-      pkgName: kubecube-monitoring-15.4.10.tgz
+      pkgName: kubecube-monitoring-15.4.11.tgz
       status: enabled
-    - name: thanos
+    - name: kubecube-thanos
       namespace: kubecube-monitoring
       pkgName: thanos-3.18.0.tgz
       status: disabled
@@ -149,6 +149,7 @@ spec:
       name: kubecube-monitoring
     - env: |
         receive:
+          tsdbRetention: 7d
           replicaCount: 1
           replicationFactor: 1
       name: kubecube-thanos

@@ -3,7 +3,7 @@
 set -e
 
 DOCKER_VER=19.03.8
-OFFLINE_INSTALL="flase"
+OFFLINE_INSTALL="false"
 BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
@@ -21,6 +21,8 @@ function offline_pkg_download() {
 }
 
 function docker_bin_get() {
+  systemctl status docker|grep Active|grep -q running && { clog warn "docker is already running."; return 0; }
+
   if [[ -f "$BASE/down/docker-${DOCKER_VER}.tgz" ]];then
     clog warn "docker binaries already existed"
   else
@@ -323,22 +325,10 @@ function k8s_bin_download() {
 function images_download() {
     clog info "downloading images"
 
-#    /usr/local/bin/kubeadm config images list >> /etc/kubecube/manifests/images.list
-
-#    spin & spinpid=$!
-#    echo
-#    clog debug "spin pid: ${spinpid}"
-#    trap 'kill ${spinpid} && exit 1' SIGINT
     for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
     do
-#      if [[ "$ZONE" == cn ]];then
-#        if [[ ${image} =~ ${K8S_REGISTR} ]]; then
-#          image=${image/$K8S_REGISTR/$CN_K8S_REGISTR}
-#        fi
-#      fi
       /usr/bin/docker pull ${image}
     done
-#    kill "$spinpid" > /dev/null
 }
 
 function preparation() {

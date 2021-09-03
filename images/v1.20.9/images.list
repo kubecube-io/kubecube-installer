@@ -1,8 +1,8 @@
-hub.c.163.com/kubecube/audit:v1.0.0
-hub.c.163.com/kubecube/cloudshell:v1.0.0
-hub.c.163.com/kubecube/webconsole:v1.0.0
-hub.c.163.com/kubecube/frontend:v1.0.0
-hub.c.163.com/kubecube/cube:v1.0.0
+hub.c.163.com/kubecube/audit:v1.0.1
+hub.c.163.com/kubecube/cloudshell:v1.0.1
+hub.c.163.com/kubecube/webconsole:v1.0.1
+hub.c.163.com/kubecube/frontend:v1.0.2
+hub.c.163.com/kubecube/cube:v1.0.1
 hub.c.163.com/kubecube/warden:v1.0.0
 hub.c.163.com/kubecube/warden-init:v1.0.0
 hub.c.163.com/kubecube/alertmanager:v0.21.0
@@ -12,7 +12,9 @@ hub.c.163.com/kubecube/grafana:7.5.5
 hub.c.163.com/kubecube/kube-state-metrics:v1.9.8
 hub.c.163.com/kubecube/prometheus-operator:v0.47.0
 hub.c.163.com/kubecube/node-exporter:v1.1.2
-hub.c.163.com/kubecube/prometheus:v2.26.0
+hub.c.163.com/kubecube/prometheus:v2.26.1
+hub.c.163.com/kubecube/thanos:v0.22.0
+hub.c.163.com/kubecube/kubectl-tools:1.21.0
 hub.c.163.com/kubecube/hnc/hnc-manager:v0.8.0-kubecube.1
 hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0-m
 hub.c.163.com/kubecube/calico/node:v3.19.1-m

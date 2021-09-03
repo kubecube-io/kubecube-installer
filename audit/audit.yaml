@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: kubecube-audit
-          image: hub.c.163.com/kubecube/audit:v1.0.0-rc0
+          image: hub.c.163.com/kubecube/audit:v1.0.1
           ports:
             - containerPort: 8888
           env:
