@@ -2,7 +2,7 @@
 
 kubecube:
   replicas: 1
-  image: hub.c.163.com/kubecube/cube:v1.0.1
+  image: hub.c.163.com/kubecube/cube:v1.0.2
 
   args:
     logLevel: info
@@ -11,8 +11,8 @@ kubecube:
     leaderElect: true
 
   env:
-    wardenImage: hub.c.163.com/kubecube/warden:v1.0.0
-    wardenInitImage: hub.c.163.com/kubecube/warden-init:v1.0.0
+    wardenImage: hub.c.163.com/kubecube/warden:v1.0.2
+    wardenInitImage: hub.c.163.com/kubecube/warden-init:v1.0.2
     pivotCubeSvc: kubecube.kubecube-system:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
