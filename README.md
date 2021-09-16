@@ -30,7 +30,7 @@ export PRE_DOWNLOAD="true";curl -fsSL https://kubecube.nos-eastchina1.126.net/ku
 ## Clean UP
 
 ```bash
-curl -fsSL https://kubecube.nos-eastchina1.126.net/hack/cleanup.sh
+curl -o cleanup.sh https://kubecube.nos-eastchina1.126.net/hack/cleanup.sh
 ```
 
 ```bash
