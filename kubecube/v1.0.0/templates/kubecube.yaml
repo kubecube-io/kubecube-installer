@@ -90,6 +90,8 @@ spec:
               value: {{ .Values.kubecube.env.pivotCubeHost }}
             - name: JWT_SECRET
               value: {{ .Values.kubecube.env.jwtSecret }}
+            - name: INSTALLER_VERSION
+              value: {{ .Values.kubecube.env.installerVersion }}
             - name: GIN_MODE
               value: release
             - name: NODE_IP

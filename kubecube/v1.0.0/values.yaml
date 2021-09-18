@@ -16,6 +16,7 @@ kubecube:
     pivotCubeSvc: kubecube.kubecube-system:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
+    installerVersion: v1.0
 
 webhook:
   caBundle: "Cg=="
