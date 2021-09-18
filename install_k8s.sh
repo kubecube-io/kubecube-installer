@@ -458,16 +458,16 @@ function Install_Kubernetes_Node (){
   clog info "init kubernetes, version：${KUBERNETES_VERSION}"
 
   if [ ! -z ${ACCESS_PASSWORD} ]; then
-    TOKEN=$(sshpass -p ${ACCESS_PASSWORD} ssh -p 22 root@${MASTER_IP} "kubeadm token create --ttl=10m")
-    Hash=$(sshpass -p ${ACCESS_PASSWORD} ssh -p 22 root@${MASTER_IP} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
+    TOKEN=$(sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubeadm token create --ttl=10m")
+    Hash=$(sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
     if [ ! -z ${CONTROL_PLANE_ENDPOINT} ]; then
-        CertificateKey=$(sshpass -p ${ACCESS_PASSWORD} ssh -p 22 root@${MASTER_IP} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
+        CertificateKey=$(sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
     fi
   elif [ ! -z ${ACCESS_PRIVATE_KEY_PATH} ]; then
-    TOKEN=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" root@${MASTER_IP} "kubeadm token create --ttl=10m")
-    Hash=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" root@${MASTER_IP} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
+    TOKEN=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubeadm token create --ttl=10m")
+    Hash=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
     if [ ! -z ${CONTROL_PLANE_ENDPOINT} ]; then
-        CertificateKey=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} root@${MASTER_IP} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
+        CertificateKey=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
     fi
   else
     clog error "ACCESS_PASSWORD or ACCESS_PRIVATE_KEY_PATH must be specified"
@@ -483,9 +483,9 @@ function Install_Kubernetes_Node (){
     clog info "node join cluster as worker"
     kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash}
     if [ ! -z ${ACCESS_PASSWORD} ]; then
-      sshpass -p ${ACCESS_PASSWORD} ssh -p 22 root@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+      sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
     else
-      ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" root@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+      ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
     fi
       mkdir -p ${HOME}/.kube
       cp -i /etc/kubernetes/kubelet.conf ${HOME}/.kube/config
