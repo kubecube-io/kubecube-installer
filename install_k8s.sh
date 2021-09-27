@@ -3,22 +3,11 @@
 set -e
 
 DOCKER_VER=19.03.8
-OFFLINE_INSTALL="false"
 BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
 
 source /etc/kubecube/manifests/utils.sh
-
-function offline_pkg_download() {
-  if [ -e "${BASE}/packages" ]; then
-    clog warn "offline packages already existed"
-  else
-    clog info "download offline packages"
-    wget https://gitee.com/kubecube/packages/repository/archive/master.zip -O packages.zip
-    unzip packages.zip -d ${BASE}/ > /dev/null
-  fi
-}
 
 function docker_bin_get() {
   systemctl status docker|grep Active|grep -q running && { clog warn "docker is already running."; return 0; }
@@ -28,7 +17,7 @@ function docker_bin_get() {
   else
     if [[ "$OFFLINE_INSTALL" == "true" ]]; then
       clog info "get docker binary from local"
-      /bin/mv -f "${BASE}/packages/docker-ce/linux/static/stable/$(arch)/docker-$DOCKER_VER.tgz" "$BASE/down"
+      /bin/mv -f "${OFFLINE_PKG_PATH}/docker-$DOCKER_VER.tgz" "$BASE/down"
     else
       docker_bin_download
     fi
@@ -266,20 +255,20 @@ function k8s_bin_local() {
   clog info "get k8s bin from local"
 
   clog debug "get cni plugin"
-  tar -zxvf ${BASE}/packages/containernetworking/${CNI_VERSION}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz -C /opt/cni/bin > /dev/null
+  tar -zxvf ${OFFLINE_PKG_PATH}/cni-plugins-linux-${os_arch}-${CNI_VERSION}.tgz -C /opt/cni/bin > /dev/null
 
   clog debug "get crictl"
-  tar -zxvf ${BASE}/packages/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz -C $DOWNLOAD_DIR > /dev/null
+  tar -zxvf ${OFFLINE_PKG_PATH}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz -C $DOWNLOAD_DIR > /dev/null
 
   clog debug "get kubeadm,kubelet,kubectl"
-  mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubeadm $DOWNLOAD_DIR
-  mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubelet $DOWNLOAD_DIR
-  mv ${BASE}/packages/kubernetes/${RELEASE}/bin/linux/${os_arch}/kubectl $DOWNLOAD_DIR
+  mv ${OFFLINE_PKG_PATH}/kubeadm $DOWNLOAD_DIR
+  mv ${OFFLINE_PKG_PATH}/kubelet $DOWNLOAD_DIR
+  mv ${OFFLINE_PKG_PATH}/kubectl $DOWNLOAD_DIR
   chmod +x {$DOWNLOAD_DIR/kubeadm,$DOWNLOAD_DIR/kubelet,$DOWNLOAD_DIR/kubectl}
 
   clog debug "config for kubelet service"
-  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
-  cat ${BASE}/packages/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  cat ${OFFLINE_PKG_PATH}/kubelet.service | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
+  cat ${OFFLINE_PKG_PATH}/10-kubeadm.conf | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 }
 
 function k8s_bin_download() {
@@ -323,12 +312,17 @@ function k8s_bin_download() {
 }
 
 function images_download() {
-    clog info "downloading images"
+  if [[ "$OFFLINE_INSTALL" == "true" ]]; then
+      clog info "loading image form local"
+      docker load < ${OFFLINE_PKG_PATH}/offline_images.tar
+  else
+      clog info "downloading images"
 
-    for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
-    do
-      /usr/bin/docker pull ${image}
-    done
+      for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
+      do
+        /usr/bin/docker pull ${image}
+      done
+  fi
 }
 
 function preparation() {
@@ -498,7 +492,6 @@ function Main() {
   mkdir -p /etc/kubecube/bin
 
   params_process
-  #offline_pkg_download
   docker_bin_get
   k8s_bin_get
   install_docker
