@@ -35,8 +35,8 @@ kill "$spinpid" > /dev/null
 clog info "deploy local-path-storage"
 kubectl apply -f /etc/kubecube/manifests/local-path-storage/local-path-storage.yaml > /dev/null
 
-#clog info "deploy metrics-server"
-#kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml > /dev/null
+clog info "deploy metrics-server"
+kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml > /dev/null
 
 # nginx ingress controller doesn't support arm64
 clog info "deploy nginx ingress controller"
