@@ -452,12 +452,14 @@ function Install_Kubernetes_Node (){
   clog info "init kubernetes, version：${KUBERNETES_VERSION}"
 
   if [ ! -z ${ACCESS_PASSWORD} ]; then
+    clog info "access master node use password"
     TOKEN=$(sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubeadm token create --ttl=10m")
     Hash=$(sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
     if [ ! -z ${CONTROL_PLANE_ENDPOINT} ]; then
         CertificateKey=$(sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubeadm init phase upload-certs --upload-certs | awk 'END {print}'")
     fi
   elif [ ! -z ${ACCESS_PRIVATE_KEY_PATH} ]; then
+    clog info "access master node use private key"
     TOKEN=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubeadm token create --ttl=10m")
     Hash=$(ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'")
     if [ ! -z ${CONTROL_PLANE_ENDPOINT} ]; then
