@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source /etc/kubecube/manifests/cube.conf
 source /etc/kubecube/manifests/utils.sh

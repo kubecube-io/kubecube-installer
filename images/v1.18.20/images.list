@@ -26,6 +26,7 @@ hub.c.163.com/kubecube/carlosedp/kube-rbac-proxy:v0.4.1-m
 hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19-m
 hub.c.163.com/kubecube/rancher/metrics-server:v0.4.1-m
 hub.c.163.com/kubecube/busybox:latest-m
+hub.c.163.com/kubecube/k8s-staging-prometheus-adapter/prometheus-adapter:v0.8.4
 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.18.20
 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.18.20
 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.18.20
