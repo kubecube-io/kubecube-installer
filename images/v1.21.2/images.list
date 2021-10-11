@@ -26,10 +26,10 @@ hub.c.163.com/kubecube/carlosedp/kube-rbac-proxy:v0.4.1-m
 hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19-m
 hub.c.163.com/kubecube/rancher/metrics-server:v0.4.1-m
 hub.c.163.com/kubecube/busybox:latest-m
-registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.21.2
-registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.21.2
-registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.21.2
-registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.21.2
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.21.5
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.21.5
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.21.5
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:v1.21.5
 registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.4.1
 registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.4.13-0
-registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:1.8.0
+registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.8.0
