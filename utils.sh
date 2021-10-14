@@ -179,7 +179,7 @@ function alert_modify_apiserver() {
   echo -e "\033[32m         name: cube                                                                             \033[0m"
   echo -e "\033[32m         readOnly: true                                                                         \033[0m"
   echo -e "\033[32m   volumes:                                                                                     \033[0m"
-  echo -e "\033[32m     - hostPath                                                                                 \033[0m"
+  echo -e "\033[32m     - hostPath:                                                                                 \033[0m"
   echo -e "\033[32m         path: /var/log/audit.log                                                                   \033[0m"
   echo -e "\033[32m         type: FileOrCreate                                                                \033[0m"
   echo -e "\033[32m       name: audit-log                                                                          \033[0m"
