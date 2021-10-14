@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source /etc/kubecube/manifests/cube.conf
 source /etc/kubecube/manifests/utils.sh
@@ -120,7 +120,7 @@ spec:
             - url: http://${IPADDR}:31291/api/v1/receive
       name: kubecube-monitoring
       namespace: kubecube-monitoring
-      pkgName: kubecube-monitoring-15.4.10.tgz
+      pkgName: kubecube-monitoring-15.4.12.tgz
       status: enabled
     - name: kubecube-thanos
       namespace: kubecube-monitoring

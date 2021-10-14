@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source /etc/kubecube/manifests/install.conf
 
@@ -183,7 +183,7 @@ function alert_modify_apiserver() {
   echo -e "\033[32m         path: /var/log/audit.log                                                                   \033[0m"
   echo -e "\033[32m         type: FileOrCreate                                                                \033[0m"
   echo -e "\033[32m       name: audit-log                                                                          \033[0m"
-  echo -e "\033[32m     - hostPath                                                                                 \033[0m"
+  echo -e "\033[32m     - hostPath:                                                                                 \033[0m"
   echo -e "\033[32m         path: /etc/cube                                                                        \033[0m"
   echo -e "\033[32m         type: DirectoryOrCreate                                                                \033[0m"
   echo -e "\033[32m       name: cube                                                                               \033[0m"

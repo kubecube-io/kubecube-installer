@@ -2,7 +2,7 @@
 
 kubecube:
   replicas: 1
-  image: hub.c.163.com/kubecube/cube:v1.0.0
+  image: hub.c.163.com/kubecube/cube:v1.0.3
 
   args:
     logLevel: info
@@ -11,11 +11,12 @@ kubecube:
     leaderElect: true
 
   env:
-    wardenImage: hub.c.163.com/kubecube/warden:v1.0.0
-    wardenInitImage: hub.c.163.com/kubecube/warden-init:v1.0.0
+    wardenImage: hub.c.163.com/kubecube/warden:v1.0.3
+    wardenInitImage: hub.c.163.com/kubecube/warden-init:v1.0.3
     pivotCubeSvc: kubecube.kubecube-system:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
+    installerVersion: v1.0
 
 webhook:
   caBundle: "Cg=="
@@ -31,4 +32,10 @@ caSecret:
 pivotCluster:
   kubernetesAPIEndpoint: "Cg=="
   kubeconfig: "Cg=="
+
+auth:
+  github:
+    enabled: false
+    clientId: ""
+    clientSecret: ""
 

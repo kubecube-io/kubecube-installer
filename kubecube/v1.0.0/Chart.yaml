@@ -1,7 +1,7 @@
 apiVersion: v1
 name: kubecube
 version: 1.0.0
-kubeVersion: 1.18 - 1.20
+kubeVersion: 1.18 - 1.21
 description: Helm chart for kubecube components
 keywords:
   - kubernetes
