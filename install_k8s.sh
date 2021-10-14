@@ -373,7 +373,7 @@ apiServer:
     authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
     audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
     audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
-    audit-log-path: "/var/log/audit"
+    audit-log-path: "/var/log/audit.log"
     audit-log-maxage: "10"
     audit-log-maxsize: "100"
     audit-log-maxbackup: "10"
@@ -385,10 +385,10 @@ apiServer:
     readOnly: true
     pathType: DirectoryOrCreate
   - name: audit-log
-    hostPath: "/var/log/audit"
-    mountPath: "/var/log/audit"
+    hostPath: "/var/log/audit.log"
+    mountPath: "/var/log/audit.log"
     readOnly: false
-    pathType: DirectoryOrCreate
+    pathType: FileOrCreate
 # set control plane components listen on LOCAL_IP
 controllerManager:
   extraArgs:
