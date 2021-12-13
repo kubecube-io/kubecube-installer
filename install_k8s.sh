@@ -318,10 +318,29 @@ function images_download() {
   else
       clog info "downloading images"
 
-      for image in $(cat /etc/kubecube/manifests/images/v${KUBERNETES_VERSION}/images.list)
-      do
-        /usr/bin/docker pull ${image}
-      done
+      # download k8s images
+      if [[ "$INSTALL_KUBERNETES" == "true" ]]; then
+        for image in $(cat /etc/kubecube/manifests/images/k8s/v${KUBERNETES_VERSION}/images.list)
+        do
+          /usr/bin/docker pull ${image}
+        done
+      fi
+
+      # downloads image need by cube pivot cluster
+      if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
+        for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
+        do
+          /usr/bin/docker pull ${image}
+        done
+      fi
+
+      # downloads image need by cube member cluster
+      if [[ "$INSTALL_KUBECUBE_MEMBER" == "true" ]]; then
+        for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
+        do
+          /usr/bin/docker pull ${image}
+        done
+      fi
   fi
 }
 
@@ -362,27 +381,6 @@ function make_cluster_configuration (){
   fi
 
 API_SERVER_CONF=$(cat <<- EOF
-apiServer:
-  extraArgs:
-    authentication-token-webhook-config-file: "/etc/cube/warden/webhook.config"
-    audit-policy-file: "/etc/cube/audit/audit-policy.yaml"
-    audit-webhook-config-file: "/etc/cube/audit/audit-webhook.config"
-    audit-log-path: "/var/log/audit.log"
-    audit-log-maxage: "10"
-    audit-log-maxsize: "100"
-    audit-log-maxbackup: "10"
-    audit-log-format: "json"
-  extraVolumes:
-  - name: "cube"
-    hostPath: "/etc/cube"
-    mountPath: "/etc/cube"
-    readOnly: true
-    pathType: DirectoryOrCreate
-  - name: audit-log
-    hostPath: "/var/log/audit.log"
-    mountPath: "/var/log/audit.log"
-    readOnly: false
-    pathType: FileOrCreate
 # set control plane components listen on LOCAL_IP
 controllerManager:
   extraArgs:

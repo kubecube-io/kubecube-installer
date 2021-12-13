@@ -55,16 +55,6 @@ spec:
       labels:
         kubecube.io/app: kubecube
     spec:
-#      affinity:
-#        podAntiAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#            - labelSelector:
-#                matchExpressions:
-#                  - key: "kubecube.io/app"
-#                    operator: In
-#                    values:
-#                      - kubecube
-#              topologyKey: "node-role.kubernetes.io/node"
       containers:
         - name: kubecube
           image: {{ .Values.kubecube.image }}
@@ -90,14 +80,10 @@ spec:
               value: {{ .Values.kubecube.env.pivotCubeHost }}
             - name: JWT_SECRET
               value: {{ .Values.kubecube.env.jwtSecret }}
-            - name: INSTALLER_VERSION
-              value: {{ .Values.kubecube.env.installerVersion }}
+            - name: DEPENDENCE_JOB_IMAGE
+              value: {{ .Values.kubecube.env.dependenceJobImage }}
             - name: GIN_MODE
               value: release
-            - name: NODE_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
           volumeMounts:
             - name: cube-tls
               mountPath: "/etc/tls"

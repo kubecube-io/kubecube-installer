@@ -92,6 +92,7 @@ function params_process() {
   fi
 }
 
+# Deprecated when we do not need modify apiserver
 function configs_for_apiserver() {
   clog info "make configs for k8s api-server"
 
@@ -152,6 +153,7 @@ rules:
 EOF
 }
 
+# Deprecated when we do not need modify apiserver
 function alert_modify_apiserver() {
   echo -e "\033[32m================================================================================================\033[0m"
   echo -e "\033[32m IMPORTANT !!!                                                                                  \033[0m"

@@ -173,6 +173,15 @@ kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
 clog info "deploy webconsole and cloudshell"
 kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
 
+clog info "installing helm"
+if [[ $(arch) == x86_64 ]]; then
+  tar -zxvf /etc/kubecube/manifests/helm/helm-v3.5.4-linux-amd64.tar.gz > /dev/null
+  mv linux-amd64/helm /usr/local/bin/helm
+else
+  tar -zxvf /etc/kubecube/manifests/helm/helm-v3.6.2-linux-arm64.tar.gz > /dev/null
+  mv linux-arm64/helm /usr/local/bin/helm
+fi
+
 clog info "deploy kubecube"
 /usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/v1.0.0
 
@@ -182,9 +191,8 @@ clog debug "spin pid: ${spinpid}"
 trap 'kill ${spinpid} && exit 1' SIGINT
 while true
 do
-  cube_healthz=$(curl -s http://${IPADDR}:30007/healthz)
-  warden_healthz=$(curl -s -k https://${IPADDR}:31443/healthz)
-  if [[ ${cube_healthz} = "healthy" && ${warden_healthz} = "healthy" ]]; then
+  pivot_cluster_ready=$(kubectl get cluster pivot-cluster | awk '{print $2}' | sed -n '2p')
+  if [[ ${pivot_cluster_ready} = "normal" ]]; then
     echo
     echo -e "\033[32m========================================================\033[0m"
     echo -e "\033[32m========================================================\033[0m"

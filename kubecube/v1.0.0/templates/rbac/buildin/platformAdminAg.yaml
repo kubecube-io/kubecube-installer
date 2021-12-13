@@ -163,6 +163,7 @@ rules:
       - ingresses
       - ingresses/status
       - networkpolicies
+      - ingressclasses
     verbs:
       - get
       - list
@@ -473,6 +474,19 @@ rules:
     resources:
       - cephs
       - nfs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
+  - apiGroups:
+      - "*"
+    resources:
+      - externalresources
     verbs:
       - get
       - list

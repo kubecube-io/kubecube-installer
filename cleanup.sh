@@ -10,7 +10,7 @@ function kubecube_uninstall() {
   clog info "uninstalling kubecube"
 
   clog debug "uninstall kubecueb helm chart release"
-  helm uninstall kubecube
+  helm uninstall kubecube || true
 
   clog debug "remove kubecube files"
   rm -rf /etc/kubecube
@@ -35,7 +35,7 @@ function kubernetes_uninstall() {
   rm /usr/local/bin/kubeadm
   rm /usr/local/bin/kubectl
   rm /usr/local/bin/kubelet
-  rm /usr/local/bin/helm
+  rm /usr/local/bin/helm || true
 
   clog info "kubernetes uninstall success"
 }

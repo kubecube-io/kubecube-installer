@@ -46,3 +46,8 @@ os_arch=amd64
 ```bash
 /bin/bash offline_pkg_download.sh ${k8s_version} ${os_arch}
 ```
+
+### Build dependence image
+```bash
+docker build -f ./dependence.Dockerfile -t hub.c.163.com/kubecube/warden-dependence:latest .
+```

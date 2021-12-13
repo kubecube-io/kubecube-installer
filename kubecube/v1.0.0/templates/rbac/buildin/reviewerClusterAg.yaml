@@ -75,3 +75,24 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "*"  #monitoring.kubecube.io
+    resources:
+      - dashboards
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "*"
+    resources:
+      - externalresources
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update

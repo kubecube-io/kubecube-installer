@@ -116,6 +116,7 @@ rules:
       - ingresses
       - ingresses/status
       - networkpolicies
+      - ingressclasses
     verbs:
       - get
       - list
