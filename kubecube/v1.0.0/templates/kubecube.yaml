@@ -109,4 +109,3 @@ spec:
         - name: localtime
           hostPath:
             path: /etc/localtime
-
