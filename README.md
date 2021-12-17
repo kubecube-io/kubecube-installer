@@ -6,7 +6,7 @@ follow [doc](https://www.kubecube.io/docs/installation-guide/)
 set version
 
 ```bash
-KUBECUBE_VERSION=v1.0
+KUBECUBE_VERSION=v1.1
 ```
 
 ### All in one install

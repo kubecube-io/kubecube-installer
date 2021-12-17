@@ -13,61 +13,11 @@ rules:
       - "*"
     resources:
       - pods
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - pods/attach
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - pods/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - pods/execescalate
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - pods/exec
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - pods/portforward
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - pods/proxy
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - pods/log
     verbs:
       - get
@@ -77,21 +27,7 @@ rules:
       - "*"
     resources:
       - replicationcontrollers
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - replicationcontrollers/scale
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - replicationcontrollers/status
     verbs:
       - get
@@ -101,13 +37,6 @@ rules:
       - "*"
     resources:
       - persistentvolumeclaims
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - persistentvolumeclaims/status
     verbs:
       - get
@@ -117,29 +46,7 @@ rules:
       - "*"
     resources:
       - configmaps
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - endpoints
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - endpointslices
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - secrets
     verbs:
       - get
@@ -149,21 +56,7 @@ rules:
       - "*"
     resources:
       - services
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - services/proxy
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - services/status
     verbs:
       - get
@@ -181,101 +74,17 @@ rules:
       - "*"
     resources:
       - daemonsets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - daemonsets/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - deployments
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - deployments/rollback
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - deployments/scale
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - deployments/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - statefulsets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - statefulsets/scale
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - statefulsets/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - replicasets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - replicasets/scale
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - replicasets/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - controllerrevisions
     verbs:
       - get
@@ -285,13 +94,6 @@ rules:
       - "*"
     resources:
       - horizontalpodautoscalers
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - horizontalpodautoscalers/status
     verbs:
       - get
@@ -300,46 +102,9 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - verticalpodautoscalercheckpoints
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - verticalpodautoscalers
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - cronjobs
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - cronjobs/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - jobs
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - jobs/status
     verbs:
       - get
@@ -349,21 +114,7 @@ rules:
       - "*"
     resources:
       - ingresses
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - ingresses/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - networkpolicies
     verbs:
       - get
@@ -373,13 +124,6 @@ rules:
       - "*"
     resources:
       - poddisruptionbudgets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - poddisruptionbudgets/status
     verbs:
       - get
@@ -389,37 +133,9 @@ rules:
       - "*"
     resources:
       - bindings
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - events
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - limitranges
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - resourcequotas
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - resourcequotas/status
     verbs:
       - get
@@ -428,22 +144,7 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - localsubjectaccessreviews
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - rolebindings
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - roles
     verbs:
       - get
@@ -452,7 +153,10 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - podtemplates
+      - cronjobs
+      - cronjobs/status
+      - jobs
+      - jobs/status
     verbs:
       - get
       - list
@@ -460,16 +164,11 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - leases
-    verbs:
-      - get
-      - list
-      - watch
-  ### KubeCube resource below
-  - apiGroups:
-      - "*"
-    resources:
-      - cuberesourcequota/status
+      - bindings
+      - events
+      - limitranges
+      - resourcequotas
+      - resourcequotas/status
     verbs:
       - get
       - list
@@ -477,20 +176,22 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - cuberesourcequota/status
+      - horizontalpodautoscalers
+      - horizontalpodautoscalers/status
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - "*" #hnc.x-k8s.io
     resources:
-      - externalresources
+      - hierarchyconfigurations
+      - hncconfigurations
+      - subnamespaceanchors
     verbs:
       - get
       - list
       - watch
-  ### KubeCube dependence resource bellow
   - apiGroups:
       - "*"  #monitoring.kubecube.io
     resources:
@@ -500,161 +201,96 @@ rules:
       - list
       - watch
   - apiGroups:
+      - "*" #netease.com
+    resources:
+      - nodelogconfigs
+      - logconfigs
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - "*" #monitoring.coreos.com
     resources:
       - alertmanagerconfigs
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - alertmanagers
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - podmonitors
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - probes
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - prometheuses
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - prometheusrules
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
       - servicemonitors
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - "*" #storage.kubecube.io
     resources:
-      - thanosrulers
+      - cephs
+      - nfs
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - ""
     resources:
-      - networkpolicies
+      - namespaces
+      - namespaces/status
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - metrics.k8s.io
     resources:
-      - networksets
+      - pods
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  # reviewer has read authority of user
+  - apiGroups:
+      - user.kubecube.io
+    resources:
+      - users
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - user.kubecube.io
     resources:
-      - subnamespaceanchors
+      - users/status
+    verbs:
+      - get
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*" # olm
+      - ""
     resources:
-      - catalogsources
+      - persistentvolumes
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - "*" #apiextensions.k8s.io
     resources:
-      - clusterserviceversions
+      - customresourcedefinitions
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - "*" #storage.kubecube.io
     resources:
-      - installplans
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - operatorconditions
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - operatorgroups
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - subscriptions
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - packagemanifests
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*" #netease.com
-    resources:
-      - nodelogconfigs
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - logconfigs
+      - cephs
+      - nfs
     verbs:
       - get
       - list

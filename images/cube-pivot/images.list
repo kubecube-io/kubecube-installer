@@ -5,6 +5,7 @@ hub.c.163.com/kubecube/frontend:v1.1.0
 hub.c.163.com/kubecube/cube:v1.1.0
 hub.c.163.com/kubecube/warden:v1.1.0
 hub.c.163.com/kubecube/warden-init:v1.1.0
+hub.c.163.com/kubecube/warden-dependence:v1.1.0
 hub.c.163.com/kubecube/alertmanager:v0.21.0
 hub.c.163.com/kubecube/prometheus-config-reloader:v0.47.0
 hub.c.163.com/kubecube/k8s-sidecar:1.10.7

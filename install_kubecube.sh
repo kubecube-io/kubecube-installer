@@ -167,12 +167,6 @@ kubectl apply -f /etc/kubecube/manifests/previous/previous.yaml
 clog info "deploy frontend for kubecube"
 kubectl apply -f /etc/kubecube/manifests/frontend/frontend.yaml
 
-clog info "deploy audit server for kubecube"
-kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
-
-clog info "deploy webconsole and cloudshell"
-kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
-
 clog info "installing helm"
 if [[ $(arch) == x86_64 ]]; then
   tar -zxvf /etc/kubecube/manifests/helm/helm-v3.5.4-linux-amd64.tar.gz > /dev/null
@@ -210,4 +204,11 @@ done
 
 kubectl apply -f /etc/kubecube/manifests/previous/hotplug.yaml > /dev/null
 
+# process which used cluster of kubecube must install after kubecube
+# todo: audit and webconsole need update pkg dependence of kubecube
+clog info "deploy audit server for kubecube"
+kubectl apply -f /etc/kubecube/manifests/audit/audit.yaml
+
+clog info "deploy webconsole and cloudshell"
+kubectl apply -f /etc/kubecube/manifests/webconsole/webconsole.yaml
 

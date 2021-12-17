@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -o errexit
 set -o nounset
 set -o pipefail
 
@@ -9,11 +8,11 @@ OPT=$1
 function kubecube_uninstall() {
   clog info "uninstalling kubecube"
 
-  clog debug "uninstall kubecueb helm chart release"
-  helm uninstall kubecube || true
-
   clog debug "remove kubecube files"
   rm -rf /etc/kubecube
+
+  clog debug "uninstall kubecueb helm chart release"
+  helm uninstall kubecube || true
 
   clog info "kubecube uninstall success"
 }

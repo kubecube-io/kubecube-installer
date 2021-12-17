@@ -9,10 +9,13 @@ metadata:
   annotations:
     kubecube.io/sync: "true"
 rules:
+  # only has read authority of namespace cause
+  # subNamespace will replace it
   - apiGroups:
-      - "*"
+      - ""
     resources:
-      - componentstatuses
+      - namespaces
+      - namespaces/status
     verbs:
       - get
       - list
@@ -26,55 +29,7 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - namespaces
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - namespaces/status
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - nodes
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*"
-    resources:
-      - persistentvolumes
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "*" #apiextensions.k8s.io
-    resources:
-      - customresourcedefinitions
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - storage.k8s.io
-    resources:
-      - storageclasses
-    verbs:
-      - get
-      - list
-      - watch
-  ### KubeCube resource below
+  # tenant access to operate project
   - apiGroups:
       - tenant.kubecube.io
     resources:
@@ -101,34 +56,36 @@ rules:
       - get
       - patch
       - update
+  # access to operate cuberesourcequota
   - apiGroups:
-      - "*"
+      - quota.kubecube.io
     resources:
       - cuberesourcequota
     verbs:
-      - get
-      - list
-      - watch
       - create
       - delete
-      - deletecollection
+      - get
+      - list
       - patch
       - update
+      - watch
   - apiGroups:
-      - "*"
+      - quota.kubecube.io
     resources:
       - cuberesourcequota/finalizers
     verbs:
-      - get
-      - list
-      - watch
-      - create
-      - delete
-      - deletecollection
-      - patch
       - update
   - apiGroups:
-      - "*"
+      - quota.kubecube.io
+    resources:
+      - cuberesourcequota/status
+    verbs:
+      - get
+      - patch
+      - update
+  # tenant has read authority of user
+  - apiGroups:
+      - user.kubecube.io
     resources:
       - users
     verbs:
@@ -136,17 +93,40 @@ rules:
       - list
       - watch
   - apiGroups:
-      - "*"
+      - user.kubecube.io
     resources:
       - users/status
+    verbs:
+      - get
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - "*"
+      - ""
     resources:
-      - externalresources
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "*" #apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "*" #storage.kubecube.io
+    resources:
+      - cephs
+      - nfs
     verbs:
       - get
       - list
