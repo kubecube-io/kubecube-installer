@@ -6,7 +6,7 @@ follow [doc](https://www.kubecube.io/docs/installation-guide/)
 set version
 
 ```bash
-KUBECUBE_VERSION=v1.0
+KUBECUBE_VERSION=v1.1
 ```
 
 ### All in one install
@@ -45,4 +45,9 @@ os_arch=amd64
 
 ```bash
 /bin/bash offline_pkg_download.sh ${k8s_version} ${os_arch}
+```
+
+### Build dependence image
+```bash
+docker build -f ./dependence.Dockerfile -t hub.c.163.com/kubecube/warden-dependence:latest .
 ```

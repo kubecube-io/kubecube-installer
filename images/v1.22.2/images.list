@@ -1,10 +1,10 @@
-hub.c.163.com/kubecube/audit:v1.0.1
-hub.c.163.com/kubecube/cloudshell:v1.0.1
-hub.c.163.com/kubecube/webconsole:v1.0.1
-hub.c.163.com/kubecube/frontend:v1.0.2
-hub.c.163.com/kubecube/cube:v1.0.3
-hub.c.163.com/kubecube/warden:v1.0.3
-hub.c.163.com/kubecube/warden-init:v1.0.3
+hub.c.163.com/kubecube/audit:v1.1.0
+hub.c.163.com/kubecube/cloudshell:v1.1.0
+hub.c.163.com/kubecube/webconsole:v1.1.0
+hub.c.163.com/kubecube/frontend:v1.1.0
+hub.c.163.com/kubecube/cube:v1.1.0
+hub.c.163.com/kubecube/warden:v1.1.0
+hub.c.163.com/kubecube/warden-init:v1.1.0
 hub.c.163.com/kubecube/alertmanager:v0.21.0
 hub.c.163.com/kubecube/prometheus-config-reloader:v0.47.0
 hub.c.163.com/kubecube/k8s-sidecar:1.10.7
