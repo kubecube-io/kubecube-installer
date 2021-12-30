@@ -229,3 +229,69 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - namespaces/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - metrics.k8s.io
+    resources:
+      - pods
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  # reviewer has read authority of user
+  - apiGroups:
+      - user.kubecube.io
+    resources:
+      - users
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - user.kubecube.io
+    resources:
+      - users/status
+    verbs:
+      - get
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "*" #apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "*" #storage.kubecube.io
+    resources:
+      - cephs
+      - nfs
+    verbs:
+      - get
+      - list
+      - watch
