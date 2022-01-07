@@ -94,6 +94,8 @@ spec:
               mountPath: "/root/helmchartpkg"
             - name: localtime
               mountPath: /etc/localtime
+            - mountPath: /i18n
+              name: i18n-config
       volumes:
         - name: cube-tls
           secret:
@@ -109,3 +111,12 @@ spec:
         - name: localtime
           hostPath:
             path: /etc/localtime
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: en.toml
+                path: en.toml
+              - key: zh.toml
+                path: zh.toml
+            name: kubecube-language-config
+          name: i18n-config
