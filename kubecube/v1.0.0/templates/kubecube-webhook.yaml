@@ -100,3 +100,26 @@ webhooks:
         resources:
           - hotplugs
     sideEffects: None
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      caBundle: {{ .Values.webhook.caBundle }}
+      service:
+        name: kubecube
+        namespace: kubecube-system
+        port: 9443
+        path: /validate-cluster-kubecube-io-v1-cluster
+    failurePolicy: Fail
+    name: vcluster.kb.io
+    rules:
+      - apiGroups:
+          - cluster.kubecube.io
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - clusters
+    sideEffects: None
