@@ -64,3 +64,6 @@ data:
     createUser = "创建用户"
     updateUser = "更新用户"
     deleteKey = "删除密钥"
+    createKey = "创建密钥"
+    exteranlAccess = "更新服务对外服务端口"
+    yamlDeploy = "部署deploy"
