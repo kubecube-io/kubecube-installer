@@ -66,4 +66,4 @@ data:
     deleteKey = "删除密钥"
     createKey = "创建密钥"
     exteranlAccess = "更新服务对外服务端口"
-    yamlDeploy = "部署deploy"
+    yamlDeploy = "使用yaml部署"
