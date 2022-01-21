@@ -31,9 +31,12 @@ data:
     key = "Key"
 
     # description
-    createUser = "createUser"
-    updateUser = "updateUser"
-    deleteKey = "deleteKey"
+    createUser = "create user"
+    updateUser = "update user"
+    deleteKey = "delete key"
+    createKey = "create key"
+    exteranlAccess = "update service externalAccess"
+    yamlDeploy = "deploy by yaml"
 
   zh.toml: |
     # method
