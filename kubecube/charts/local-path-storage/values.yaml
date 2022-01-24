@@ -1,0 +1,13 @@
+# local-path-config/deployment.yaml
+provisioner:
+  image:
+    repository: hub.c.163.com/kubecube/rancher/local-path-provisioner
+    pullPolicy: IfNotPresent
+    tag: v0.0.19-m
+
+# local-path-config/configmap.yaml
+configmap:
+  image:
+    repository: hub.c.163.com/kubecube/busybox
+    pullPolicy: IfNotPresent
+    tag: latest-m

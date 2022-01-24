@@ -1,0 +1,268 @@
+# check1: sre 能否允许驼峰
+
+global:
+  dependencesEnable:
+    hnc: "true"
+    ingressController: "true"
+    localPathStorage: "true"
+    metricServer: "true"
+
+  componentsEnable:
+    kubecube: "true"
+    warden: "false"
+    audit: "true"
+    webconsole: "true"
+    cloudshell: "true"
+    frontend: "true"
+
+  imagePullSecrets: []  # check3: 开源 imagePullSecret 需要支持数组和不设置
+#    - name: harbor-qingzhou
+
+# certs used by kubecube components
+certs:
+  tls:
+    key: "Cg=="
+    crt: "Cg=="
+  ca:
+    key: "Cg=="
+    crt: "Cg=="
+
+kubecube:
+  # kubecube/deployment.yaml
+  replicas: 1
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 500m
+    #   memory: 1Gi
+    # requests:
+    #   cpu: 500m
+    #   memory: 1Gi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+  image:
+    repository: hub.c.163.com/kubecube/cube
+    pullPolicy: IfNotPresent
+    tag: v1.1.1-test3
+  args:
+    logLevel: info
+    securePort: 7443
+    webhookServerPort: 9443
+    leaderElect: true
+  env:
+    wardenImage: hub.c.163.com/kubecube/warden:v1.1.1-test2
+    wardenInitImage: hub.c.163.com/kubecube/warden-init:v1.1.0
+    dependenceJobImage: hub.c.163.com/kubecube/warden-dependence:latest
+    pivotCubeSvc: kubecube.kubecube-system:7443
+    pivotCubeHost: "Cg=="
+    jwtSecret: "56F0D8DB90241C6E"
+
+  # kubecube/pivot-cluster.yaml
+  pivotCluster:
+    kubernetesAPIEndpoint: "Cg=="
+    kubeconfig: "Cg=="
+
+  # kubecube/kubecube-auth-config.yaml
+  authConfig:
+    github:
+      enabled: false
+      clientId: ""
+      clientSecret: ""
+
+warden:
+  # warden/deployment.yaml
+  replicas: 1
+  nodeSelector: { }
+  affinity: { }
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubecube.io
+      operator: Exists
+  containers:
+    warden:
+      image:
+        repository: hub.c.163.com/kubecube/warden
+        pullPolicy: IfNotPresent
+        tag: v1.1.1-test2
+      resources: {}
+        # If you do want to specify resources, uncomment the following
+        # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#        limits:
+#          cpu: 300m
+#          memory: 512Mi
+#        requests:
+#          cpu: 300m
+#          memory: 512Mi
+      args:
+        cluster: "pivot-cluster"  # member cluster name
+        inMemberCluster: false    # is member cluster or not
+        pivotCubeHost: "kubecube.kubecube-system:7443"  # kubecube address
+      env:
+        JWTSecret: "56F0D8DB90241C6E"  # jwt secret for jwt token gen
+    downloader:
+      image:
+        repository: hub.c.163.com/kubecube/warden-init
+        pullPolicy: IfNotPresent
+        tag: v1.1.0
+      env:
+        downloadCharts: "true"  # download charts or use local
+        downloadURL: "" # where to download charts, empty means use default
+
+  # warden/secret.yaml
+  kubeconfigSecret:
+    localCluster: "Cg=="  # local cluster kubeconfig base64
+    pivotCluster: "Cg=="  # pivot cluster kubeconfig base64
+
+audit:
+  # audit/deployment.yaml
+  replicas: 1
+  image:
+    repository: hub.c.163.com/kubecube/audit
+    pullPolicy: IfNotPresent
+    tag: v1.1.0
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+webconsole:
+  # webconsole/deployment.yaml
+  replicas: 1
+  image:
+    repository: hub.c.163.com/kubecube/webconsole
+    pullPolicy: IfNotPresent
+    tag: v1.1.0
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+cloudshell:
+  # cloudshell/deployment.yaml
+  replicas: 1
+  image:
+    repository: hub.c.163.com/kubecube/cloudshell
+    pullPolicy: IfNotPresent
+    tag: v1.1.0
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+frontend:
+  # frontend/deployment.yaml
+  replicas: 1
+  image:
+    repository: hub.c.163.com/kubecube/frontend
+    pullPolicy: IfNotPresent
+    tag: v1.1.0
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+# override hnc sub chart
+hnc:
+  # hnc/deployment.yaml
+  replicas: 1
+  image:
+    repository: hub.c.163.com/kubecube/hnc/hnc-manager
+    pullPolicy: IfNotPresent
+    tag: v0.8.0-kubecube.1.1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 300Mi
+    requests:
+      cpu: 100m
+      memory: 300Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+# override ingress-controller sub chart
+ingress-controller:
+  # ingress-controller/deployment.yaml
+  controller:
+    image:
+      repository: hub.c.163.com/kubecube/ingress-nginx/controller
+      pullPolicy: IfNotPresent
+      tag: v0.46.0-m
+  # ingress-controller/job.yaml
+  job:
+    image:
+      repository: hub.c.163.com/kubecube/jettech/kube-webhook-certgen
+      pullPolicy: IfNotPresent
+      tag: v1.5.1-m
+
+# override local-path-storage sub chart
+local-path-storage:
+  # local-path-config/deployment.yaml
+  provisioner:
+    image:
+      repository: hub.c.163.com/kubecube/rancher/local-path-provisioner
+      pullPolicy: IfNotPresent
+      tag: v0.0.19-m
+
+  # local-path-config/configmap.yaml
+  configmap:
+    image:
+      repository: hub.c.163.com/kubecube/busybox
+      pullPolicy: IfNotPresent
+      tag: latest-m
+
+# override metrics-server sub chart
+metrics-server:
+  image:
+    repository: hub.c.163.com/kubecube/rancher/metrics-server
+    pullPolicy: IfNotPresent
+    tag: v0.4.1-m
+

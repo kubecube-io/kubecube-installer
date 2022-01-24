@@ -1,5 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kubecube-feature-config
-  namespace: kubecube-system

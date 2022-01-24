@@ -1,0 +1,12 @@
+{{- if and (eq .Values.global.componentsEnable.kubecube "true") (eq .Values.global.componentsEnable.warden "false") }}
+apiVersion: cluster.kubecube.io/v1
+kind: Cluster
+metadata:
+  name: pivot-cluster
+spec:
+  kubernetesAPIEndpoint: {{ .Values.kubecube.pivotCluster.kubernetesAPIEndpoint }}
+  isMemberCluster: false
+  description: "There is a pivot cluster dating with KubeCube"
+  kubeconfig: {{ .Values.kubecube.pivotCluster.kubeconfig }}
+---
+{{- end }}

@@ -75,9 +75,7 @@ if [[ ${CUSTOMIZE} = "true" ]]; then
   echo -e "\033[32m 'cd /etc/kubecube/manifests'                   \033[0m"
   echo -e "\033[32m 2. Please modify install.conf                  \033[0m"
   echo -e "\033[32m 'vi install.conf'                              \033[0m"
-  echo -e "\033[32m 3. Please modify cube.conf(optional)           \033[0m"
-  echo -e "\033[32m 'vi cube.conf'                                 \033[0m"
-  echo -e "\033[32m 4. Confirm every args then do command below:   \033[0m"
+  echo -e "\033[32m 3. Confirm every args then do command below:   \033[0m"
   echo -e "\033[32m '/bin/bash install.sh'                         \033[0m"
   echo -e "\033[32m================================================\033[0m"
   exit 0

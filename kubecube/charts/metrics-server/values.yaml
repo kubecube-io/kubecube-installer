@@ -1,0 +1,7 @@
+image:
+  repository: hub.c.163.com/kubecube/rancher/metrics-server
+  pullPolicy: IfNotPresent
+  tag: v0.4.1-m
+tolerations:
+  - key: node-role.kubernetes.io/master
+    operator: Exists

@@ -19,11 +19,13 @@ ARG arch=amd64
 ARG kubectl_version=v1.22.2
 
 # load dependces into image
-COPY hnc/hnc.yaml /etc/kubecube/manifests/hnc/hnc.yaml
-COPY ingress-controller/ingress-controller.yaml /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml
-COPY local-path-storage/local-path-storage.yaml /etc/kubecube/manifests/local-path-storage/local-path-storage.yaml
-COPY metrics-server/metrics-server.yaml /etc/kubecube/manifests/metrics-server/metrics-server.yaml
+COPY kubecube /etc/kubecube/manifests/kubecube
+COPY utils.sh /etc/kubecube/manifests/utils.sh
 COPY install_third_dependence.sh install_third_dependence.sh
+
+# add helm bin
+ADD helm/helm-*-${arch}.tar.gz .
+RUN chmod +x ./linux-${arch}/helm && mv ./linux-${arch}/helm /bin/helm
 
 # downloads kubectl
 RUN wget https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/${arch}/kubectl --no-check-certificate

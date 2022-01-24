@@ -7,6 +7,7 @@ BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
 
+source /etc/kubecube/manifests/install.conf
 source /etc/kubecube/manifests/utils.sh
 
 function docker_bin_get() {
@@ -347,12 +348,6 @@ function images_download() {
 function preparation() {
   clog info "doing previous preparation"
 
-#  clog debug "close firewall and selinux"
-#  systemctl stop firewalld.service
-#  systemctl disable firewalld.service
-#  sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-#  setenforce 0 || true # ignore error
-
   clog debug "closing swap"
   swapoff -a
   sed -i '/swap/s/^/#/g' /etc/fstab
@@ -381,13 +376,13 @@ function make_cluster_configuration (){
   fi
 
 API_SERVER_CONF=$(cat <<- EOF
-# set control plane components listen on LOCAL_IP
+# set control plane components listen on IPADDR
 controllerManager:
   extraArgs:
-    bind-address: ${LOCAL_IP}
+    bind-address: ${IPADDR}
 scheduler:
   extraArgs:
-    bind-address: ${LOCAL_IP}
+    bind-address: ${IPADDR}
 imageRepository: ${REGISTRY}
 EOF
 )
@@ -401,7 +396,7 @@ EOF
 
 if [ -z ${CONTROL_PLANE_ENDPOINT} ]; then
   clog debug "vip not be set, use node ip"
-  CONTROL_PLANE_ENDPOINT=${LOCAL_IP}
+  CONTROL_PLANE_ENDPOINT=${IPADDR}
 fi
 
 cat >/etc/cube/kubeadm/init.config <<EOF
@@ -428,8 +423,8 @@ function Install_Kubernetes_Master (){
   cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
   chown $(id -u):$(id -g) ${HOME}/.kube/config
 
-  clog debug "installing calico"
-  kubectl apply -f /etc/kubecube/manifests/calico/calico.yaml > /dev/null
+  clog debug "installing cni ${CNI}"
+  kubectl apply -f /etc/kubecube/manifests/cni/${CNI} > /dev/null
 
   sleep 7 >/dev/null
   clog debug "inspect node"
@@ -491,7 +486,6 @@ function Main() {
   mkdir -p /etc/kubecube/down
   mkdir -p /etc/kubecube/bin
 
-  params_process
   docker_bin_get
   k8s_bin_get
   install_docker

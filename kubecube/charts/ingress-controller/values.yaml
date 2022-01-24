@@ -1,0 +1,12 @@
+# ingress-controller/deployment.yaml
+controller:
+  image:
+    repository: hub.c.163.com/kubecube/ingress-nginx/controller
+    pullPolicy: IfNotPresent
+    tag: v0.46.0-m
+# ingress-controller/job.yaml
+job:
+  image:
+    repository: hub.c.163.com/kubecube/jettech/kube-webhook-certgen
+    pullPolicy: IfNotPresent
+    tag: v1.5.1-m

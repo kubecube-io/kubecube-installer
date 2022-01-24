@@ -1,0 +1,8 @@
+{{- if eq .Values.global.dependencesEnable.hnc "true" }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: controller-manager
+  name: hnc-system
+  {{- end }}

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-# note: this script should be idempotent
+source /etc/kubecube/manifests/utils.sh
+
+# note: this script should be idempotent.
+# just used in warden distribution mode.
 
 function init_etcd_secret (){
   kubectl create namespace kubecube-monitoring --dry-run=client -o yaml | kubectl apply -f -
@@ -16,29 +19,20 @@ then
   kubectl get nodes | grep -v "NAME" | awk '{print $1}' | sed -n '1p' | xargs -t -i kubectl taint node {} node-role.kubernetes.io/master-
 fi
 
-echo "[INFO]deploy local-path-storage"
-kubectl apply -f /etc/kubecube/manifests/local-path-storage/local-path-storage.yaml > /dev/null
+echo "[INFO] deploying metrics-server"
+helm install metrics-server /etc/kubecube/manifests/kubecube/charts/metrics-server
 
-echo "[INFO]deploy metrics-server"
-kubectl apply -f /etc/kubecube/manifests/metrics-server/metrics-server.yaml > /dev/null
+echo "[INFO] deploying ingress-controller"
+helm install ingress-controller /etc/kubecube/manifests/kubecube/charts/ingress-controller
 
-# nginx ingress controller doesn't support arm64
-echo "[INFO]deploy nginx ingress controller"
-kubectl apply -f /etc/kubecube/manifests/ingress-controller/ingress-controller.yaml > /dev/null
+echo "[INFO] deploying local-path-storage"
+helm install local-path-storage /etc/kubecube/manifests/kubecube/charts/local-path-storage
 
-echo "[INFO]init etcd-certs secret for etcd monitoring"
-init_etcd_secret
+echo "[INFO] deploying hnc"
+helm install hnc /etc/kubecube/manifests/kubecube/charts/hnc
 
-echo "[INFO]deploy hnc-manager, and wait for ready"
-kubectl apply -f /etc/kubecube/manifests/hnc/hnc.yaml > /dev/null
-
-hnc_ready="0/2"
-while [ ${hnc_ready} != "2/2" ]
-do
-  sleep 5 > /dev/null
-  hnc_ready=$(kubectl get pod -n hnc-system | awk '{print $2}' | sed -n '2p')
-done
-sleep 20 > /dev/null
+# we just need wait for hnc ready cause webhook
+wait_pod_ready "control-plane=controller-manager" "hnc-system"
 
 echo "[INFO]third dependence install success"
 
