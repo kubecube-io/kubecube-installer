@@ -7,7 +7,11 @@ params_process
 
 # install k8s or not
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
-  /bin/bash /etc/kubecube/manifests/install_k8s.sh
+  if [[ ${CONTAINERD_RUNTIME} = "true" ]]; then
+    /bin/bash /etc/kubecube/manifests/install_k8s_containerd.sh
+  else
+    /bin/bash /etc/kubecube/manifests/install_k8s.sh
+  fi
   if [ "$?" -ne 0 ]; then
     clog error "install kubernetes failed"
       exit 1

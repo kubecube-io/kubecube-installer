@@ -31,6 +31,17 @@ function env_check() {
       env_ok=false
     fi
 
+    if command -v apt >/dev/null 2>&1; then
+      echo -e 'install libseccomp by apt'
+      apt update
+      apt install libseccomp-dev -y
+    else
+      echo -e 'install libseccomp by yum'
+      yum update
+      yum install libseccomp -y
+    fi
+
+
     echo -e "\033[32m|---------------------------------------------------|\033[0m"
     echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |\033[0m"
     echo -e "\033[32m|---------------------------------------------------|\033[0m"
