@@ -9,54 +9,64 @@ CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
 source /etc/kubecube/manifests/utils.sh
 
 function containerd_installed(){
-CONTAINERD_VERSION=1.5.5
-if command -v crictl >/dev/null 2>&1; then
-  clog info 'exists containerd'
-  return
-fi
+  CONTAINERD_VERSION=1.5.5
+  #disable docker if exist
+  systemctl disable docker --now || true
 
-os_arch="amd64"
-if [[ $(arch) == aarch64 ]]; then
-  os_arch="arm64"
-fi
+  if command -v crictl >/dev/null 2>&1; then
+    clog info 'exists containerd'
+    return
+  fi
 
-cat <<EOF | tee /etc/modules-load.d/containerd.conf
+  os_arch="amd64"
+  if [[ $(arch) == aarch64 ]]; then
+    os_arch="arm64"
+  fi
+
+  wget https://kubecube.nos-eastchina1.126.net/containerd/"$CONTAINERD_VERSION"/cri-containerd-cni-"$CONTAINERD_VERSION"-linux-$os_arch.tar.gz -O containerd.tar.gz
+
+  tar -C / -xzf containerd.tar.gz
+  rm -rf containerd.tar.gz
+  echo "export PATH=$PATH:/usr/local/bin:/usr/local/sbin" >> /etc/profile
+  source /etc/profile
+  if command -v crictl >/dev/null 2>&1; then
+    clog info "install containerd success"
+  else
+    clog error "install containerd fail"
+    exit 1
+  fi
+}
+
+function containerd_configuration() {
+  #configuration net
+  cat <<EOF | tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
 EOF
-modprobe overlay
-modprobe br_netfilter
+  modprobe overlay
+  modprobe br_netfilter
 
-cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+  cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
-sysctl --system
+  sysctl --system
 
-wget https://kubecube.nos-eastchina1.126.net/containerd/"$CONTAINERD_VERSION"/cri-containerd-cni-"$CONTAINERD_VERSION"-linux-$os_arch.tar.gz -O containerd.tar.gz
-tar -C / -xzf containerd.tar.gz
-rm -rf containerd.tar.gz
+  #configuration containerd
+  mkdir /etc/containerd || true
+  containerd config default > /etc/containerd/config.toml
+  sed -i '/SystemdCgroup = false/d' /etc/containerd/config.toml
+  sed -i '/containerd.runtimes.runc.options/a\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true' /etc/containerd/config.toml
+  systemctl daemon-reload
+  systemctl enable containerd --now || true
 
-echo "export PATH=$PATH:/usr/local/bin:/usr/local/sbin" >> /etc/profile
-source /etc/profile
-if command -v crictl >/dev/null 2>&1; then
-  clog info "install containerd success"
-else
-  clog error "install containerd fail"
-  exit 1
-fi
-mkdir /etc/containerd
-containerd config default > /etc/containerd/config.toml
-sed -i '/SystemdCgroup = false/d' /etc/containerd/config.toml
-sed -i '/containerd.runtimes.runc.options/a\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true' /etc/containerd/config.toml
-systemctl daemon-reload
-systemctl enable containerd --now || true
-if [[ "$ZONE" == cn ]];then
-  sed -i 's|k8s.gcr.io/pause|registry.cn-hangzhou.aliyuncs.com/k8sxio/pause|' /etc/containerd/config.toml
-  ctr -n k8s.io i pull registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 || true
-  ctr -n k8s.io i tag registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 k8s.gcr.io/pause:3.5 || true
-fi
+  #configuration pause
+  if [[ "$ZONE" == cn ]];then
+    sed -i 's|k8s.gcr.io/pause|registry.cn-hangzhou.aliyuncs.com/k8sxio/pause|' /etc/containerd/config.toml
+    ctr -n k8s.io i pull registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 || true
+    ctr -n k8s.io i tag registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 k8s.gcr.io/pause:3.5 || true
+  fi
 }
 
 function k8s_bin_get() {
@@ -318,6 +328,7 @@ function Main() {
 
   params_process
   containerd_installed
+  containerd_configuration
   k8s_bin_get
   images_download
 
