@@ -1,3 +1,7 @@
+global:
+  dependencesEnable:
+    ingressController: "true"
+
 # ingress-controller/deployment.yaml
 controller:
   image:

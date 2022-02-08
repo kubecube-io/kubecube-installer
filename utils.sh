@@ -123,6 +123,21 @@ function kubectl_with_retry() {
     return ${ret}
 }
 
+function helm_download() {
+  clog info "download helm bin"
+  if [[ $(arch) == x86_64 ]]; then
+    wget https://kubecube.nos-eastchina1.126.net/helm/helm-v3.5.4-linux-amd64.tar.gz -O helm.tar.gz
+    tar -xzvf helm.tar.gz > /dev/null
+    chmod +x linux-amd64/helm
+    mv linux-amd64/helm /usr/local/bin/helm
+  else
+    wget https://kubecube.nos-eastchina1.126.net/helm/helm-v3.6.2-linux-arm64.tar.gz -O helm.tar.gz
+    tar -xzvf helm.tar.gz > /dev/null
+    chmod +x linux-arm64/helm
+    mv linux-arm64/helm /usr/local/bin/helm
+  fi
+}
+
 # todo: sign_cert sign cert for given sans
 function sign_cert() {
   clog info "signing cert..."

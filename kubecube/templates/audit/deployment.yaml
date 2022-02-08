@@ -43,5 +43,25 @@ spec:
           env:
             - name: JWT_SECRET
               value: "56F0D8DB90241C6E"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
 ---
 {{- end }}

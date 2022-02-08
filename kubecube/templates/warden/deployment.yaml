@@ -51,6 +51,26 @@ spec:
           name: warden
           resources:
           {{- toYaml .Values.warden.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /readyz
+              port: 9778
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 9778
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
           volumeMounts:
             - mountPath: /etc/tls
               name: cube-tls-secret
@@ -66,9 +86,9 @@ spec:
       initContainers:
         - env:
             - name: DOWNLOAD_CHARTS
-              value: {{ .Values.warden.containers.downloader.env.downloadCharts }}
+              value: "{{ .Values.warden.containers.downloader.env.downloadCharts }}"
             - name: DOWNLOAD_URL
-              value: {{ .Values.warden.containers.downloader.env.downloadURL }}
+              value: "{{ .Values.warden.containers.downloader.env.downloadURL }}"
           image: {{ .Values.warden.containers.downloader.image.repository}}:{{ .Values.warden.containers.downloader.image.tag | default "latest" }}
           imagePullPolicy: {{ .Values.warden.containers.downloader.image.pullPolicy }}
           name: downloader

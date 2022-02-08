@@ -87,6 +87,7 @@ fi
 
 # install KubeCube as pivot cluster
 if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
+  helm_download
   /bin/bash /etc/kubecube/manifests/install_kubecube.sh
   if [ "$?" -ne 0 ]; then
       clog error "install kubecube failed"
@@ -97,7 +98,7 @@ fi
 # add member cluster to pivot
 if [[ ${INSTALL_KUBECUBE_MEMBER} = "true" ]]; then
 # invoke cluster register api of kubecube
-curl -s -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"${LOCAL_IP}:6443\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"this is member cluster\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}" >/dev/null
+curl -s -k -H "Content-type: application/json" -X POST https://${KUBECUBE_HOST}:30443/api/v1/cube/clusters/register -d "{\"apiVersion\":\"cluster.kubecube.io/v1\",\"kind\":\"Cluster\",\"metadata\":{\"name\":\"${MEMBER_CLUSTER_NAME}\"},\"spec\":{\"kubernetesAPIEndpoint\":\"$(hostname -I |awk '{print $1}'):6443\",\"networkType\":\"calico\",\"isMemberCluster\":true,\"description\":\"this is member cluster\",\"kubeconfig\":\"$(cat /root/.kube/config | base64 -w 0)\"}}" >/dev/null
 if [[ $? = 0 ]]; then
   echo -e "\033[32m================================================\033[0m"
   echo -e "\033[32m             add cluster success!               \033[0m"

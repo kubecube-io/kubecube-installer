@@ -61,6 +61,26 @@ spec:
               value: {{ .Values.kubecube.env.dependenceJobImage }}
             - name: GIN_MODE
               value: release
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 7777
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 7777
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
           volumeMounts:
             - name: cube-tls
               mountPath: "/etc/tls"

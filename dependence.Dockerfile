@@ -20,11 +20,10 @@ ARG kubectl_version=v1.22.2
 
 # load dependces into image
 COPY kubecube /etc/kubecube/manifests/kubecube
-COPY utils.sh /etc/kubecube/manifests/utils.sh
 COPY install_third_dependence.sh install_third_dependence.sh
 
 # add helm bin
-ADD helm/helm-*-${arch}.tar.gz .
+ADD helm.tar.gz .
 RUN chmod +x ./linux-${arch}/helm && mv ./linux-${arch}/helm /bin/helm
 
 # downloads kubectl

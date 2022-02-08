@@ -63,6 +63,7 @@ kubecube:
 
   # kubecube/pivot-cluster.yaml
   pivotCluster:
+    name: "pivot-cluster"
     kubernetesAPIEndpoint: "Cg=="
     kubeconfig: "Cg=="
 
@@ -112,7 +113,7 @@ warden:
         tag: v1.1.0
       env:
         downloadCharts: "true"  # download charts or use local
-        downloadURL: "" # where to download charts, empty means use default
+        downloadURL: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz" # where to download charts, empty means use default
 
   # warden/secret.yaml
   kubeconfigSecret:

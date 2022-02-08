@@ -2,7 +2,7 @@
 apiVersion: cluster.kubecube.io/v1
 kind: Cluster
 metadata:
-  name: pivot-cluster
+  name: {{ .Values.kubecube.pivotCluster.name }}
 spec:
   kubernetesAPIEndpoint: {{ .Values.kubecube.pivotCluster.kubernetesAPIEndpoint }}
   isMemberCluster: false

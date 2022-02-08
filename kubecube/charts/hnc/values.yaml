@@ -1,3 +1,7 @@
+global:
+  dependencesEnable:
+    hnc: "true"
+
 # hnc/deployment.yaml
 replicas: 1
 image:

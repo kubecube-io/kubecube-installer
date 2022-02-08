@@ -1,3 +1,7 @@
+global:
+  dependencesEnable:
+    localPathStorage: "true"
+
 # local-path-config/deployment.yaml
 provisioner:
   image:

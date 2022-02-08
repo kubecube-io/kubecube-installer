@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source /etc/kubecube/manifests/utils.sh
-
 # note: this script should be idempotent.
 # just used in warden distribution mode.
 
@@ -30,9 +28,6 @@ helm install local-path-storage /etc/kubecube/manifests/kubecube/charts/local-pa
 
 echo "[INFO] deploying hnc"
 helm install hnc /etc/kubecube/manifests/kubecube/charts/hnc
-
-# we just need wait for hnc ready cause webhook
-wait_pod_ready "control-plane=controller-manager" "hnc-system"
 
 echo "[INFO]third dependence install success"
 

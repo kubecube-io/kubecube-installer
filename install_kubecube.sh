@@ -102,15 +102,6 @@ make_hotplug
 sign_cert
 render_values
 
-clog info "installing helm"
-if [[ $(arch) == x86_64 ]]; then
-  tar -zxvf /etc/kubecube/manifests/helm/helm-v3.5.4-linux-amd64.tar.gz > /dev/null
-  mv linux-amd64/helm /usr/local/bin/helm
-else
-  tar -zxvf /etc/kubecube/manifests/helm/helm-v3.6.2-linux-arm64.tar.gz > /dev/null
-  mv linux-arm64/helm /usr/local/bin/helm
-fi
-
 clog info "deploy kubecube"
 /usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube
 

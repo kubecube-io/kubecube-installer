@@ -1,4 +1,4 @@
-{{- if eq .Values.global.componentsEnable.warden "true" }}
+{{- if and (eq .Values.global.componentsEnable.kubecube "false") (eq .Values.global.componentsEnable.warden "true") }}
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
@@ -9,7 +9,7 @@ webhooks:
       - v1
       - v1beta1
     clientConfig:
-      caBundle: {{ .Values.webhook.caBundle }}
+      caBundle: {{ .Values.certs.ca.crt }}
       service:
         name: warden
         namespace: kubecube-system
@@ -33,7 +33,7 @@ webhooks:
       - v1
       - v1beta1
     clientConfig:
-      caBundle: {{ .Values.webhook.caBundle }}
+      caBundle: {{ .Values.certs.ca.crt }}
       service:
         name: warden
         namespace: kubecube-system

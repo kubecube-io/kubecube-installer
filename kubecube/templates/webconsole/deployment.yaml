@@ -43,5 +43,25 @@ spec:
             - containerPort: 9081
           resources:
           {{- toYaml .Values.webconsole.resources | nindent 12 }}
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 9081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 3
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /leader
+              port: 9081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 3
 ---
 {{- end }}

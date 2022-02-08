@@ -1,3 +1,7 @@
+global:
+  dependencesEnable:
+    metricServer: "true"
+
 image:
   repository: hub.c.163.com/kubecube/rancher/metrics-server
   pullPolicy: IfNotPresent
