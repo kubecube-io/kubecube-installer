@@ -47,14 +47,14 @@ kubecube:
   image:
     repository: hub.c.163.com/kubecube/cube
     pullPolicy: IfNotPresent
-    tag: v1.1.1-test3
+    tag: v1.1.1-test8
   args:
     logLevel: info
     securePort: 7443
     webhookServerPort: 9443
     leaderElect: true
   env:
-    wardenImage: hub.c.163.com/kubecube/warden:v1.1.1-test2
+    wardenImage: hub.c.163.com/kubecube/warden:v1.1.1-test4
     wardenInitImage: hub.c.163.com/kubecube/warden-init:v1.1.0
     dependenceJobImage: hub.c.163.com/kubecube/warden-dependence:latest
     pivotCubeSvc: kubecube.kubecube-system:7443
@@ -90,7 +90,7 @@ warden:
       image:
         repository: hub.c.163.com/kubecube/warden
         pullPolicy: IfNotPresent
-        tag: v1.1.1-test2
+        tag: v1.1.1-test4
       resources: {}
         # If you do want to specify resources, uncomment the following
         # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
