@@ -29,8 +29,8 @@ spec:
       hostNetwork: true
       containers:
         - name: controller
-          image: {{ .Values.controller.image.repository}}:{{ .Values.controller.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.ingressController }}"
+          imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
               exec:

@@ -2,16 +2,21 @@ global:
   dependencesEnable:
     localPathStorage: "true"
 
-# local-path-config/deployment.yaml
-provisioner:
-  image:
-    repository: hub.c.163.com/kubecube/rancher/local-path-provisioner
-    pullPolicy: IfNotPresent
-    tag: v0.0.19-m
+  # kubecube hub config
+  hub:
+    registry: hub.c.163.com
+    project: kubecube
+    username: kubecube
+    password: XXX
+    email: kubecube@163.com
 
-# local-path-config/configmap.yaml
-configmap:
-  image:
-    repository: hub.c.163.com/kubecube/busybox
-    pullPolicy: IfNotPresent
-    tag: latest-m
+  # kubecube all images
+  images:
+    localPathStorageProvisioner: rancher/local-path-provisioner:v0.0.19-m
+    localPathStorageConfigmap: busybox:latest-m
+
+## local-path-config/deployment.yaml
+#provisioner:
+#
+## local-path-config/configmap.yaml
+#configmap:

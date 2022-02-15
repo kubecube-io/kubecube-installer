@@ -37,8 +37,8 @@ spec:
             - name: JWT_SECRET
               value: 56F0D8DB90241C6E
           name: kubecube-webconsole
-          image: {{ .Values.webconsole.image.repository}}:{{ .Values.webconsole.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.webconsole.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.webconsole }}"
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9081
           resources:

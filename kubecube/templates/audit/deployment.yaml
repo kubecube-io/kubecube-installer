@@ -34,8 +34,8 @@ spec:
       {{- end }}
       containers:
         - name: kubecube-audit
-          image: {{ .Values.audit.image.repository}}:{{ .Values.audit.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.audit.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.audit }}"
+          imagePullPolicy: IfNotPresent
           resources:
           {{- toYaml .Values.audit.resources | nindent 12 }}
           ports:

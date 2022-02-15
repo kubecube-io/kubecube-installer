@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
         - name: create
-          image: {{ .Values.job.image.repository }}:{{ .Values.job.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.job.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.ingressControllerJob }}"
+          imagePullPolicy: IfNotPresent
           args:
             - create
             - --host=ingress-nginx-controller-admission,ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
@@ -63,8 +63,8 @@ spec:
     spec:
       containers:
         - name: patch
-          image: {{ .Values.job.image.repository }}:{{ .Values.job.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.job.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.ingressControllerJob }}"
+          imagePullPolicy: IfNotPresent
           args:
             - patch
             - --webhook-name=ingress-nginx-admission

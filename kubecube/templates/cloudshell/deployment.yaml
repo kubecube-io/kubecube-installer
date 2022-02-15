@@ -36,8 +36,8 @@ spec:
           name: localtime
       containers:
         - name: cloud-shell
-          image: {{ .Values.cloudshell.image.repository}}:{{ .Values.cloudshell.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.cloudshell.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.cloudshell }}"
+          imagePullPolicy: IfNotPresent
           terminationMessagePath: "/dev/termination-log"
           terminationMessagePolicy: "File"
           volumeMounts:

@@ -34,8 +34,8 @@ spec:
       {{- end }}
       containers:
         - name: nginx
-          image: {{ .Values.frontend.image.repository}}:{{ .Values.frontend.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.frontend }}"
+          imagePullPolicy: IfNotPresent
           resources:
           {{- toYaml .Values.frontend.resources | nindent 12 }}
           lifecycle:

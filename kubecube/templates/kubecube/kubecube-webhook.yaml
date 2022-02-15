@@ -8,7 +8,7 @@ webhooks:
       - v1
       - v1beta1
     clientConfig:
-      caBundle: {{ .Values.certs.ca.crt }}
+      caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
         namespace: kubecube-system
@@ -32,7 +32,7 @@ webhooks:
       - v1
       - v1beta1
     clientConfig:
-      caBundle: {{ .Values.certs.ca.crt }}
+      caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
         namespace: kubecube-system
@@ -56,7 +56,7 @@ webhooks:
       - v1
       - v1beta1
     clientConfig:
-      caBundle: {{ .Values.certs.ca.crt }}
+      caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
         namespace: kubecube-system
@@ -80,7 +80,7 @@ webhooks:
       - v1
       - v1beta1
     clientConfig:
-      caBundle: {{ .Values.certs.ca.crt }}
+      caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
         namespace: kubecube-system

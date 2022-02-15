@@ -2,23 +2,30 @@ global:
   dependencesEnable:
     hnc: "true"
 
+  # kubecube hub config
+  hub:
+    registry: hub.c.163.com
+    project: kubecube
+    username: kubecube
+    password: XXX
+    email: kubecube@163.com
+
+  images:
+    hnc: hnc/hnc-manager:v0.8.0-kubecube.1.1
+    hncKubeRBACProxy: carlosedp/kube-rbac-proxy:v0.4.1-m
+
 # hnc/deployment.yaml
 replicas: 1
-image:
-  repository: hub.c.163.com/kubecube/hnc/hnc-manager
-  pullPolicy: IfNotPresent
-  tag: v0.8.0-kubecube.1.1
-resources:
-  # If you do want to specify resourceskube, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  limits:
-    cpu: 100m
-    memory: 128Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
 nodeSelector: { }
 affinity: { }
 tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
+manager:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 300Mi
+    requests:
+      cpu: 100m
+      memory: 300Mi

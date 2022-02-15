@@ -46,8 +46,8 @@ spec:
               value: {{ .Values.warden.containers.warden.env.JWTSecret }}
             - name: GIN_MODE
               value: release
-          image: {{ .Values.warden.containers.warden.image.repository}}:{{ .Values.warden.containers.warden.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.warden.containers.warden.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.warden }}"
+          imagePullPolicy: IfNotPresent
           name: warden
           resources:
           {{- toYaml .Values.warden.resources | nindent 12 }}
@@ -89,8 +89,8 @@ spec:
               value: "{{ .Values.warden.containers.downloader.env.downloadCharts }}"
             - name: DOWNLOAD_URL
               value: "{{ .Values.warden.containers.downloader.env.downloadURL }}"
-          image: {{ .Values.warden.containers.downloader.image.repository}}:{{ .Values.warden.containers.downloader.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.warden.containers.downloader.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.wardenInit }}"
+          imagePullPolicy: IfNotPresent
           name: downloader
           volumeMounts:
             - mountPath: /root/helmchartpkg

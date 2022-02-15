@@ -58,7 +58,7 @@ data:
     spec:
       containers:
       - name: helper-pod
-        image: {{ .Values.configmap.image.repository }}:{{ .Values.configmap.image.tag | default "latest" }}
-        imagePullPolicy: {{ .Values.configmap.image.pullPolicy }}
+        image: {{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.localPathStorageProvisioner }}
+        imagePullPolicy: IfNotPresent
 ---
 {{- end }}

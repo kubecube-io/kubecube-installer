@@ -34,8 +34,8 @@ spec:
       {{- end }}
       containers:
         - name: kubecube
-          image: {{ .Values.kubecube.image.repository}}:{{ .Values.kubecube.image.tag | default "latest" }}
-          imagePullPolicy: {{ .Values.kubecube.image.pullPolicy }}
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.kubecube }}"
+          imagePullPolicy: IfNotPresent
           resources:
           {{- toYaml .Values.kubecube.resources | nindent 12 }}
           args:
@@ -48,9 +48,9 @@ spec:
             - -leader-elect={{ .Values.kubecube.args.leaderElect }}
           env:
             - name: WARDEN_IMAGE
-              value: {{ .Values.kubecube.env.wardenImage }}
+              value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.warden }}"
             - name: WARDEN_INIT_IMAGE
-              value: {{ .Values.kubecube.env.wardenInitImage }}
+              value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.wardenInit }}"
             - name: PIVOT_CUBE_CLUSTER_IP_SVC
               value: {{ .Values.kubecube.env.pivotCubeSvc }}
             - name: PIVOT_CUBE_HOST
@@ -58,7 +58,7 @@ spec:
             - name: JWT_SECRET
               value: {{ .Values.kubecube.env.jwtSecret }}
             - name: DEPENDENCE_JOB_IMAGE
-              value: {{ .Values.kubecube.env.dependenceJobImage }}
+              value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.dependenceJob }}"
             - name: GIN_MODE
               value: release
           livenessProbe:
