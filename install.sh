@@ -7,9 +7,9 @@ params_process
 
 # install k8s or not
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
-  if [[ ${CONTAINERD_RUNTIME} = "true" ]]; then
+  if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
     /bin/bash /etc/kubecube/manifests/install_k8s_containerd.sh
-  else
+  elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
     /bin/bash /etc/kubecube/manifests/install_k8s.sh
   fi
   if [ "$?" -ne 0 ]; then

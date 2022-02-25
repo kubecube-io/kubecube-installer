@@ -12,6 +12,7 @@ function env_check() {
     sshpass_has="✓"
     conntrack_has="✓"
     unzip_has="✓"
+    libseccomp_has="✓"
 
     which sshpass > /dev/null
     if [ $? != 0 ]; then
@@ -31,22 +32,20 @@ function env_check() {
       env_ok=false
     fi
 
-    if command -v apt >/dev/null 2>&1; then
-      echo -e 'install libseccomp by apt'
-      apt update
-      apt install libseccomp-dev -y
-    else
-      echo -e 'install libseccomp by yum'
-      yum update
-      yum install libseccomp -y
+    whereis libseccomp | grep .so > /dev/null
+    if [ $? != 0 ]; then
+      whereis -b libseccomp.so.2 | grep / > /dev/null
+        if [ $? != 0 ]; then
+          libseccomp_has="x"
+          env_ok=false
+        fi
     fi
 
-
-    echo -e "\033[32m|---------------------------------------------------|\033[0m"
-    echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |\033[0m"
-    echo -e "\033[32m|---------------------------------------------------|\033[0m"
-    echo -e "\033[32m|     ${sshpass_has}           |    ${conntrack_has}            |      ${unzip_has}        |\033[0m"
-    echo -e "\033[32m|---------------------------------------------------|\033[0m"
+    echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
+    echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |  libseccomp_has |\033[0m"
+    echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
+    echo -e "\033[32m|     ${sshpass_has}           |    ${conntrack_has}            |      ${unzip_has}        |         ${libseccomp_has}       |\033[0m"
+    echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
 
     if [ ${env_ok} = false ]; then
         echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m lack of dependencies, ensure them"
