@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 source /etc/kubecube/manifests/utils.sh
+source /etc/kubecube/manifests/install.conf
+
+if [ ! -z ${KUBERNETES_BIND_ADDRESS} ]; then
+  IPADDR=${KUBERNETES_BIND_ADDRESS}
+fi
 
 # todo: allow user customize
 function render_values() {
@@ -103,7 +108,7 @@ EOF
 /bin/bash /etc/kubecube/manifests/install_third_dependence.sh false
 
 make_hotplug
-sign_cert
+sign_cert ${IPADDR}
 render_values
 
 clog info "deploy kubecube"

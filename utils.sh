@@ -138,11 +138,12 @@ function helm_download() {
   fi
 }
 
-# todo: sign_cert sign cert for given sans
 function sign_cert() {
   clog info "signing cert..."
   mkdir -p ca
   cd ca
+
+  extra_ip=$1
 
   clog debug "generate ca key and ca cert"
   openssl genrsa -out ca.key 2048 > /dev/null
@@ -175,7 +176,7 @@ DNS.1 = *.kubecube-system
 DNS.2 = *.kubecube-system.svc
 DNS.3 = *.kubecube-system.svc.cluster.local
 IP.1 = 127.0.0.1
-IP.2 = ${IPADDR}
+IP.2 = ${extra_ip}
 
 [ v3_ext ]
 authorityKeyIdentifier=keyid,issuer:always

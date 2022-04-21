@@ -236,12 +236,16 @@ function k8s_bin_get() {
       os_arch="arm64"
   fi
 
-  # todo judgement version according to k8s version
   CNI_VERSION="v0.8.2"
   CRICTL_VERSION="v1.17.0"
   RELEASE_VERSION="v0.4.0"
   RELEASE=v${KUBERNETES_VERSION}
   DOWNLOAD_DIR=/usr/local/bin
+
+  K8S_VERSION_MAIN=$(echo "$KUBERNETES_VERSION"|cut -d. -f2)
+  if [ $K8S_VERSION_MAIN -gt 22 ]; then
+    CRICTL_VERSION="v1.22.0"
+  fi
 
   mkdir -p /opt/cni/bin
   mkdir -p $DOWNLOAD_DIR
@@ -286,13 +290,13 @@ function k8s_bin_download() {
     curl -L "https://kubecube.nos-eastchina1.126.net/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
 
     clog debug "downloading kubeadm,kubelet,kubectl"
-    RELEASE=v${KUBERNETES_VERSION}
+#    RELEASE=v${KUBERNETES_VERSION}
     cd $DOWNLOAD_DIR
     curl -L --remote-name-all https://kubecube.nos-eastchina1.126.net/kubernetes/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
     chmod +x {kubeadm,kubelet,kubectl}
 
     clog debug "config for kubelet service"
-    RELEASE_VERSION="v0.4.0"
+#    RELEASE_VERSION="v0.4.0"
     curl -sSL "https://kubecube.nos-eastchina1.126.net/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
     curl -sSL "https://kubecube.nos-eastchina1.126.net/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   else
@@ -302,13 +306,13 @@ function k8s_bin_download() {
     curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
 
     clog debug "downloading kubeadm,kubelet,kubectl"
-    RELEASE=v${KUBERNETES_VERSION}
+#    RELEASE=v${KUBERNETES_VERSION}
     cd $DOWNLOAD_DIR
     curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
     chmod +x {kubeadm,kubelet,kubectl}
 
     clog debug "config for kubelet service"
-    RELEASE_VERSION="v0.4.0"
+#    RELEASE_VERSION="v0.4.0"
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   fi
@@ -377,6 +381,11 @@ function make_cluster_configuration (){
   REGISTRY=${K8S_REGISTR}
   if [[ "$ZONE" == cn ]];then
     REGISTRY=${CN_K8S_REGISTR}
+  fi
+
+  if [ ! -z ${KUBERNETES_BIND_ADDRESS} ]; then
+    clog info "use customize k8s bind address ${KUBERNETES_BIND_ADDRESS}"
+    IPADDR=${KUBERNETES_BIND_ADDRESS}
   fi
 
 API_SERVER_CONF=$(cat <<- EOF

@@ -43,14 +43,13 @@ function params_process() {
     fi
   fi
 
-  # set LOCAL_IP
-  if [ -z ${LOCAL_IP} ]; then
-    LOCAL_IP=$(hostname -I |awk '{print $1}')
-  fi
-
   # check ZONE
   if [ -z ${ZONE} ]; then
     ZONE="ch"
+  fi
+
+  if [ ! -z ${KUBERNETES_BIND_ADDRESS} ]; then
+    IPADDR=${KUBERNETES_BIND_ADDRESS}
   fi
 }
 
