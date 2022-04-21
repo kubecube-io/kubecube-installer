@@ -139,10 +139,9 @@ EOF
   # configuration for dockerd
   mkdir -p /etc/docker
 
+  CGROUP_DRIVER="systemd"
+
   if [[ $(arch) == x86_64 ]]; then
-  DOCKER_VER_MAIN=$(echo "$DOCKER_VER"|cut -d. -f1)
-  CGROUP_DRIVER="cgroupfs"
-  ((DOCKER_VER_MAIN>=20)) && CGROUP_DRIVER="systemd"
   clog debug "generate docker config: /etc/docker/daemon.json"
   if [[ "$ZONE" == cn ]];then
     clog debug "prepare register mirror for $ZONE"
@@ -184,6 +183,7 @@ EOF
     clog debug "prepare register mirror for $ZONE"
     cat > /etc/docker/daemon.json << EOF
 {
+  "exec-opts": ["native.cgroupdriver=$CGROUP_DRIVER"],
   "registry-mirrors": [
     "https://docker.mirrors.ustc.edu.cn",
     "http://hub-mirror.c.163.com"
@@ -202,6 +202,7 @@ EOF
     clog debug "standard config without registry mirrors"
     cat > /etc/docker/daemon.json << EOF
 {
+  "exec-opts": ["native.cgroupdriver=$CGROUP_DRIVER"],
   "max-concurrent-downloads": 10,
   "log-driver": "json-file",
   "log-level": "warn",
@@ -235,11 +236,12 @@ function k8s_bin_get() {
       os_arch="arm64"
   fi
 
+  # todo judgement version according to k8s version
   CNI_VERSION="v0.8.2"
-  DOWNLOAD_DIR=/usr/local/bin
   CRICTL_VERSION="v1.17.0"
-  RELEASE=v${KUBERNETES_VERSION}
   RELEASE_VERSION="v0.4.0"
+  RELEASE=v${KUBERNETES_VERSION}
+  DOWNLOAD_DIR=/usr/local/bin
 
   mkdir -p /opt/cni/bin
   mkdir -p $DOWNLOAD_DIR
@@ -342,6 +344,8 @@ function images_download() {
           /usr/bin/docker pull ${image}
         done
       fi
+
+      # todo: support download cni images by conf
   fi
 }
 

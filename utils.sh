@@ -145,11 +145,11 @@ function sign_cert() {
   cd ca
 
   clog debug "generate ca key and ca cert"
-  openssl genrsa -out ca.key 2048
-  openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system" -days 10000 -out ca.crt
+  openssl genrsa -out ca.key 2048 > /dev/null
+  openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system" -days 10000 -out ca.crt > /dev/null
 
   clog debug "generate tls key"
-  openssl genrsa -out tls.key 2048
+  openssl genrsa -out tls.key 2048 > /dev/null
 
   clog debug "make tls csr"
 cat << EOF >csr.conf

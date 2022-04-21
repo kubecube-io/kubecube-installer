@@ -11,21 +11,22 @@ global:
     email: kubecube@163.com
 
   images:
-    hnc: hnc/hnc-manager:v0.8.0-kubecube.1.1
-    hncKubeRBACProxy: carlosedp/kube-rbac-proxy:v0.4.1-m
+    hnc: hnc/hnc-manager:v1.0.0
 
 # hnc/deployment.yaml
-replicas: 1
 nodeSelector: { }
 affinity: { }
 tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
 manager:
+  args:
+    managedLabel1: kubecube.hnc.x-k8s.io/tenant
+    managedLabel2: kubecube.hnc.x-k8s.io/project
   resources:
     limits:
       cpu: 100m
       memory: 300Mi
     requests:
       cpu: 100m
-      memory: 300Mi
+      memory: 150Mi

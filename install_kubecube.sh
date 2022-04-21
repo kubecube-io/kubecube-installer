@@ -6,13 +6,14 @@ source /etc/kubecube/manifests/utils.sh
 function render_values() {
   clog info "render values for kubecube chart values"
 cat >> values.yaml <<EOF
-certs:
-  tls:
-    key: "$(cat ca/tls.key | base64 -w 0)"
-    crt: "$(cat ca/tls.crt | base64 -w 0)"
-  ca:
-    key: "$(cat ca/ca.key | base64 -w 0)"
-    crt: "$(cat ca/ca.crt | base64 -w 0)"
+global:
+  certs:
+    tls:
+      key: "$(cat ca/tls.key | base64 -w 0)"
+      crt: "$(cat ca/tls.crt | base64 -w 0)"
+    ca:
+      key: "$(cat ca/ca.key | base64 -w 0)"
+      crt: "$(cat ca/ca.crt | base64 -w 0)"
 kubecube:
   env:
     pivotCubeHost: "${IPADDR}:30443"
@@ -98,6 +99,9 @@ spec:
 EOF
 }
 
+# install monitor secret
+/bin/bash /etc/kubecube/manifests/install_third_dependence.sh false
+
 make_hotplug
 sign_cert
 render_values
@@ -105,13 +109,9 @@ render_values
 clog info "deploy kubecube"
 /usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube
 
-# todo: add wait timeout
-clog info "waiting for kubecube ready"
-spin & spinpid=$!
-clog debug "spin pid: ${spinpid}"
-trap 'kill ${spinpid} && exit 1' SIGINT
-while true
-do
+clog info "waiting for kubecube ready..."
+timeout=180
+for ((time=0; time<${timeout}; time++)); do
   pivot_cluster_ready=$(kubectl get cluster pivot-cluster | awk '{print $2}' | sed -n '2p')
   if [[ ${pivot_cluster_ready} = "normal" ]]; then
     echo
@@ -123,11 +123,12 @@ do
     echo -e "\033[32m         You must change password after login         \033[0m"
     echo -e "\033[32m========================================================\033[0m"
     echo -e "\033[32m========================================================\033[0m"
-    kill "$spinpid" > /dev/null
-    break
+    kubectl apply -f ./hotplug.yaml > /dev/null
+    exit 0
   fi
-  sleep 7 > /dev/null
+  sleep 1
 done
 
-kubectl apply -f ./hotplug.yaml > /dev/null
+clog error "waiting for kubecube ready timeout"
+exit 1
 

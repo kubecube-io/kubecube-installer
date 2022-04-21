@@ -46,7 +46,16 @@ spec:
             - -webhook-cert=/etc/tls
             - -webhook-server-port={{ .Values.kubecube.args.webhookServerPort }}
             - -leader-elect={{ .Values.kubecube.args.leaderElect }}
+            - -generic-auth-is-enable={{ .Values.kubecube.args.genericAuthIsEnable }}
+            - -generic-auth-url={{ .Values.kubecube.args.genericAuthUrl }}
+            - -generic-auth-method={{ .Values.kubecube.args.genericAuthMethod }}
+            - -generic-auth-scheme={{ .Values.kubecube.args.genericAuthScheme }}
+            - -generic-auth-insecure-skip-verify={{ .Values.kubecube.args.genericAuthInsecureSkikVerify }}
           env:
+            - name: DOWNLOAD_CHARTS
+              value: "{{ .Values.kubecube.env.downloadCharts }}"
+            - name: DOWNLOAD_CHARTS_URL
+              value: "{{ .Values.kubecube.env.downloadChartsUrl }}"
             - name: WARDEN_IMAGE
               value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.warden }}"
             - name: WARDEN_INIT_IMAGE

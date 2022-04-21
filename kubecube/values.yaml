@@ -35,16 +35,15 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:v1.1.1-test8
-    warden: warden:v1.1.1-test4
-    wardenInit: warden-init:v1.1.0
+    kubecube: cube:latest
+    warden: warden:latest
+    wardenInit: warden-init:latest
     dependenceJob: warden-dependence:latest
     audit: audit:v1.1.0
     webconsole: webconsole:v1.1.0
     cloudshell: cloudshell:v1.1.0
     frontend: frontend:v1.1.0
-    hnc: hnc/hnc-manager:v0.8.0-kubecube.1.1
-    hncKubeRBACProxy: carlosedp/kube-rbac-proxy:v0.4.1-m
+    hnc: hnc/hnc-manager:v1.0.0
     ingressController: ingress-nginx/controller:v0.46.0-m
     ingressControllerJob: jettech/kube-webhook-certgen:v1.5.1-m
     localPathStorageProvisioner: rancher/local-path-provisioner:v0.0.19-m
@@ -73,7 +72,14 @@ kubecube:
     securePort: 7443
     webhookServerPort: 9443
     leaderElect: true
+    genericAuthIsEnable: false
+    genericAuthUrl: example.com
+    genericAuthMethod: GET
+    genericAuthScheme: https
+    genericAuthInsecureSkikVerify: true
   env:
+    downloadCharts: "false"
+    downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
     pivotCubeSvc: kubecube.kubecube-system:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
@@ -206,20 +212,22 @@ frontend:
 # override hnc sub chart
 hnc:
   # hnc/deployment.yaml
-  replicas: 1
   nodeSelector: { }
   affinity: { }
   tolerations:
     - key: node-role.kubernetes.io/master
       operator: Exists
   manager:
+    args:
+      managedLabel1: kubecube.hnc.x-k8s.io/tenant
+      managedLabel2: kubecube.hnc.x-k8s.io/project
     resources:
       limits:
         cpu: 100m
         memory: 300Mi
       requests:
         cpu: 100m
-        memory: 300Mi
+        memory: 150Mi
 
 ## override ingress-controller sub chart
 #ingress-controller:

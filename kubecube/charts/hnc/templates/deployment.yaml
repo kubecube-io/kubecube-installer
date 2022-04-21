@@ -7,12 +7,14 @@ metadata:
   name: hnc-controller-manager
   namespace: hnc-system
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       control-plane: controller-manager
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
       labels:
         control-plane: controller-manager
     spec:
@@ -28,49 +30,58 @@ spec:
       tolerations:
       {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - args:
             - --webhook-server-port=9443
             - --metrics-addr=:8080
             - --max-reconciles=10
             - --apiserver-qps-throttle=50
+            - --excluded-namespace=kube-system
+            - --excluded-namespace=kube-public
+            - --excluded-namespace=hnc-system
+            - --excluded-namespace=kube-node-lease
             - --enable-internal-cert-management
             - --cert-restart-on-secret-refresh
+            - --managed-namespace-label={{ .Values.manager.args.managedLabel1 }}
+            - --managed-namespace-label={{ .Values.manager.args.managedLabel2 }}
           command:
             - /manager
           image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.hnc }}"
-          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz
+              port: 8081
+            periodSeconds: 10
           name: manager
           ports:
             - containerPort: 9443
               name: webhook-server
               protocol: TCP
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
           readinessProbe:
             httpGet:
               path: /readyz
               port: 8081
-          startupProbe:
-            httpGet:
-              path: /healthz
-              port: 8081
-            failureThreshold: 30
-            periodSeconds: 10
+            periodSeconds: 5
           resources:
           {{- toYaml .Values.manager.resources | nindent 12 }}
+          startupProbe:
+            failureThreshold: 100
+            httpGet:
+              path: /readyz
+              port: 8081
+            periodSeconds: 5
           volumeMounts:
             - mountPath: /tmp/k8s-webhook-server/serving-certs
               name: cert
               readOnly: true
-        - args:
-            - --upstream=http://127.0.0.1:8080/
-            - --secure-listen-address=0.0.0.0:8443
-            - --logtostderr=true
-            - --v=10
-          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.hncKubeRBACProxy }}" #carlosedp/kube-rbac-proxy:v0.4.1
-          name: kube-rbac-proxy # deprecated container
-          ports:
-            - containerPort: 8443
-              name: https
       securityContext:
         fsGroup: 2000
         runAsNonRoot: true

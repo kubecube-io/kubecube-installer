@@ -17,6 +17,12 @@ then
   kubectl get nodes | grep -v "NAME" | awk '{print $1}' | sed -n '1p' | xargs -t -i kubectl taint node {} node-role.kubernetes.io/master-
 fi
 
+NEED_INSTALL=$1
+
+if [[ ${NEED_INSTALL} == "false" ]]; then
+    exit 0
+fi
+
 echo "[INFO] deploying metrics-server"
 helm install metrics-server /etc/kubecube/manifests/kubecube/charts/metrics-server
 

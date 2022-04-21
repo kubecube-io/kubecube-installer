@@ -1,11 +1,39 @@
 {{- if eq .Values.global.dependencesEnable.hnc "true" }}
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: hnc-mutating-webhook-configuration
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: hnc-webhook-service
+        namespace: hnc-system
+        path: /mutate-namespace
+    failurePolicy: Ignore
+    name: namespacelabel.hnc.x-k8s.io
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - namespaces
+    sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: hnc-validating-webhook-configuration
 webhooks:
-  - clientConfig:
-      caBundle: Cg==
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
       service:
         name: hnc-webhook-service
         namespace: hnc-system
@@ -23,8 +51,9 @@ webhooks:
         resources:
           - subnamespaceanchors
     sideEffects: None
-  - clientConfig:
-      caBundle: Cg==
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
       service:
         name: hnc-webhook-service
         namespace: hnc-system
@@ -42,8 +71,35 @@ webhooks:
         resources:
           - hierarchyconfigurations
     sideEffects: None
-  - clientConfig:
-      caBundle: Cg==
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: hnc-webhook-service
+        namespace: hnc-system
+        path: /validate-objects
+    failurePolicy: Fail
+    name: objects.hnc.x-k8s.io
+    namespaceSelector:
+      matchLabels:
+        hnc.x-k8s.io/included-namespace: "true"
+    rules:
+      - apiGroups:
+          - '*'
+        apiVersions:
+          - '*'
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - '*'
+        scope: Namespaced
+    sideEffects: None
+    timeoutSeconds: 2
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
       service:
         name: hnc-webhook-service
         namespace: hnc-system
@@ -62,8 +118,9 @@ webhooks:
         resources:
           - hncconfigurations
     sideEffects: None
-  - clientConfig:
-      caBundle: Cg==
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
       service:
         name: hnc-webhook-service
         namespace: hnc-system
@@ -82,26 +139,5 @@ webhooks:
         resources:
           - namespaces
     sideEffects: None
-  - clientConfig:
-      caBundle: Cg==
-      service:
-        name: hnc-webhook-service
-        namespace: hnc-system
-        path: /validate-objects
-    failurePolicy: Ignore
-    name: objects.hnc.x-k8s.io
-    rules:
-      - apiGroups:
-          - '*'
-        apiVersions:
-          - '*'
-        operations:
-          - CREATE
-          - UPDATE
-          - DELETE
-        resources:
-          - '*'
-    sideEffects: None
-    timeoutSeconds: 2
 ---
 {{- end }}
