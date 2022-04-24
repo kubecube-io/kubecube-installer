@@ -57,6 +57,28 @@ function docker_uninstall() {
   clog info "docker uninstall success"
 }
 
+function containerd_uninstall() {
+    clog info "uninstalling containerd"
+    systemctl disable containerd --now
+    rm -f /etc/crictl.yaml
+    rm -rf /etc/cni
+    rm -f /etc/systemd/system/containerd.service
+    rm -f /usr/local/sbin/runc
+    rm -f /usr/local/bin/containerd-shim-runc-v1
+    rm -f /usr/local/bin/critest
+    rm -f /usr/local/bin/ctr
+    rm -f /usr/local/bin/containerd-shim
+    rm -f /usr/local/bin/crictl
+    rm -f /usr/local/bin/containerd
+    rm -f /usr/local/bin/ctd-decoder
+    rm -f /usr/local/bin/containerd-stress
+    rm -f /usr/local/bin/containerd-shim-runc-v2
+    rm -rf /opt/cni
+    rm -rf /opt/containerd
+    rm -rf /etc/containerd
+    clog info "containerd uninstall success"
+}
+
 function clog() {
   TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
   case "$1" in
@@ -85,13 +107,16 @@ function main() {
     ;;
     "docker") docker_uninstall
     ;;
+    "containerd") containerd_uninstall
+    ;;
     "all")
       kubecube_uninstall
       kubernetes_uninstall
       docker_uninstall
+      containerd_uninstall
     ;;
     *)
-      echo "unknown params, only support: 'kubecube','k8s','docker','all'"
+      echo "unknown params, only support: 'kubecube','k8s','docker','containerd','all'"
     ;;
   esac
 }
