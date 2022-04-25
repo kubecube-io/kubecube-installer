@@ -42,7 +42,7 @@ global:
     audit: audit:v1.1.0
     webconsole: webconsole:v1.1.0
     cloudshell: cloudshell:v1.1.0
-    frontend: frontend:v1.1.0
+    frontend: frontend:vx.y.z
     hnc: hnc/hnc-manager:v1.0.0
     ingressController: ingress-nginx/controller:v0.46.0-m
     ingressControllerJob: jettech/kube-webhook-certgen:v1.5.1-m

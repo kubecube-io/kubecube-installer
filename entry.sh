@@ -42,7 +42,7 @@ function env_check() {
     fi
 
     echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
-    echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |  libseccomp_has |\033[0m"
+    echo -e "\033[32m|     sshpass     |    conntrack    |      unzip    |  libseccomp     |\033[0m"
     echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
     echo -e "\033[32m|     ${sshpass_has}           |    ${conntrack_has}            |      ${unzip_has}        |         ${libseccomp_has}       |\033[0m"
     echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
