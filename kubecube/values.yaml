@@ -35,14 +35,14 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:latest
-    warden: warden:latest
-    wardenInit: warden-init:latest
-    dependenceJob: warden-dependence:latest
-    audit: audit:v1.1.0
-    webconsole: webconsole:v1.1.0
-    cloudshell: cloudshell:v1.1.0
-    frontend: frontend:vx.y.z
+    kubecube: cube:v1.2.0
+    warden: warden:v1.2.0
+    wardenInit: warden-init:v1.2.0
+    dependenceJob: warden-dependence:v1.2.0
+    audit: audit:v1.2.0
+    webconsole: webconsole:v1.2.0
+    cloudshell: cloudshell:v1.2.0
+    frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
     ingressController: ingress-nginx/controller:v0.46.0-m
     ingressControllerJob: jettech/kube-webhook-certgen:v1.5.1-m
