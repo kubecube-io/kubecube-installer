@@ -18,22 +18,27 @@ then
 fi
 
 NEED_INSTALL=$1
+VERSION=$2
 
 if [[ ${NEED_INSTALL} == "false" ]]; then
     exit 0
 fi
 
+if [ -z ${VERSION} ]; then
+    VERSION=1.23
+fi
+
 echo "[INFO] deploying metrics-server"
-helm install metrics-server /etc/kubecube/manifests/kubecube/charts/metrics-server
+helm install metrics-server /etc/kubecube/manifests/kubecube/${VERSION}/charts/metrics-server
 
 echo "[INFO] deploying ingress-controller"
-helm install ingress-controller /etc/kubecube/manifests/kubecube/charts/ingress-controller
+helm install ingress-controller /etc/kubecube/manifests/kubecube/${VERSION}/charts/ingress-controller
 
 echo "[INFO] deploying local-path-storage"
-helm install local-path-storage /etc/kubecube/manifests/kubecube/charts/local-path-storage
+helm install local-path-storage /etc/kubecube/manifests/kubecube/${VERSION}/charts/local-path-storage
 
 echo "[INFO] deploying hnc"
-helm install hnc /etc/kubecube/manifests/kubecube/charts/hnc
+helm install hnc /etc/kubecube/manifests/kubecube/${VERSION}/charts/hnc
 
 echo "[INFO]third dependence install success"
 

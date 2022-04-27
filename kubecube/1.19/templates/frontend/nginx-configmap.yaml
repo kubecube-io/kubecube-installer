@@ -1,0 +1,113 @@
+#{{- if eq .Values.global.componentsEnable.frontend "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: kubecube-system
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        upstream cube {
+            server kubecube:7443;
+        }
+        upstream audit {
+            server audit:8888;
+        }
+
+        upstream webconsole {
+            server webconsole:9081;
+        }
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        #gzip  on;
+
+        server {
+            listen      80;
+            listen [::]:80;
+            server_name localhost;
+
+            error_page   500 502 503 504  /50x.html;
+            location ^~ /public/ {
+                root    /usr/share/nginx/html;
+                expires 30d;
+            }
+
+            location ~* \.(gif|jpg|jpeg|png|css|js|ico|svg)$ {
+                root /usr/share/nginx/html/public;
+            }
+
+            location ^~ /api/v1/label {
+                resolver kube-dns.kube-system.svc.cluster.local;
+                set $target http://kubecube-thanos-query.kubecube-monitoring.svc.cluster.local:9090;
+                proxy_pass $target;
+            }
+
+            location ^~ /api/v1/series {
+                resolver kube-dns.kube-system.svc.cluster.local;
+                set $target http://kubecube-thanos-query.kubecube-monitoring.svc.cluster.local:9090;
+                proxy_pass $target;
+            }
+
+            location ^~ /api/v1/query {
+                resolver kube-dns.kube-system.svc.cluster.local;
+                set $target http://kubecube-thanos-query.kubecube-monitoring.svc.cluster.local:9090;
+                proxy_pass $target;
+            }
+
+            location ^~ /api/v1/query_range {
+                resolver kube-dns.kube-system.svc.cluster.local;
+                set $target http://kubecube-thanos-query.kubecube-monitoring.svc.cluster.local:9090;
+                proxy_pass $target;
+            }
+
+            location ^~ /api/v1/logseer/ {
+                resolver kube-dns.kube-system.svc.cluster.local;
+                set $target http://logseer.logseer.svc.cluster.local;
+                proxy_pass $target;
+            }
+
+            location ^~ /api/v1/cube/ {
+                proxy_pass https://cube;
+            }
+            location ^~ /api/v1/audit {
+                proxy_pass http://audit/api/v1/cube/audit;
+            }
+
+            location ^~ /api/v1/webconsole {
+                proxy_pass http://webconsole/api/v1;
+            }
+            location ^~ /webconsole/api/sockjs {
+                proxy_pass http://webconsole/api/sockjs;
+            }
+
+            location / {
+                root /usr/share/nginx/html/public;
+                index index.html index.htm;
+            }
+        }
+    }
+---
+#{{- end }}

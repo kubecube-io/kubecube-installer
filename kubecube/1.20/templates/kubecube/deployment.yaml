@@ -1,0 +1,131 @@
+{{- if eq .Values.global.componentsEnable.kubecube "true" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubecube
+  namespace: kubecube-system
+  labels:
+    kubecube.io/app: kubecube
+spec:
+  replicas: {{ .Values.kubecube.replicas }}
+  selector:
+    matchLabels:
+      kubecube.io/app: kubecube
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: kubecube
+    spec:
+      {{- with .Values.kubecube.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kubecube.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kubecube.tolerations}}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: kubecube
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.kubecube }}"
+          imagePullPolicy: IfNotPresent
+          resources:
+          {{- toYaml .Values.kubecube.resources | nindent 12 }}
+          args:
+            - -log-level={{ .Values.kubecube.args.logLevel }}
+            - -secure-port={{ .Values.kubecube.args.securePort }}
+            - -tls-cert=/etc/tls/tls.crt
+            - -tls-key=/etc/tls/tls.key
+            - -webhook-cert=/etc/tls
+            - -webhook-server-port={{ .Values.kubecube.args.webhookServerPort }}
+            - -leader-elect={{ .Values.kubecube.args.leaderElect }}
+            - -generic-auth-is-enable={{ .Values.kubecube.args.genericAuthIsEnable }}
+            - -generic-auth-url={{ .Values.kubecube.args.genericAuthUrl }}
+            - -generic-auth-method={{ .Values.kubecube.args.genericAuthMethod }}
+            - -generic-auth-scheme={{ .Values.kubecube.args.genericAuthScheme }}
+            - -generic-auth-insecure-skip-verify={{ .Values.kubecube.args.genericAuthInsecureSkikVerify }}
+            - -enable-version-conversion={{ .Values.kubecube.args.enableVersionConversion }}
+          env:
+            - name: DOWNLOAD_CHARTS
+              value: "{{ .Values.kubecube.env.downloadCharts }}"
+            - name: DOWNLOAD_CHARTS_URL
+              value: "{{ .Values.kubecube.env.downloadChartsUrl }}"
+            - name: WARDEN_IMAGE
+              value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.warden }}"
+            - name: WARDEN_INIT_IMAGE
+              value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.wardenInit }}"
+            - name: PIVOT_CUBE_CLUSTER_IP_SVC
+              value: {{ .Values.kubecube.env.pivotCubeSvc }}
+            - name: PIVOT_CUBE_HOST
+              value: {{ .Values.kubecube.env.pivotCubeHost }}
+            - name: JWT_SECRET
+              value: {{ .Values.kubecube.env.jwtSecret }}
+            - name: DEPENDENCE_JOB_IMAGE
+              value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.dependenceJob }}"
+            - name: GIN_MODE
+              value: release
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 7777
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 7777
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: cube-tls
+              mountPath: "/etc/tls"
+              readOnly: true
+            - name: logs
+              mountPath: "/etc/logs/cube"
+            - name: helm-pkg
+              mountPath: "/root/helmchartpkg"
+            - name: localtime
+              mountPath: /etc/localtime
+            - mountPath: /i18n
+              name: i18n-config
+      volumes:
+        - name: cube-tls
+          secret:
+            secretName: cube-tls-secret
+        - name: helm-pkg
+          hostPath:
+            path: /etc/cube/helm-pkg
+            type: DirectoryOrCreate
+        - name: logs
+          hostPath:
+            path: /etc/cube/logs
+            type: DirectoryOrCreate
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: en.toml
+                path: en.toml
+              - key: zh.toml
+                path: zh.toml
+            name: kubecube-language-config
+          name: i18n-config
+---
+{{- end }}

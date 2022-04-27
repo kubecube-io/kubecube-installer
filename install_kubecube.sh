@@ -104,15 +104,17 @@ spec:
 EOF
 }
 
+version=1.$(echo "$KUBERNETES_VERSION"|cut -d. -f2)
+
 # install monitor secret
-/bin/bash /etc/kubecube/manifests/install_third_dependence.sh false
+/bin/bash /etc/kubecube/manifests/install_third_dependence.sh false ${version}
 
 make_hotplug
 sign_cert ${IPADDR}
 render_values
 
 clog info "deploy kubecube"
-/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube
+/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/${version}
 
 clog info "waiting for kubecube ready..."
 timeout=180

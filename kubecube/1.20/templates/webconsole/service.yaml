@@ -1,0 +1,16 @@
+{{- if eq .Values.global.componentsEnable.webconsole "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: webconsole
+  namespace: kubecube-system
+spec:
+  type: ClusterIP
+  selector:
+    kubecube.io/app: kubecube-webconsole
+  ports:
+    - name: http
+      port: 9081
+      targetPort: 9081
+---
+{{- end }}

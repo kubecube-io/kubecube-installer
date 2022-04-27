@@ -1,0 +1,13 @@
+{{- if eq .Values.global.componentsEnable.kubecube "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubecube-auth-config
+  namespace: kubecube-system
+data:
+  github: |
+    enabled: {{ .Values.kubecube.authConfig.github.enabled }}
+    clientId: {{ .Values.kubecube.authConfig.github.clientId }}
+    clientSecret: {{ .Values.kubecube.authConfig.github.clientSecret }}
+---
+{{- end }}
