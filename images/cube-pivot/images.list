@@ -18,6 +18,8 @@ hub.c.163.com/kubecube/thanos:v0.22.0
 hub.c.163.com/kubecube/kubectl-tools:1.21.0
 hub.c.163.com/kubecube/hnc/hnc-manager:v1.0.0
 hub.c.163.com/kubecube/ingress-nginx/controller:v0.46.0-m
+hub.c.163.com/kubecube/ingress-nginx/controller:v1.2.0
+hub.c.163.com/kubecube/ingress-nginx/kube-webhook-certgen:v1.1.1
 hub.c.163.com/kubecube/jettech/kube-webhook-certgen:v1.5.1-m
 hub.c.163.com/kubecube/jettech/kube-webhook-certgen:v1.5.1
 hub.c.163.com/kubecube/rancher/local-path-provisioner:v0.0.19-m
