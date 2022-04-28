@@ -77,7 +77,7 @@ kubecube:
     genericAuthMethod: GET
     genericAuthScheme: https
     genericAuthInsecureSkikVerify: true
-    enableVersionConversion: true
+    enableVersionConversion: false
   env:
     downloadCharts: "false"
     downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
