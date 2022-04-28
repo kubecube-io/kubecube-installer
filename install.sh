@@ -57,15 +57,7 @@ params_process
 
 # install k8s or not
 if [[ ${INSTALL_KUBERNETES} = "true" ]]; then
-  if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
-    /bin/bash /etc/kubecube/manifests/install_k8s_containerd.sh
-  elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
-    /bin/bash /etc/kubecube/manifests/install_k8s.sh
-  else
-    clog error "container_runtime error, only support docker and containerd now!"
-    exit 1
-  fi
-
+  /bin/bash /etc/kubecube/manifests/install_k8s.sh
   if [ "$?" -ne 0 ]; then
     clog error "install kubernetes failed"
       exit 1

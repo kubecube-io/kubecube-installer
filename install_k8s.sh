@@ -228,6 +228,66 @@ EOF
   systemctl daemon-reload && systemctl restart docker && sleep 4
 }
 
+function containerd_installed(){
+  CONTAINERD_VERSION=1.5.5
+  #disable docker if exist
+  systemctl disable docker --now || true
+
+  if command -v ctr >/dev/null 2>&1; then
+    clog info 'exists containerd'
+    return
+  fi
+
+  os_arch="amd64"
+  if [[ $(arch) == aarch64 ]]; then
+    os_arch="arm64"
+  fi
+
+  wget https://kubecube.nos-eastchina1.126.net/containerd/"$CONTAINERD_VERSION"/containerd-"$CONTAINERD_VERSION"-linux-$os_arch.tar.gz -O containerd.tar.gz
+
+  tar -C / -xzf containerd.tar.gz
+  rm -rf containerd.tar.gz
+  if command -v ctr >/dev/null 2>&1; then
+    clog info "install containerd success"
+  else
+    clog error "install containerd fail"
+    exit 1
+  fi
+}
+
+function containerd_configuration() {
+  #configuration net
+  cat <<EOF | tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+  modprobe overlay
+  modprobe br_netfilter
+
+  cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+  sysctl --system
+
+  #configuration containerd
+  mkdir /etc/containerd || true
+  containerd config default > /etc/containerd/config.toml
+  sed -i '/SystemdCgroup = false/d' /etc/containerd/config.toml
+  sed -i '/containerd.runtimes.runc.options/a\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true' /etc/containerd/config.toml
+  systemctl daemon-reload
+  systemctl enable containerd --now || true
+
+  #configuration pause
+  if [[ "$ZONE" == cn ]];then
+    sed -i 's|k8s.gcr.io/pause|registry.cn-hangzhou.aliyuncs.com/k8sxio/pause|' /etc/containerd/config.toml
+    ctr -n k8s.io i pull registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 || true
+    ctr -n k8s.io i tag registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 k8s.gcr.io/pause:3.5 || true
+  fi
+}
+
+
 function k8s_bin_get() {
   [[ (-f "/usr/local/bin/kubelet") && (-f "/usr/local/bin/kubeadm") && (-f "/usr/local/bin/kubectl") && (-f "/usr/local/bin/crictl") ]] && { clog warn "kubernetes binaries existed"; return 0; }
 
@@ -255,6 +315,9 @@ function k8s_bin_get() {
     k8s_bin_local
   else
     k8s_bin_download
+      if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+        sed -i '2a\Environment="KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --container-runtime=remote --runtime-request-timeout=15m --container-runtime-endpoint=unix:///run/containerd/containerd.sock"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      fi
   fi
 }
 
@@ -329,7 +392,14 @@ function images_download() {
       if [[ "$INSTALL_KUBERNETES" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/k8s/v${KUBERNETES_VERSION}/images.list)
         do
-          /usr/bin/docker pull ${image}
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 ctr i pull ${image}
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull ${image}
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -337,7 +407,14 @@ function images_download() {
       if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
         do
-          /usr/bin/docker pull ${image}
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 ctr i pull ${image}
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull ${image}
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -345,7 +422,14 @@ function images_download() {
       if [[ "$INSTALL_KUBECUBE_MEMBER" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
         do
-          /usr/bin/docker pull ${image}
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 ctr i pull ${image}
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull ${image}
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -499,9 +583,19 @@ function Main() {
   mkdir -p /etc/kubecube/down
   mkdir -p /etc/kubecube/bin
 
-  docker_bin_get
+  if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+    containerd_installed
+    containerd_configuration
+  elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+    docker_bin_get
+    install_docker
+  else
+    clog error "container_runtime error, only support docker and containerd now!"
+    exit 1
+  fi
+
+
   k8s_bin_get
-  install_docker
   images_download
 
   if [[ ${PRE_DOWNLOAD} = "true" ]]; then
