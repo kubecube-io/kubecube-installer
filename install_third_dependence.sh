@@ -26,6 +26,7 @@ fi
 
 if [ -z ${VERSION} ]; then
     VERSION=1.23
+    echo "[INFO] use version ${VERSION}"
 fi
 
 echo "[INFO] deploying metrics-server"
