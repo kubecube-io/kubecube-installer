@@ -230,7 +230,11 @@ EOF
 
 function containerd_installed(){
   CONTAINERD_VERSION=1.5.5
-  #disable docker if exist
+  # if docker exist, then exit
+  if command -v docker >/dev/null 2>&1; then
+    clog info 'exists docker, please remove docker, or update CONTAINER_RUNTIME value as docker in install.conf `'
+    return
+  fi
   systemctl disable docker --now || true
 
   if command -v ctr >/dev/null 2>&1; then
