@@ -6,7 +6,7 @@ follow [doc](https://www.kubecube.io/docs/installation-guide/)
 set version
 
 ```bash
-KUBECUBE_VERSION=v1.1
+KUBECUBE_VERSION=v1.2
 ```
 
 ### All in one install
@@ -34,7 +34,7 @@ curl -o cleanup.sh https://kubecube.nos-eastchina1.126.net/hack/cleanup.sh
 ```
 
 ```bash
-# params can be: 'kubecube','k8s','docker','all'
+# params can be: 'kubecube','k8s','docker','containerd','all'
 /bin/bash cleanup.sh all
 ```
 ### Offline Download
