@@ -7,6 +7,7 @@ BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
 
+source /etc/kubecube/manifests/install.conf
 source /etc/kubecube/manifests/utils.sh
 
 function docker_bin_get() {
@@ -138,10 +139,9 @@ EOF
   # configuration for dockerd
   mkdir -p /etc/docker
 
+  CGROUP_DRIVER="systemd"
+
   if [[ $(arch) == x86_64 ]]; then
-  DOCKER_VER_MAIN=$(echo "$DOCKER_VER"|cut -d. -f1)
-  CGROUP_DRIVER="cgroupfs"
-  ((DOCKER_VER_MAIN>=20)) && CGROUP_DRIVER="systemd"
   clog debug "generate docker config: /etc/docker/daemon.json"
   if [[ "$ZONE" == cn ]];then
     clog debug "prepare register mirror for $ZONE"
@@ -183,6 +183,7 @@ EOF
     clog debug "prepare register mirror for $ZONE"
     cat > /etc/docker/daemon.json << EOF
 {
+  "exec-opts": ["native.cgroupdriver=$CGROUP_DRIVER"],
   "registry-mirrors": [
     "https://docker.mirrors.ustc.edu.cn",
     "http://hub-mirror.c.163.com"
@@ -201,6 +202,7 @@ EOF
     clog debug "standard config without registry mirrors"
     cat > /etc/docker/daemon.json << EOF
 {
+  "exec-opts": ["native.cgroupdriver=$CGROUP_DRIVER"],
   "max-concurrent-downloads": 10,
   "log-driver": "json-file",
   "log-level": "warn",
@@ -226,6 +228,70 @@ EOF
   systemctl daemon-reload && systemctl restart docker && sleep 4
 }
 
+function containerd_installed(){
+  CONTAINERD_VERSION=1.5.5
+  # if docker exist, then exit
+  if command -v docker >/dev/null 2>&1; then
+    clog info 'exists docker, please remove docker, or update CONTAINER_RUNTIME value as docker in install.conf `'
+    return
+  fi
+  systemctl disable docker --now || true
+
+  if command -v ctr >/dev/null 2>&1; then
+    clog info 'exists containerd'
+    return
+  fi
+
+  os_arch="amd64"
+  if [[ $(arch) == aarch64 ]]; then
+    os_arch="arm64"
+  fi
+
+  wget https://kubecube.nos-eastchina1.126.net/containerd/"$CONTAINERD_VERSION"/containerd-"$CONTAINERD_VERSION"-linux-$os_arch.tar.gz -O containerd.tar.gz
+
+  tar -C / -xzf containerd.tar.gz
+  rm -rf containerd.tar.gz
+  if command -v ctr >/dev/null 2>&1; then
+    clog info "install containerd success"
+  else
+    clog error "install containerd fail"
+    exit 1
+  fi
+}
+
+function containerd_configuration() {
+  #configuration net
+  cat <<EOF | tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+  modprobe overlay
+  modprobe br_netfilter
+
+  cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+  sysctl --system
+
+  #configuration containerd
+  mkdir /etc/containerd || true
+  containerd config default > /etc/containerd/config.toml
+  sed -i '/SystemdCgroup = false/d' /etc/containerd/config.toml
+  sed -i '/containerd.runtimes.runc.options/a\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true' /etc/containerd/config.toml
+  systemctl daemon-reload
+  systemctl enable containerd --now || true
+
+  #configuration pause
+  if [[ "$ZONE" == cn ]];then
+    sed -i 's|k8s.gcr.io/pause|registry.cn-hangzhou.aliyuncs.com/k8sxio/pause|' /etc/containerd/config.toml
+    ctr -n k8s.io i pull registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 || true
+    ctr -n k8s.io i tag registry.cn-hangzhou.aliyuncs.com/k8sxio/pause:3.5 k8s.gcr.io/pause:3.5 || true
+  fi
+}
+
+
 function k8s_bin_get() {
   [[ (-f "/usr/local/bin/kubelet") && (-f "/usr/local/bin/kubeadm") && (-f "/usr/local/bin/kubectl") && (-f "/usr/local/bin/crictl") ]] && { clog warn "kubernetes binaries existed"; return 0; }
 
@@ -235,10 +301,15 @@ function k8s_bin_get() {
   fi
 
   CNI_VERSION="v0.8.2"
-  DOWNLOAD_DIR=/usr/local/bin
   CRICTL_VERSION="v1.17.0"
-  RELEASE=v${KUBERNETES_VERSION}
   RELEASE_VERSION="v0.4.0"
+  RELEASE=v${KUBERNETES_VERSION}
+  DOWNLOAD_DIR=/usr/local/bin
+
+  K8S_VERSION_MAIN=$(echo "$KUBERNETES_VERSION"|cut -d. -f2)
+  if [ $K8S_VERSION_MAIN -gt 22 ]; then
+    CRICTL_VERSION="v1.22.0"
+  fi
 
   mkdir -p /opt/cni/bin
   mkdir -p $DOWNLOAD_DIR
@@ -248,6 +319,9 @@ function k8s_bin_get() {
     k8s_bin_local
   else
     k8s_bin_download
+      if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+        sed -i '2a\Environment="KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --container-runtime=remote --runtime-request-timeout=15m --container-runtime-endpoint=unix:///run/containerd/containerd.sock"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      fi
   fi
 }
 
@@ -283,13 +357,13 @@ function k8s_bin_download() {
     curl -L "https://kubecube.nos-eastchina1.126.net/cri-tools/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
 
     clog debug "downloading kubeadm,kubelet,kubectl"
-    RELEASE=v${KUBERNETES_VERSION}
+#    RELEASE=v${KUBERNETES_VERSION}
     cd $DOWNLOAD_DIR
     curl -L --remote-name-all https://kubecube.nos-eastchina1.126.net/kubernetes/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
     chmod +x {kubeadm,kubelet,kubectl}
 
     clog debug "config for kubelet service"
-    RELEASE_VERSION="v0.4.0"
+#    RELEASE_VERSION="v0.4.0"
     curl -sSL "https://kubecube.nos-eastchina1.126.net/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
     curl -sSL "https://kubecube.nos-eastchina1.126.net/githubusercontent/kubernetes/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   else
@@ -299,13 +373,13 @@ function k8s_bin_download() {
     curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${os_arch}.tar.gz" | tar -C $DOWNLOAD_DIR -xz
 
     clog debug "downloading kubeadm,kubelet,kubectl"
-    RELEASE=v${KUBERNETES_VERSION}
+#    RELEASE=v${KUBERNETES_VERSION}
     cd $DOWNLOAD_DIR
     curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${os_arch}/{kubeadm,kubelet,kubectl}
     chmod +x {kubeadm,kubelet,kubectl}
 
     clog debug "config for kubelet service"
-    RELEASE_VERSION="v0.4.0"
+#    RELEASE_VERSION="v0.4.0"
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   fi
@@ -322,7 +396,14 @@ function images_download() {
       if [[ "$INSTALL_KUBERNETES" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/k8s/v${KUBERNETES_VERSION}/images.list)
         do
-          /usr/bin/docker pull ${image}
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 crictl pull "${image}"
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull "${image}"
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -330,7 +411,14 @@ function images_download() {
       if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
         do
-          /usr/bin/docker pull ${image}
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 crictl pull "${image}"
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull "${image}"
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -338,20 +426,23 @@ function images_download() {
       if [[ "$INSTALL_KUBECUBE_MEMBER" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
         do
-          /usr/bin/docker pull ${image}
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 crictl pull "${image}"
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull "${image}"
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
+
+      # todo: support download cni images by conf
   fi
 }
 
 function preparation() {
   clog info "doing previous preparation"
-
-#  clog debug "close firewall and selinux"
-#  systemctl stop firewalld.service
-#  systemctl disable firewalld.service
-#  sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-#  setenforce 0 || true # ignore error
 
   clog debug "closing swap"
   swapoff -a
@@ -380,14 +471,19 @@ function make_cluster_configuration (){
     REGISTRY=${CN_K8S_REGISTR}
   fi
 
+  if [ ! -z ${KUBERNETES_BIND_ADDRESS} ]; then
+    clog info "use customize k8s bind address ${KUBERNETES_BIND_ADDRESS}"
+    IPADDR=${KUBERNETES_BIND_ADDRESS}
+  fi
+
 API_SERVER_CONF=$(cat <<- EOF
-# set control plane components listen on LOCAL_IP
+# set control plane components listen on IPADDR
 controllerManager:
   extraArgs:
-    bind-address: ${LOCAL_IP}
+    bind-address: ${IPADDR}
 scheduler:
   extraArgs:
-    bind-address: ${LOCAL_IP}
+    bind-address: ${IPADDR}
 imageRepository: ${REGISTRY}
 EOF
 )
@@ -401,7 +497,7 @@ EOF
 
 if [ -z ${CONTROL_PLANE_ENDPOINT} ]; then
   clog debug "vip not be set, use node ip"
-  CONTROL_PLANE_ENDPOINT=${LOCAL_IP}
+  CONTROL_PLANE_ENDPOINT=${IPADDR}
 fi
 
 cat >/etc/cube/kubeadm/init.config <<EOF
@@ -428,8 +524,8 @@ function Install_Kubernetes_Master (){
   cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
   chown $(id -u):$(id -g) ${HOME}/.kube/config
 
-  clog debug "installing calico"
-  kubectl apply -f /etc/kubecube/manifests/calico/calico.yaml > /dev/null
+  clog debug "installing cni ${CNI}"
+  kubectl apply -f /etc/kubecube/manifests/cni/${CNI} > /dev/null
 
   sleep 7 >/dev/null
   clog debug "inspect node"
@@ -491,10 +587,19 @@ function Main() {
   mkdir -p /etc/kubecube/down
   mkdir -p /etc/kubecube/bin
 
-  params_process
-  docker_bin_get
+  if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+    containerd_installed
+    containerd_configuration
+  elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+    docker_bin_get
+    install_docker
+  else
+    clog error "container_runtime error, only support docker and containerd now!"
+    exit 1
+  fi
+
+
   k8s_bin_get
-  install_docker
   images_download
 
   if [[ ${PRE_DOWNLOAD} = "true" ]]; then

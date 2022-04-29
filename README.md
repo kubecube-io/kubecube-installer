@@ -49,5 +49,7 @@ os_arch=amd64
 
 ### Build dependence image
 ```bash
+wget https://kubecube.nos-eastchina1.126.net/helm/helm-v3.5.4-linux-amd64.tar.gz -O helm.tar.gz
 docker build -f ./dependence.Dockerfile -t hub.c.163.com/kubecube/warden-dependence:latest .
+rm ./helm.tar.gz
 ```

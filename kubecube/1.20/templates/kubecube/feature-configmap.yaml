@@ -1,0 +1,8 @@
+{{- if eq .Values.global.componentsEnable.kubecube "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubecube-feature-config
+  namespace: kubecube-system
+---
+{{- end }}

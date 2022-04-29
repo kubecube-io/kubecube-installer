@@ -1,0 +1,66 @@
+{{- if eq .Values.global.componentsEnable.cloudshell "true" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-shell
+  namespace: kubecube-system
+spec:
+  replicas: {{ .Values.cloudshell.replicas }}
+  selector:
+    matchLabels:
+      kubecube.io/app: kubecube-cloud-shell
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: kubecube-cloud-shell
+    spec:
+      {{- with .Values.cloudshell.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cloudshell.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cloudshell.tolerations}}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - hostPath:
+            path: /etc/localtime
+          name: localtime
+      containers:
+        - name: cloud-shell
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.cloudshell }}"
+          imagePullPolicy: IfNotPresent
+          terminationMessagePath: "/dev/termination-log"
+          terminationMessagePolicy: "File"
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+          resources:
+          {{- toYaml .Values.cloudshell.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/ls
+            timeoutSeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/ls
+            timeoutSeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 120
+      restartPolicy: "Always"
+---
+{{- end }}

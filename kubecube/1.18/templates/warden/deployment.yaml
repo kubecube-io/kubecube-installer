@@ -1,0 +1,120 @@
+{{- if eq .Values.global.componentsEnable.warden "true" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    kubecube.io/app: warden
+  name: warden
+  namespace: kubecube-system
+spec:
+  replicas: {{ .Values.warden.replicas }}
+  selector:
+    matchLabels:
+      kubecube.io/app: warden
+  template:
+    metadata:
+      labels:
+        kubecube.io/app: warden
+    spec:
+      {{- with .Values.warden.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.warden.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.warden.tolerations}}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - args:
+            - -cluster={{ .Values.warden.containers.warden.args.cluster }}
+            - -in-member-cluster={{ .Values.warden.containers.warden.args.inMemberCluster }}
+            - -pivot-cube-host={{ .Values.warden.containers.warden.args.pivotCubeHost }}
+            - -local-cluster-kubeconfig=/etc/kubeconfigs/local-kubeconfig
+            - -pivot-cluster-kubeconfig=/etc/kubeconfigs/pivot-kubeconfig
+            - -tls-cert=/etc/tls/tls.crt
+            - -tls-key=/etc/tls/tls.key
+          env:
+            - name: JWT_SECRET
+              value: {{ .Values.warden.containers.warden.env.JWTSecret }}
+            - name: GIN_MODE
+              value: release
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.warden }}"
+          imagePullPolicy: IfNotPresent
+          name: warden
+          resources:
+          {{- toYaml .Values.warden.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /readyz
+              port: 9778
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 9778
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: /etc/tls
+              name: cube-tls-secret
+              readOnly: true
+            - mountPath: /root/helmchartpkg
+              name: helm-pkg
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /etc/kubeconfigs
+              name: kubeconfigs
+              readOnly: true
+      dnsPolicy: ClusterFirst
+      initContainers:
+        - env:
+            - name: DOWNLOAD_CHARTS
+              value: "{{ .Values.warden.containers.downloader.env.downloadCharts }}"
+            - name: DOWNLOAD_URL
+              value: "{{ .Values.warden.containers.downloader.env.downloadURL }}"
+          image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.wardenInit }}"
+          imagePullPolicy: IfNotPresent
+          name: downloader
+          volumeMounts:
+            - mountPath: /root/helmchartpkg
+              name: helm-pkg
+      restartPolicy: Always
+      volumes:
+        - name: kubeconfigs
+          secret:
+            secretName: kubeconfigs
+            defaultMode: 420
+            items:
+              - key: pivotCluster
+                path: pivot-kubeconfig
+              - key: localCluster
+                path: local-kubeconfig
+        - name: cube-tls-secret
+          secret:
+            defaultMode: 420
+            secretName: cube-tls-secret
+        - emptyDir: {}
+          name: helm-pkg
+        - hostPath:
+            path: /etc/localtime
+            type: ""
+          name: localtime
+---
+{{- end }}

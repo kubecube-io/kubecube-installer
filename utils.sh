@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source /etc/kubecube/manifests/install.conf
-
 IPADDR=$(hostname -I |awk '{print $1}')
 Uptime_day=$(uptime |awk '{print $3,$4}')
 CPU_NUM=$(grep -c 'processor' /proc/cpuinfo)
@@ -14,6 +12,7 @@ DISK_INFO=$(df -h |grep -w "/" |awk '{print "disk total:",$1,$2}')
 DISK_Avail=$(df -h |grep -w "/" |awk '{print "disk available:",$1,$4}')
 LOAD_INFO=$(uptime |awk '{print "CPU load: "$(NF-2),$(NF-1),$NF}'|sed 's/\,//g')
 
+# system_info inspect current machine
 function system_info () {
   echo -e "\033[32m-------------System Infomation-------------\033[0m"
   echo -e "\033[32m System running time：${Uptime_day}${Uptime} \033[0m"
@@ -29,6 +28,7 @@ function system_info () {
   echo -e "\033[32m--------------------------------------------\033[0m"
 }
 
+# clog print log with timestamp and custom level
 function clog() {
   TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
   case "$1" in
@@ -49,151 +49,16 @@ function clog() {
   esac
 }
 
-function params_process() {
-  if [ -z ${NODE_MODE} ]
-  then
-    clog error "NODE_MODE can not be empty!"
-    exit 1
-  else
-    NODE_MODE_LEGAL="false"
-    for v in "control-plane-master" "master" "node-join-control-plane" "node-join-master"
-    do
-      if [ ${NODE_MODE} = $v ];then
-        NODE_MODE_LEGAL="true"
-        break
-      fi
-    done
-    if [ ${NODE_MODE_LEGAL} = "false" ]; then
-      clog error "NODE_MODE illegal! must be one of:control-plane-master,master,node-join-control-plane,node-join-master"
-      exit 1
-    fi
-  fi
-
-  if [ -z ${MASTER_IP} ]; then
-    if [ ${NODE_MODE} = "master" ]; then
-      MASTER_IP=$(hostname -I |awk '{print $1}')
-    else
-      clog error "MASTER_IP can not be empty!"
-      exit 1
-    fi
-  fi
-
-  if [ -z ${LOCAL_IP} ]; then
-    LOCAL_IP=$(hostname -I |awk '{print $1}')
-  fi
-
-  #if [ -z ${MEMBER_CLUSTER_NAME} ]; then
-  #  echo -e "\033[32m empty MEMBER_CLUSTER_NAME, used hostname by default \033[0m"
-  #  MEMBER_CLUSTER_NAME = $(hostname)
-  #fi
-
-  if [ -z ${ZONE} ]; then
-    ZONE="ch"
-  fi
+# init_etcd_secret create etcd secret for monitoring at first
+function init_etcd_secret (){
+  kubectl create namespace kubecube-monitoring --dry-run=client -o yaml | kubectl apply -f -
+  kubectl create secret generic etcd-certs -n kubecube-monitoring --dry-run=client -o yaml \
+  --from-file=ca.crt=/etc/kubernetes/pki/ca.crt \
+  --from-file=client.crt=/etc/kubernetes/pki/apiserver-etcd-client.crt \
+  --from-file=client.key=/etc/kubernetes/pki/apiserver-etcd-client.key | kubectl apply -f -
 }
 
-# Deprecated when we do not need modify apiserver
-function configs_for_apiserver() {
-  clog info "make configs for k8s api-server"
-
-  mkdir -p /etc/cube/warden
-  mkdir -p /etc/cube/audit
-
-cat >/etc/cube/warden/webhook.config <<EOF
-apiVersion: v1
-kind: Config
-clusters:
-  - name: warden
-    cluster:
-      server: https://${IPADDR}:31443/api/v1/warden/authenticate
-      insecure-skip-tls-verify: true
-users:
-  - name: api-server
-
-current-context: webhook
-contexts:
-  - context:
-      cluster: warden
-      user: api-server
-    name: webhook
-EOF
-
-cat >/etc/cube/audit/audit-webhook.config  <<EOF
-apiVersion: v1
-clusters:
-- cluster:
-    server: http://${IPADDR}:30008/api/v1/cube/audit/k8s
-    insecure-skip-tls-verify: true
-  name: audit
-contexts:
-- context:
-    cluster: audit
-    user: ""
-  name: default-context
-current-context: default-context
-kind: Config
-preferences: {}
-users: []
-EOF
-
-cat >/etc/cube/audit/audit-policy.yaml  <<EOF
-apiVersion: audit.k8s.io/v1
-kind: Policy
-omitStages:
-  - "ResponseStarted"
-  - "RequestReceived"
-rules:
-- level: None
-  nonResourceURLs:
-    - /apis*
-    - /api/v1?timeout=*
-    - /api?timeout=*
-- level: Metadata
-  userGroups: ["kubecube"]
-EOF
-}
-
-# Deprecated when we do not need modify apiserver
-function alert_modify_apiserver() {
-  echo -e "\033[32m================================================================================================\033[0m"
-  echo -e "\033[32m IMPORTANT !!!                                                                                  \033[0m"
-  echo -e "\033[32m You must change the args of k8s api-server before installing kubecube, steps below:            \033[0m"
-  echo -e "\033[32m 1. find the manifests folder contains kube-apiserver.yaml                                      \033[0m"
-  echo -e "\033[32m    generally in /etc/kubernetes/manifests of master node.                                      \033[0m"
-  echo -e "\033[32m 2. add patches as below:                                                                       \033[0m"
-  echo -e "\033[32m================================================================================================\033[0m"
-  echo -e "\033[32m spec:                                                                                          \033[0m"
-  echo -e "\033[32m   containers:                                                                                  \033[0m"
-  echo -e "\033[32m     - command:                                                                                 \033[0m"
-  echo -e "\033[32m         - kube-apiserver                                                                       \033[0m"
-  echo -e "\033[32m         - --audit-webhook-config-file=/etc/cube/audit/audit-webhook.config                     \033[0m"
-  echo -e "\033[32m         - --audit-policy-file=/etc/cube/audit/audit-policy.yaml                                \033[0m"
-  echo -e "\033[32m         - --authentication-token-webhook-config-file=/etc/cube/warden/webhook.config           \033[0m"
-  echo -e "\033[32m         - --audit-log-format=json                                                              \033[0m"
-  echo -e "\033[32m         - --audit-log-maxage=10                                                                \033[0m"
-  echo -e "\033[32m         - --audit-log-maxbackup=10                                                             \033[0m"
-  echo -e "\033[32m         - --audit-log-maxsize=100                                                              \033[0m"
-  echo -e "\033[32m         - --audit-log-path=/var/log/audit.log                                                      \033[0m"
-  echo -e "\033[32m       volumeMounts:                                                                            \033[0m"
-  echo -e "\033[32m       - mountPath: /var/log/audit.log                                                              \033[0m"
-  echo -e "\033[32m         name: audit-log                                                                        \033[0m"
-  echo -e "\033[32m       - mountPath: /etc/cube                                                                   \033[0m"
-  echo -e "\033[32m         name: cube                                                                             \033[0m"
-  echo -e "\033[32m         readOnly: true                                                                         \033[0m"
-  echo -e "\033[32m   volumes:                                                                                     \033[0m"
-  echo -e "\033[32m     - hostPath:                                                                                 \033[0m"
-  echo -e "\033[32m         path: /var/log/audit.log                                                                   \033[0m"
-  echo -e "\033[32m         type: FileOrCreate                                                                \033[0m"
-  echo -e "\033[32m       name: audit-log                                                                          \033[0m"
-  echo -e "\033[32m     - hostPath:                                                                                 \033[0m"
-  echo -e "\033[32m         path: /etc/cube                                                                        \033[0m"
-  echo -e "\033[32m         type: DirectoryOrCreate                                                                \033[0m"
-  echo -e "\033[32m       name: cube                                                                               \033[0m"
-  echo -e "\033[32m================================================================================================\033[0m"
-  echo -e "\033[32m Please enter 'exit' to modify args of k8s api-server \033[0m"
-  echo -e "\033[32m After modify is done, please redo script and enter 'confirm' to continue \033[0m"
-}
-
+# spin do wait print for circle
 function spin() {
   sp='/-\|'
   printf ' '
@@ -203,4 +68,126 @@ function spin() {
     sp=${sp#?}${sp%???}
     sleep 0.5
   done
+}
+
+# cmd_must_exist check whether command is installed.
+function cmd_must_exist {
+    local CMD=$(command -v ${1})
+    if [[ ! -x ${CMD} ]]; then
+      echo "please install ${1} and verify they are in \$PATH."
+      exit 1
+    fi
+}
+
+# wait_pod_ready waits for pod state becomes ready until timeout.
+# Parmeters:
+#  - $1: pod label, such as "app=etcd"
+#  - $2: pod namespace, such as "karmada-system"
+#  - $3: time out, such as "200s"
+function wait_pod_ready() {
+    local pod_label=$1
+    local pod_namespace=$2
+    local wait_timeout=$3
+
+    echo "wait the $pod_label ready..."
+    set +e
+    util::kubectl_with_retry wait --for=condition=Ready --timeout=30s pods -l app=${pod_label} -n ${pod_namespace}
+    ret=$?
+    set -e
+    if [ $ret -ne 0 ];then
+      echo "kubectl describe info:"
+      kubectl describe pod -l app=${pod_label} -n ${pod_namespace}
+    fi
+    return ${ret}
+}
+
+# kubectl_with_retry will retry if execute kubectl command failed
+# tolerate kubectl command failure that may happen before the pod is created by  StatefulSet/Deployment.
+# default retry 10 times
+function kubectl_with_retry() {
+    local ret=0
+    for i in {1..10}; do
+        kubectl "$@"
+        ret=$?
+        if [[ ${ret} -ne 0 ]]; then
+            echo "kubectl $@ failed, retrying(${i} times)"
+            sleep 1
+            continue
+        else
+            return 0
+        fi
+    done
+
+    echo "kubectl $@ failed"
+    kubectl "$@"
+    return ${ret}
+}
+
+function helm_download() {
+  clog info "download helm bin"
+  if [[ $(arch) == x86_64 ]]; then
+    wget https://kubecube.nos-eastchina1.126.net/helm/helm-v3.5.4-linux-amd64.tar.gz -O helm.tar.gz
+    tar -xzvf helm.tar.gz > /dev/null
+    chmod +x linux-amd64/helm
+    mv linux-amd64/helm /usr/local/bin/helm
+  else
+    wget https://kubecube.nos-eastchina1.126.net/helm/helm-v3.6.2-linux-arm64.tar.gz -O helm.tar.gz
+    tar -xzvf helm.tar.gz > /dev/null
+    chmod +x linux-arm64/helm
+    mv linux-arm64/helm /usr/local/bin/helm
+  fi
+}
+
+function sign_cert() {
+  clog info "signing cert..."
+  mkdir -p ca
+  cd ca
+
+  extra_ip=$1
+
+  clog debug "generate ca key and ca cert"
+  openssl genrsa -out ca.key 2048 > /dev/null
+  openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.kubecube-system" -days 10000 -out ca.crt > /dev/null
+
+  clog debug "generate tls key"
+  openssl genrsa -out tls.key 2048 > /dev/null
+
+  clog debug "make tls csr"
+cat << EOF >csr.conf
+[ req ]
+default_bits = 2048
+prompt = no
+default_md = sha256
+req_extensions = req_ext
+distinguished_name = dn
+
+[ dn ]
+C = ch
+ST = zj
+L = hz
+O = kubecube
+CN = *.kubecube-system
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = *.kubecube-system
+DNS.2 = *.kubecube-system.svc
+DNS.3 = *.kubecube-system.svc.cluster.local
+IP.1 = 127.0.0.1
+IP.2 = ${extra_ip}
+
+[ v3_ext ]
+authorityKeyIdentifier=keyid,issuer:always
+basicConstraints=CA:FALSE
+keyUsage=keyEncipherment,dataEncipherment
+extendedKeyUsage=serverAuth,clientAuth
+subjectAltName=@alt_names
+EOF
+  openssl req -new -key tls.key -out tls.csr -config csr.conf
+
+  clog debug "generate tls cert"
+  openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt -days 10000 -extensions v3_ext -extfile csr.conf
+  cd ..
 }
