@@ -392,7 +392,14 @@ function images_download() {
       if [[ "$INSTALL_KUBERNETES" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/k8s/v${KUBERNETES_VERSION}/images.list)
         do
-            crictl pull "${image}"
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 crictl pull "${image}"
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull "${image}"
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -400,7 +407,14 @@ function images_download() {
       if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
         do
-            crictl pull "${image}"
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 crictl pull "${image}"
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull "${image}"
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
@@ -408,7 +422,14 @@ function images_download() {
       if [[ "$INSTALL_KUBECUBE_MEMBER" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
         do
-            crictl pull "${image}"
+            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 crictl pull "${image}"
+            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
+                 /usr/bin/docker pull "${image}"
+            else
+              clog error "container_runtime error, only support docker and containerd now!"
+              exit 1
+            fi
         done
       fi
 
