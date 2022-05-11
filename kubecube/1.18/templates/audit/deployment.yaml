@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: audit
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
   labels:
     kubecube.io/app: audit
 spec:
@@ -48,7 +48,7 @@ spec:
               path: /healthz
               port: 8888
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1
@@ -58,7 +58,7 @@ spec:
               path: /healthz
               port: 8888
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1

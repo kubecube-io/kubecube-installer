@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubecube
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
   labels:
     kubecube.io/app: kubecube
 spec:
@@ -53,6 +53,8 @@ spec:
             - -generic-auth-insecure-skip-verify={{ .Values.kubecube.args.genericAuthInsecureSkikVerify }}
             - -enable-version-conversion={{ .Values.kubecube.args.enableVersionConversion }}
           env:
+            - name: CUBE_NAMESPACE
+              value: {{ include "kubecube.namespace" . }}
             - name: DOWNLOAD_CHARTS
               value: "{{ .Values.kubecube.env.downloadCharts }}"
             - name: DOWNLOAD_CHARTS_URL
@@ -76,7 +78,7 @@ spec:
               path: /healthz
               port: 7777
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1
@@ -86,7 +88,7 @@ spec:
               path: /healthz
               port: 7777
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1

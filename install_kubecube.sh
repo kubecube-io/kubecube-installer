@@ -110,11 +110,11 @@ version=1.$(echo "$KUBERNETES_VERSION"|cut -d. -f2)
 /bin/bash /etc/kubecube/manifests/install_third_dependence.sh false ${version}
 
 make_hotplug
-sign_cert ${IPADDR}
+sign_cert ${INSTALL_NAMESPACE} ${IPADDR}
 render_values
 
 clog info "deploy kubecube"
-/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/${version}
+/usr/local/bin/helm install -f values.yaml kubecube /etc/kubecube/manifests/kubecube/${version} -n ${INSTALL_NAMESPACE} --create-namespace
 
 clog info "waiting for kubecube ready..."
 timeout=180

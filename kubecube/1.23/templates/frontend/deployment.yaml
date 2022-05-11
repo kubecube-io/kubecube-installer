@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
   labels:
     kubecube.io/app: frontend
 spec:
@@ -46,13 +46,13 @@ spec:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 5
           volumeMounts:
             - name: nginx-config

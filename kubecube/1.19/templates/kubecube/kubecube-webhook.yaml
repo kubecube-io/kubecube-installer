@@ -12,7 +12,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ include "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-tenant-kubecube-io-v1-project
     failurePolicy: Fail
@@ -36,7 +36,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ include "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-tenant-kubecube-io-v1-tenant
     failurePolicy: Fail
@@ -60,7 +60,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ include "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-quota-kubecube-io-v1-cube-resource-quota
     failurePolicy: Fail
@@ -84,7 +84,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ include "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-hotplug-kubecube-io-v1-hotplug
     failurePolicy: Fail
@@ -108,7 +108,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ include "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-cluster-kubecube-io-v1-cluster
     failurePolicy: Fail

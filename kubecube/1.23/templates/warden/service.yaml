@@ -5,7 +5,7 @@ metadata:
   labels:
     kubecube.io/app: warden
   name: warden
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
 spec:
   ports:
     - name: https

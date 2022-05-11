@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: audit-nodeport
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
 spec:
   type: NodePort
   selector:
@@ -18,7 +18,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: audit
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
 spec:
   selector:
     kubecube.io/app: audit

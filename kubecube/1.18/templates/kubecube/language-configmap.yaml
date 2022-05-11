@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kubecube-language-config
-  namespace: kubecube-system
+  namespace: {{ include "kubecube.namespace" . }}
 data:
   languages: "zh,en"
   en.toml: |
