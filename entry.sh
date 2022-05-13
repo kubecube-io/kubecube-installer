@@ -32,13 +32,16 @@ function env_check() {
       env_ok=false
     fi
 
-    whereis libseccomp | grep .so > /dev/null
+    ldconfig -p | grep libseccomp > /dev/null
     if [ $? != 0 ]; then
-      whereis -b libseccomp.so.2 | grep / > /dev/null
+      whereis libseccomp | grep .so > /dev/null
+      if [ $? != 0 ]; then
+        whereis -b libseccomp.so.2 | grep / > /dev/null
         if [ $? != 0 ]; then
           libseccomp_has="x"
           env_ok=false
         fi
+      fi
     fi
 
     echo -e "\033[32m|---------------------------------------------------------------------|\033[0m"
