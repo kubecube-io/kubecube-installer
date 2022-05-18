@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloud-shell
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
 spec:
   replicas: {{ .Values.cloudshell.replicas }}
   selector:

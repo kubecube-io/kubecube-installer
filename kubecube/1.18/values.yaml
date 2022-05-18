@@ -1,4 +1,7 @@
 global:
+  ## Override the deployment namespace
+  namespaceOverride: ""
+
   dependencesEnable:
     hnc: "true"
     ingressController: "true"

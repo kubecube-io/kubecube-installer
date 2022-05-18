@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubecube
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
   labels:
     kubecube.io/app: kubecube
 spec:
@@ -54,7 +54,7 @@ spec:
             - -enable-version-conversion={{ .Values.kubecube.args.enableVersionConversion }}
           env:
             - name: CUBE_NAMESPACE
-              value: {{ include "kubecube.namespace" . }}
+              value: {{ template "kubecube.namespace" . }}
             - name: DOWNLOAD_CHARTS
               value: "{{ .Values.kubecube.env.downloadCharts }}"
             - name: DOWNLOAD_CHARTS_URL

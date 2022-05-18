@@ -5,7 +5,7 @@ metadata:
   labels:
     kubecube.io/app: warden
   name: warden
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
 spec:
   replicas: {{ .Values.warden.replicas }}
   selector:
@@ -43,7 +43,7 @@ spec:
             - -tls-key=/etc/tls/tls.key
           env:
             - name: CUBE_NAMESPACE
-              value: {{ include "kubecube.namespace" . }}
+              value: {{ template "kubecube.namespace" . }}
             - name: JWT_SECRET
               value: {{ .Values.warden.containers.warden.env.JWTSecret }}
             - name: GIN_MODE

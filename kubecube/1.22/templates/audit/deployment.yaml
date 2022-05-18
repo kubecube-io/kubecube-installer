@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: audit
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
   labels:
     kubecube.io/app: audit
 spec:

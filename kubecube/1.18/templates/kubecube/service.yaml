@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kubecube
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
 spec:
   selector:
     kubecube.io/app: kubecube
@@ -24,7 +24,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kubecube-nodeport
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
 spec:
   type: NodePort
   selector:

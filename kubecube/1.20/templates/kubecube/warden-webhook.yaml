@@ -12,7 +12,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: warden
-        namespace: {{ include "kubecube.namespace" . }}
+        namespace: {{ template "kubecube.namespace" . }}
         port: 8443
         path: /validate-core-kubernetes-v1-resource-quota
     failurePolicy: Fail
@@ -36,7 +36,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: warden
-        namespace: {{ include "kubecube.namespace" . }}
+        namespace: {{ template "kubecube.namespace" . }}
         port: 8443
         path: /warden-validate-hotplug-kubecube-io-v1-hotplug
     failurePolicy: Fail

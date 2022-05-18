@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webconsole
-  namespace: {{ include "kubecube.namespace" . }}
+  namespace: {{ template "kubecube.namespace" . }}
   labels:
     kubecube.io/app: kubecube-webconsole
 spec:
@@ -39,7 +39,7 @@ spec:
             - name: KUBECUBE_SVC
               value: kubecube-nodeport:7443
           args:
-            - --appNamespace={{ include "kubecube.namespace" . }}
+            - --appNamespace={{ template "kubecube.namespace" . }}
           name: kubecube-webconsole
           image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.webconsole }}"
           imagePullPolicy: IfNotPresent
