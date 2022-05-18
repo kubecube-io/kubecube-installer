@@ -47,8 +47,8 @@ global:
     cloudshell: cloudshell:v1.2.0
     frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
-    ingressController: ingress-nginx/controller:v0.46.0-m
-    ingressControllerJob: jettech/kube-webhook-certgen:v1.5.1-m
+    ingressController: ingress-nginx/controller:v1.2.0
+    ingressControllerJob: ingress-nginx/kube-webhook-certgen:v1.1.1
     localPathStorageProvisioner: rancher/local-path-provisioner:v0.0.19-m
     localPathStorageConfigmap: busybox:latest-m
     metricsServer: rancher/metrics-server:v0.4.1-m
@@ -64,7 +64,7 @@ kubecube:
     #   memory: 1Gi
     # requests:
     #   cpu: 500m
-    #   memory: 1Gi
+  #   memory: 1Gi
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -80,7 +80,7 @@ kubecube:
     genericAuthMethod: GET
     genericAuthScheme: https
     genericAuthInsecureSkikVerify: true
-    enableVersionConversion: true
+    enableVersionConversion: false
   env:
     downloadCharts: "false"
     downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
@@ -116,15 +116,16 @@ warden:
     warden:
       resources: {}
         # If you do want to specify resources, uncomment the following
-        # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#        limits:
-#          cpu: 300m
-#          memory: 512Mi
-#        requests:
-#          cpu: 300m
-#          memory: 512Mi
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      #        limits:
+      #          cpu: 300m
+      #          memory: 512Mi
+      #        requests:
+      #          cpu: 300m
+      #          memory: 512Mi
       args:
         cluster: "pivot-cluster"  # member cluster name
+        leaderElect: false
         inMemberCluster: false    # is member cluster or not
         pivotCubeHost: "kubecube.kubecube-system:7443"  # kubecube address
       env:
@@ -144,13 +145,13 @@ audit:
   replicas: 1
   resources: {}
     # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#    limits:
-#      cpu: 100m
-#      memory: 128Mi
-#    requests:
-#      cpu: 100m
-#      memory: 128Mi
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  #    limits:
+  #      cpu: 100m
+  #      memory: 128Mi
+  #    requests:
+  #      cpu: 100m
+  #      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -162,13 +163,13 @@ webconsole:
   replicas: 1
   resources: {}
     # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#    limits:
-#      cpu: 100m
-#      memory: 128Mi
-#    requests:
-#      cpu: 100m
-#      memory: 128Mi
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  #    limits:
+  #      cpu: 100m
+  #      memory: 128Mi
+  #    requests:
+  #      cpu: 100m
+  #      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -180,13 +181,13 @@ cloudshell:
   replicas: 1
   resources: {}
     # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#    limits:
-#      cpu: 100m
-#      memory: 128Mi
-#    requests:
-#      cpu: 100m
-#      memory: 128Mi
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  #    limits:
+  #      cpu: 100m
+  #      memory: 128Mi
+  #    requests:
+  #      cpu: 100m
+  #      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -200,13 +201,13 @@ frontend:
   imagePullPolicy: IfNotPresent
   resources: {}
     # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#    limits:
-#      cpu: 100m
-#      memory: 128Mi
-#    requests:
-#      cpu: 100m
-#      memory: 128Mi
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  #    limits:
+  #      cpu: 100m
+  #      memory: 128Mi
+  #    requests:
+  #      cpu: 100m
+  #      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:

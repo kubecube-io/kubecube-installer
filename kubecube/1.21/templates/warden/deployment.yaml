@@ -35,6 +35,7 @@ spec:
       containers:
         - args:
             - -cluster={{ .Values.warden.containers.warden.args.cluster }}
+            - -leader-elect={{ .Values.warden.containers.warden.args.leaderElect }}
             - -in-member-cluster={{ .Values.warden.containers.warden.args.inMemberCluster }}
             - -pivot-cube-host={{ .Values.warden.containers.warden.args.pivotCubeHost }}
             - -local-cluster-kubeconfig=/etc/kubeconfigs/local-kubeconfig

@@ -125,6 +125,7 @@ warden:
 #          memory: 512Mi
       args:
         cluster: "pivot-cluster"  # member cluster name
+        leaderElect: false
         inMemberCluster: false    # is member cluster or not
         pivotCubeHost: "kubecube.kubecube-system:7443"  # kubecube address
       env:
