@@ -397,6 +397,7 @@ function images_download() {
         for image in $(cat /etc/kubecube/manifests/images/k8s/v${KUBERNETES_VERSION}/images.list)
         do
             if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 clog debug "pulling image ${image}"
                  crictl pull "${image}"
             elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
                  /usr/bin/docker pull "${image}"
@@ -412,6 +413,7 @@ function images_download() {
         for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
         do
             if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 clog debug "pulling image ${image}"
                  crictl pull "${image}"
             elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
                  /usr/bin/docker pull "${image}"
@@ -427,6 +429,7 @@ function images_download() {
         for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
         do
             if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+                 clog debug "pulling image ${image}"
                  crictl pull "${image}"
             elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
                  /usr/bin/docker pull "${image}"

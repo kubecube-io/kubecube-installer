@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kubecube-system
-  annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "0"

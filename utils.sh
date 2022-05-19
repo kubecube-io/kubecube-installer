@@ -143,7 +143,8 @@ function sign_cert() {
   mkdir -p ca
   cd ca
 
-  extra_ip=$1
+  ns=$1
+  extra_ip=$2
 
   clog debug "generate ca key and ca cert"
   openssl genrsa -out ca.key 2048 > /dev/null
@@ -166,15 +167,15 @@ C = ch
 ST = zj
 L = hz
 O = kubecube
-CN = *.kubecube-system
+CN = *.${ns}
 
 [ req_ext ]
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = *.kubecube-system
-DNS.2 = *.kubecube-system.svc
-DNS.3 = *.kubecube-system.svc.cluster.local
+DNS.1 = *.${ns}
+DNS.2 = *.${ns}.svc
+DNS.3 = *.${ns}.svc.cluster.local
 IP.1 = 127.0.0.1
 IP.2 = ${extra_ip}
 
