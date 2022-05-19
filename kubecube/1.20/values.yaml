@@ -84,7 +84,7 @@ kubecube:
   env:
     downloadCharts: "false"
     downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
-    pivotCubeSvc: kubecube.kubecube-system:7443
+    pivotCubeSvc: kubecube:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
 
@@ -127,7 +127,7 @@ warden:
         cluster: "pivot-cluster"  # member cluster name
         leaderElect: false
         inMemberCluster: false    # is member cluster or not
-        pivotCubeHost: "kubecube.kubecube-system:7443"  # kubecube address
+        pivotCubeHost: "kubecube:7443"  # kubecube address
       env:
         JWTSecret: "56F0D8DB90241C6E"  # jwt secret for jwt token gen
     downloader:
