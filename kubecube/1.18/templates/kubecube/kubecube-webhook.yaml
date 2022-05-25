@@ -14,54 +14,6 @@ webhooks:
         name: kubecube
         namespace: {{ template "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
-        path: /validate-tenant-kubecube-io-v1-project
-    failurePolicy: Fail
-    name: vproject.kb.io
-    rules:
-      - apiGroups:
-          - tenant.kubecube.io
-        apiVersions:
-          - v1
-        operations:
-          - CREATE
-          - UPDATE
-          - DELETE
-        resources:
-          - projects
-    sideEffects: None
-  - admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
-      caBundle: {{ .Values.global.certs.ca.crt }}
-      service:
-        name: kubecube
-        namespace: {{ template "kubecube.namespace" . }}
-        port: {{ .Values.kubecube.args.webhookServerPort }}
-        path: /validate-tenant-kubecube-io-v1-tenant
-    failurePolicy: Fail
-    name: vtenant.kb.io
-    rules:
-      - apiGroups:
-          - tenant.kubecube.io
-        apiVersions:
-          - v1
-        operations:
-          - CREATE
-          - UPDATE
-          - DELETE
-        resources:
-          - tenants
-    sideEffects: None
-  - admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
-      caBundle: {{ .Values.global.certs.ca.crt }}
-      service:
-        name: kubecube
-        namespace: {{ template "kubecube.namespace" . }}
-        port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-quota-kubecube-io-v1-cube-resource-quota
     failurePolicy: Fail
     name: vcuberesourcequota.kb.io
