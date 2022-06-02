@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         kubecube.io/app: frontend
+        app: frontend
     spec:
       {{- with .Values.frontend.nodeSelector }}
       nodeSelector:

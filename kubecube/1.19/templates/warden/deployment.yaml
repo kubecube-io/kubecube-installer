@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         kubecube.io/app: warden
+        app: warden
     spec:
       {{- with .Values.warden.nodeSelector }}
       nodeSelector:

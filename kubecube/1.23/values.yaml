@@ -87,6 +87,7 @@ kubecube:
     pivotCubeSvc: kubecube:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
+    retainMemberClusterResource: "false"
 
   # kubecube/pivot-cluster.yaml
   pivotCluster:

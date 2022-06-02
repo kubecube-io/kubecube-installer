@@ -17,6 +17,7 @@ spec:
         prometheus.io/scrape: "true"
       labels:
         control-plane: controller-manager
+        app: hnc
     spec:
       {{- with .Values.nodeSelector }}
       nodeSelector:

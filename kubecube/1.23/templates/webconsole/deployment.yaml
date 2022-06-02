@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         kubecube.io/app: kubecube-webconsole
+        app: webconsole
     spec:
       {{- with .Values.webconsole.nodeSelector }}
       nodeSelector:

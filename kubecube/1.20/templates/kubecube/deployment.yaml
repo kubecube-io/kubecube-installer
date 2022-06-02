@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         kubecube.io/app: kubecube
+        app: kubecube
     spec:
       {{- with .Values.kubecube.nodeSelector }}
       nodeSelector:
@@ -73,6 +74,8 @@ spec:
               value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.dependenceJob }}"
             - name: GIN_MODE
               value: release
+            - name: RETAIN_MEMBER_CLUSTER_RESOURCE
+              value: "{{ .Values.kubecube.env.retainMemberClusterResource }}"
           livenessProbe:
             httpGet:
               path: /healthz

@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         kubecube.io/app: kubecube-cloud-shell
+        app: cloudshell
     spec:
       {{- with .Values.cloudshell.nodeSelector }}
       nodeSelector:
