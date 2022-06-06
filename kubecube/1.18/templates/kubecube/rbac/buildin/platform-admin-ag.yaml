@@ -586,19 +586,6 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - networkpolicies
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - delete
-      - deletecollection
-      - patch
-      - update
-  - apiGroups:
-      - "*"
-    resources:
       - ingressclasses
     verbs:
       - get
