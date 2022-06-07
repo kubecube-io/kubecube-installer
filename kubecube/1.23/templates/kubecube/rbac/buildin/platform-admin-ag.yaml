@@ -1146,19 +1146,6 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - cuberesourcequota/status
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - delete
-      - deletecollection
-      - patch
-      - update
-  - apiGroups:
-      - "*"
-    resources:
       - tenants
     verbs:
       - get

@@ -743,7 +743,7 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - cuberesourcequota/status
+      - cuberesourcequota
     verbs:
       - get
       - list
