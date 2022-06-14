@@ -275,7 +275,6 @@ rules:
     resources:
       - serviceaccounts
     verbs:
-      - impersonate
       - get
       - list
       - watch
@@ -743,7 +742,7 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - cuberesourcequota/status
+      - cuberesourcequota
     verbs:
       - get
       - list

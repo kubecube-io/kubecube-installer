@@ -68,7 +68,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - storage.k8s.io
+      - "*"
     resources:
       - storageclasses
     verbs:
@@ -77,7 +77,7 @@ rules:
       - watch
   ### KubeCube resource below
   - apiGroups:
-      - tenant.kubecube.io
+      - "*"
     resources:
       - projects
     verbs:
@@ -89,13 +89,13 @@ rules:
       - update
       - watch
   - apiGroups:
-      - tenant.kubecube.io
+      - "*"
     resources:
       - projects/finalizers
     verbs:
       - update
   - apiGroups:
-      - tenant.kubecube.io
+      - "*"
     resources:
       - projects/status
     verbs:

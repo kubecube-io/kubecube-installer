@@ -26,6 +26,19 @@ rules:
   - apiGroups:
       - "*"
     resources:
+      - pods/eviction
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - patch
+      - update
+  - apiGroups:
+      - "*"
+    resources:
       - pods/attach
     verbs:
       - get
@@ -275,7 +288,6 @@ rules:
     resources:
       - serviceaccounts
     verbs:
-      - impersonate
       - get
       - list
       - watch
