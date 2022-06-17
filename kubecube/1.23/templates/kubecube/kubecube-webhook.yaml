@@ -63,7 +63,7 @@ webhooks:
         namespace: {{ template "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-cluster-kubecube-io-v1-cluster
-    failurePolicy: Fail
+    failurePolicy: Ignore
     name: vcluster.kb.io
     rules:
       - apiGroups:
@@ -76,5 +76,6 @@ webhooks:
         resources:
           - clusters
     sideEffects: None
+    timeoutSeconds: 1
 ---
 {{- end }}

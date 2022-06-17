@@ -38,13 +38,13 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:v1.2.0
-    warden: warden:v1.2.0
+    kubecube: cube:v1.2.1
+    warden: warden:v1.2.1
     wardenInit: warden-init:v1.2.0
     dependenceJob: warden-dependence:v1.2.0
     audit: audit:v1.2.0
-    webconsole: webconsole:v1.2.0
-    cloudshell: cloudshell:v1.2.0
+    webconsole: webconsole:v1.2.1
+    cloudshell: cloudshell:v1.2.1
     frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
     ingressController: ingress-nginx/controller:v1.2.0
