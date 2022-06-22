@@ -43,7 +43,7 @@ global:
     wardenInit: warden-init:v1.2.0
     dependenceJob: warden-dependence:v1.2.0
     audit: audit:v1.2.0
-    webconsole: webconsole:v1.2.1
+    webconsole: webconsole:v1.2.2
     cloudshell: cloudshell:v1.2.1
     frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
