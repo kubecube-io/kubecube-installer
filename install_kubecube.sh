@@ -12,6 +12,10 @@ function render_values() {
   clog info "render values for kubecube chart values"
 cat >> values.yaml <<EOF
 global:
+  dependencesEnable:
+    ingressController: "${INGRESS_CONTROLLER_ENABLE}"
+    localPathStorage: "${LOCAL_PATH_STORAGE_ENABLE}"
+    metricServer: "${METRIC_SERVER_ENABLE}"
   certs:
     tls:
       key: "$(cat ca/tls.key | base64 -w 0)"
