@@ -12,7 +12,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: warden
-        namespace: kubecube-system
+        namespace: {{ template "kubecube.namespace" . }}
         port: 8443
         path: /validate-core-kubernetes-v1-resource-quota
     failurePolicy: Fail
@@ -36,7 +36,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: warden
-        namespace: kubecube-system
+        namespace: {{ template "kubecube.namespace" . }}
         port: 8443
         path: /warden-validate-hotplug-kubecube-io-v1-hotplug
     failurePolicy: Fail
@@ -52,6 +52,54 @@ webhooks:
           - DELETE
         resources:
           - hotplugs
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      caBundle: {{ .Values.global.certs.ca.crt }}
+      service:
+        name: warden
+        namespace: {{ template "kubecube.namespace" . }}
+        port: 8443
+        path: /validate-tenant-kubecube-io-v1-project
+    failurePolicy: Fail
+    name: vproject.kb.io
+    rules:
+      - apiGroups:
+          - tenant.kubecube.io
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - projects
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      caBundle: {{ .Values.global.certs.ca.crt }}
+      service:
+        name: warden
+        namespace: {{ template "kubecube.namespace" . }}
+        port: 8443
+        path: /validate-tenant-kubecube-io-v1-tenant
+    failurePolicy: Fail
+    name: vtenant.kb.io
+    rules:
+      - apiGroups:
+          - tenant.kubecube.io
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+          - DELETE
+        resources:
+          - tenants
     sideEffects: None
 ---
 {{- end }}

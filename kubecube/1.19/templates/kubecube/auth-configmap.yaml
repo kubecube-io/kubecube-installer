@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kubecube-auth-config
-  namespace: kubecube-system
+  namespace: {{ template "kubecube.namespace" . }}
 data:
   github: |
     enabled: {{ .Values.kubecube.authConfig.github.enabled }}

@@ -1,4 +1,7 @@
 global:
+  ## Override the deployment namespace
+  namespaceOverride: ""
+
   dependencesEnable:
     hnc: "true"
     ingressController: "true"
@@ -35,13 +38,13 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:v1.2.0
-    warden: warden:v1.2.0
+    kubecube: cube:v1.2.1
+    warden: warden:v1.2.1
     wardenInit: warden-init:v1.2.0
     dependenceJob: warden-dependence:v1.2.0
     audit: audit:v1.2.0
-    webconsole: webconsole:v1.2.0
-    cloudshell: cloudshell:v1.2.0
+    webconsole: webconsole:v1.2.2
+    cloudshell: cloudshell:v1.2.1
     frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
     ingressController: ingress-nginx/controller:v1.2.0
@@ -81,9 +84,10 @@ kubecube:
   env:
     downloadCharts: "false"
     downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
-    pivotCubeSvc: kubecube.kubecube-system:7443
+    pivotCubeSvc: kubecube:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
+    retainMemberClusterResource: "false"
 
   # kubecube/pivot-cluster.yaml
   pivotCluster:
@@ -122,8 +126,9 @@ warden:
 #          memory: 512Mi
       args:
         cluster: "pivot-cluster"  # member cluster name
+        leaderElect: false
         inMemberCluster: false    # is member cluster or not
-        pivotCubeHost: "kubecube.kubecube-system:7443"  # kubecube address
+        pivotCubeHost: "kubecube:7443"  # kubecube address
       env:
         JWTSecret: "56F0D8DB90241C6E"  # jwt secret for jwt token gen
     downloader:

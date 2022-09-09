@@ -275,7 +275,6 @@ rules:
     resources:
       - serviceaccounts
     verbs:
-      - impersonate
       - get
       - list
       - watch
@@ -586,19 +585,6 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - networkpolicies
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - delete
-      - deletecollection
-      - patch
-      - update
-  - apiGroups:
-      - "*"
-    resources:
       - poddisruptionbudgets
     verbs:
       - get
@@ -756,7 +742,7 @@ rules:
   - apiGroups:
       - "*"
     resources:
-      - cuberesourcequota/status
+      - cuberesourcequota
     verbs:
       - get
       - list

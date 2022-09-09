@@ -25,6 +25,7 @@ webhooks:
         resources:
           - namespaces
     sideEffects: None
+    timeoutSeconds: 1
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
@@ -78,7 +79,7 @@ webhooks:
         name: hnc-webhook-service
         namespace: hnc-system
         path: /validate-objects
-    failurePolicy: Fail
+    failurePolicy: Ignore
     name: objects.hnc.x-k8s.io
     namespaceSelector:
       matchLabels:
@@ -96,7 +97,7 @@ webhooks:
           - '*'
         scope: Namespaced
     sideEffects: None
-    timeoutSeconds: 2
+    timeoutSeconds: 1
   - admissionReviewVersions:
       - v1
     clientConfig:
@@ -125,7 +126,7 @@ webhooks:
         name: hnc-webhook-service
         namespace: hnc-system
         path: /validate-v1-namespace
-    failurePolicy: Fail
+    failurePolicy: Ignore
     name: namespaces.hnc.x-k8s.io
     rules:
       - apiGroups:
@@ -139,5 +140,6 @@ webhooks:
         resources:
           - namespaces
     sideEffects: None
+    timeoutSeconds: 1
 ---
 {{- end }}

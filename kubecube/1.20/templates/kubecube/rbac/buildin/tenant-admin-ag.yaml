@@ -275,7 +275,6 @@ rules:
     resources:
       - serviceaccounts
     verbs:
-      - impersonate
       - get
       - list
       - watch
@@ -574,19 +573,6 @@ rules:
       - "*"
     resources:
       - ingresses/status
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - delete
-      - deletecollection
-      - patch
-      - update
-  - apiGroups:
-      - "*"
-    resources:
-      - networkpolicies
     verbs:
       - get
       - list

@@ -79,6 +79,7 @@ fi
 # install KubeCube as pivot cluster
 if [[ ${INSTALL_KUBECUBE_PIVOT} = "true" ]]; then
   helm_download
+  init_etcd_secret || true
   /bin/bash /etc/kubecube/manifests/install_kubecube.sh
   if [ "$?" -ne 0 ]; then
       clog error "install kubecube failed"

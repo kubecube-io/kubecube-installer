@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubecube
-  namespace: kubecube-system
+  namespace: {{ template "kubecube.namespace" . }}
   labels:
     kubecube.io/app: kubecube
 spec:
@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         kubecube.io/app: kubecube
+        app: kubecube
     spec:
       {{- with .Values.kubecube.nodeSelector }}
       nodeSelector:
@@ -53,6 +54,8 @@ spec:
             - -generic-auth-insecure-skip-verify={{ .Values.kubecube.args.genericAuthInsecureSkikVerify }}
             - -enable-version-conversion={{ .Values.kubecube.args.enableVersionConversion }}
           env:
+            - name: CUBE_NAMESPACE
+              value: {{ template "kubecube.namespace" . }}
             - name: DOWNLOAD_CHARTS
               value: "{{ .Values.kubecube.env.downloadCharts }}"
             - name: DOWNLOAD_CHARTS_URL
@@ -71,12 +74,14 @@ spec:
               value: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.dependenceJob }}"
             - name: GIN_MODE
               value: release
+            - name: RETAIN_MEMBER_CLUSTER_RESOURCE
+              value: "{{ .Values.kubecube.env.retainMemberClusterResource }}"
           livenessProbe:
             httpGet:
               path: /healthz
               port: 7777
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1
@@ -86,7 +91,7 @@ spec:
               path: /healthz
               port: 7777
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 1
             successThreshold: 1

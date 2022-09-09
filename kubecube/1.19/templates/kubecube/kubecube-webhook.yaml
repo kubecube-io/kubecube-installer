@@ -12,55 +12,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
-        port: {{ .Values.kubecube.args.webhookServerPort }}
-        path: /validate-tenant-kubecube-io-v1-project
-    failurePolicy: Fail
-    name: vproject.kb.io
-    rules:
-      - apiGroups:
-          - tenant.kubecube.io
-        apiVersions:
-          - v1
-        operations:
-          - CREATE
-          - UPDATE
-          - DELETE
-        resources:
-          - projects
-    sideEffects: None
-  - admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
-      caBundle: {{ .Values.global.certs.ca.crt }}
-      service:
-        name: kubecube
-        namespace: kubecube-system
-        port: {{ .Values.kubecube.args.webhookServerPort }}
-        path: /validate-tenant-kubecube-io-v1-tenant
-    failurePolicy: Fail
-    name: vtenant.kb.io
-    rules:
-      - apiGroups:
-          - tenant.kubecube.io
-        apiVersions:
-          - v1
-        operations:
-          - CREATE
-          - UPDATE
-          - DELETE
-        resources:
-          - tenants
-    sideEffects: None
-  - admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
-      caBundle: {{ .Values.global.certs.ca.crt }}
-      service:
-        name: kubecube
-        namespace: kubecube-system
+        namespace: {{ template "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-quota-kubecube-io-v1-cube-resource-quota
     failurePolicy: Fail
@@ -84,7 +36,7 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ template "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-hotplug-kubecube-io-v1-hotplug
     failurePolicy: Fail
@@ -108,10 +60,10 @@ webhooks:
       caBundle: {{ .Values.global.certs.ca.crt }}
       service:
         name: kubecube
-        namespace: kubecube-system
+        namespace: {{ template "kubecube.namespace" . }}
         port: {{ .Values.kubecube.args.webhookServerPort }}
         path: /validate-cluster-kubecube-io-v1-cluster
-    failurePolicy: Fail
+    failurePolicy: Ignore
     name: vcluster.kb.io
     rules:
       - apiGroups:
@@ -124,5 +76,6 @@ webhooks:
         resources:
           - clusters
     sideEffects: None
+    timeoutSeconds: 1
 ---
 {{- end }}
