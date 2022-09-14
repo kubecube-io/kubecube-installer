@@ -19,6 +19,8 @@ global:
   # imagePullSecrets for all pods
   imagePullSecrets: []
 
+  dataDir: "/data"
+
   # certs used by kubecube components
   certs:
     tls:
@@ -38,12 +40,12 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:v1.2.1
-    warden: warden:v1.2.1
-    wardenInit: warden-init:v1.2.0
+    kubecube: cube:v1.4.1
+    warden: warden:v1.4.1
+    wardenInit: warden-init:v1.4.1
     dependenceJob: warden-dependence:v1.2.0
     audit: audit:v1.2.0
-    webconsole: webconsole:v1.2.2
+    webconsole: webconsole:v1.2.4
     cloudshell: cloudshell:v1.2.1
     frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
@@ -64,14 +66,20 @@ kubecube:
     #   memory: 1Gi
     # requests:
     #   cpu: 500m
-  #   memory: 1Gi
+    #   memory: 1Gi
   nodeSelector: {}
   affinity: {}
   tolerations:
     - key: node-role.kubernetes.io/master
       operator: Exists
   args:
+    maxSize: 1000
+    maxBackups: 7
+    maxAge: 3
+    compress: false
     logLevel: info
+    jsonEncode: false
+    stacktraceLevel: error
     securePort: 7443
     webhookServerPort: 9443
     leaderElect: true
@@ -88,6 +96,7 @@ kubecube:
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
     retainMemberClusterResource: "false"
+    wardenRegisterModeEnable: "false"
 
   # kubecube/pivot-cluster.yaml
   pivotCluster:
@@ -117,17 +126,25 @@ warden:
     warden:
       resources: {}
         # If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      #        limits:
-      #          cpu: 300m
-      #          memory: 512Mi
-      #        requests:
-      #          cpu: 300m
-      #          memory: 512Mi
+        # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#        limits:
+#          cpu: 300m
+#          memory: 512Mi
+#        requests:
+#          cpu: 300m
+#          memory: 512Mi
       args:
+        maxSize: 1000
+        maxBackups: 7
+        maxAge: 3
+        compress: false
+        logLevel: info
+        jsonEncode: false
+        stacktraceLevel: error
         cluster: "pivot-cluster"  # member cluster name
         leaderElect: false
         inMemberCluster: false    # is member cluster or not
+        isClusterWritable: true
         pivotCubeHost: "kubecube:7443"  # kubecube address
       env:
         JWTSecret: "56F0D8DB90241C6E"  # jwt secret for jwt token gen
@@ -146,13 +163,13 @@ audit:
   replicas: 1
   resources: {}
     # If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  #    limits:
-  #      cpu: 100m
-  #      memory: 128Mi
-  #    requests:
-  #      cpu: 100m
-  #      memory: 128Mi
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -164,13 +181,21 @@ webconsole:
   replicas: 1
   resources: {}
     # If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  #    limits:
-  #      cpu: 100m
-  #      memory: 128Mi
-  #    requests:
-  #      cpu: 100m
-  #      memory: 128Mi
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  args:
+    maxSize: 1000
+    maxBackups: 7
+    maxAge: 3
+    compress: false
+    logLevel: info
+    jsonEncode: false
+    stacktraceLevel: error
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -182,13 +207,13 @@ cloudshell:
   replicas: 1
   resources: {}
     # If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  #    limits:
-  #      cpu: 100m
-  #      memory: 128Mi
-  #    requests:
-  #      cpu: 100m
-  #      memory: 128Mi
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:
@@ -202,13 +227,13 @@ frontend:
   imagePullPolicy: IfNotPresent
   resources: {}
     # If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  #    limits:
-  #      cpu: 100m
-  #      memory: 128Mi
-  #    requests:
-  #      cpu: 100m
-  #      memory: 128Mi
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
   nodeSelector: {}
   affinity: {}
   tolerations:

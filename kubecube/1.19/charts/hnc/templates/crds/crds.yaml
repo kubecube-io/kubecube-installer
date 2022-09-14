@@ -4,6 +4,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
+    helm.sh/resource-policy: keep
   creationTimestamp: null
   name: hierarchyconfigurations.hnc.x-k8s.io
 spec:
@@ -143,6 +144,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
+    helm.sh/resource-policy: keep
   creationTimestamp: null
   name: hncconfigurations.hnc.x-k8s.io
 spec:
@@ -292,6 +294,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.8.0
+    helm.sh/resource-policy: keep
   creationTimestamp: null
   name: subnamespaceanchors.hnc.x-k8s.io
 spec:
