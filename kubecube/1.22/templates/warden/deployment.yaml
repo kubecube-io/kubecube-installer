@@ -35,9 +35,18 @@ spec:
       {{- end }}
       containers:
         - args:
+            - -log-file=/etc/logs/warden.log
+            - -max-size={{ .Values.warden.containers.warden.args.maxSize }}
+            - -max-backups={{ .Values.warden.containers.warden.args.maxBackups }}
+            - -max-age={{ .Values.warden.containers.warden.args.maxAge }}
+            - -compress={{ .Values.warden.containers.warden.args.compress }}
+            - -log-level={{ .Values.warden.containers.warden.args.logLevel }}
+            - -json-encode={{ .Values.warden.containers.warden.args.jsonEncode }}
+            - -stacktrace-level={{ .Values.warden.containers.warden.args.stacktraceLevel }}
             - -cluster={{ .Values.warden.containers.warden.args.cluster }}
             - -leader-elect={{ .Values.warden.containers.warden.args.leaderElect }}
             - -in-member-cluster={{ .Values.warden.containers.warden.args.inMemberCluster }}
+            - -is-cluster-writable={{ .Values.warden.containers.warden.args.isClusterWritable }}
             - -pivot-cube-host={{ .Values.warden.containers.warden.args.pivotCubeHost }}
             - -local-cluster-kubeconfig=/etc/kubeconfigs/local-kubeconfig
             - -pivot-cluster-kubeconfig=/etc/kubeconfigs/pivot-kubeconfig
@@ -54,7 +63,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: warden
           resources:
-          {{- toYaml .Values.warden.resources | nindent 12 }}
+          {{- toYaml .Values.warden.containers.warden.resources | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /readyz
@@ -76,6 +85,8 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           volumeMounts:
+            - mountPath: /etc/logs
+              name: logs
             - mountPath: /etc/tls
               name: cube-tls-secret
               readOnly: true
@@ -101,6 +112,10 @@ spec:
               name: helm-pkg
       restartPolicy: Always
       volumes:
+        - hostPath:
+            path: "{{ .Values.global.dataDir }}/log/warden"
+            type: DirectoryOrCreate
+          name: logs
         - name: kubeconfigs
           secret:
             secretName: kubeconfigs

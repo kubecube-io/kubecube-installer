@@ -40,7 +40,14 @@ spec:
           resources:
           {{- toYaml .Values.kubecube.resources | nindent 12 }}
           args:
+            - -log-file=/etc/logs/cube.log
+            - -max-size={{ .Values.kubecube.args.maxSize }}
+            - -max-backups={{ .Values.kubecube.args.maxBackups }}
+            - -max-age={{ .Values.kubecube.args.maxAge }}
+            - -compress={{ .Values.kubecube.args.compress }}
             - -log-level={{ .Values.kubecube.args.logLevel }}
+            - -json-encode={{ .Values.kubecube.args.jsonEncode }}
+            - -stacktrace-level={{ .Values.kubecube.args.stacktraceLevel }}
             - -secure-port={{ .Values.kubecube.args.securePort }}
             - -tls-cert=/etc/tls/tls.crt
             - -tls-key=/etc/tls/tls.key
@@ -76,6 +83,8 @@ spec:
               value: release
             - name: RETAIN_MEMBER_CLUSTER_RESOURCE
               value: "{{ .Values.kubecube.env.retainMemberClusterResource }}"
+            - name: WARDEN_REGISTER_MODE_ENABLE
+              value: "{{ .Values.kubecube.env.wardenRegisterModeEnable }}"
           livenessProbe:
             httpGet:
               path: /healthz
@@ -101,7 +110,7 @@ spec:
               mountPath: "/etc/tls"
               readOnly: true
             - name: logs
-              mountPath: "/etc/logs/cube"
+              mountPath: "/etc/logs"
             - name: helm-pkg
               mountPath: "/root/helmchartpkg"
             - name: localtime
@@ -118,7 +127,7 @@ spec:
             type: DirectoryOrCreate
         - name: logs
           hostPath:
-            path: /etc/cube/logs
+            path: "{{ .Values.global.dataDir }}/log/kubecube"
             type: DirectoryOrCreate
         - name: localtime
           hostPath:
