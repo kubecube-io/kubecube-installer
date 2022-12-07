@@ -1,5 +1,5 @@
 hub.c.163.com/kubecube/warden:v1.2.0
-hub.c.163.com/kubecube/warden-init:v1.2.0
+hub.c.163.com/kubecube/warden-init:v1.7.1
 hub.c.163.com/kubecube/warden-dependence:v1.2.0
 hub.c.163.com/kubecube/prometheus-config-reloader:v0.47.0
 hub.c.163.com/kubecube/k8s-sidecar:1.10.7

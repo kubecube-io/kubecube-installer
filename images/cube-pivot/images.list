@@ -4,7 +4,7 @@ hub.c.163.com/kubecube/webconsole:v1.2.0
 hub.c.163.com/kubecube/frontend:v1.2.0
 hub.c.163.com/kubecube/cube:v1.2.0
 hub.c.163.com/kubecube/warden:v1.2.0
-hub.c.163.com/kubecube/warden-init:v1.2.0
+hub.c.163.com/kubecube/warden-init:v1.7.1
 hub.c.163.com/kubecube/warden-dependence:v1.2.0
 hub.c.163.com/kubecube/alertmanager:v0.21.0
 hub.c.163.com/kubecube/prometheus-config-reloader:v0.47.0
