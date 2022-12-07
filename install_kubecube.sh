@@ -50,11 +50,21 @@ spec:
       namespace: logseer
       pkgName: logseer-v1.0.0.tgz
       status: disabled
+    - name: logseer-new
+      namespace: logseer
+      pkgName: logseer-2.3.0.tgz
+      status: disabled
     - env: |
         clustername: "{{.cluster}}"
       name: logagent
       namespace: logagent
       pkgName: logagent-v1.0.0.tgz
+      status: disabled
+    - env: |
+        clustername: "{{.cluster}}"
+      name: logagent-new
+      namespace: logagent
+      pkgName: logagent-1.3.0.tgz
       status: disabled
     - name: elasticsearch
       namespace: elasticsearch
@@ -87,6 +97,10 @@ metadata:
 spec:
   component:
     - name: logseer
+      status: disabled
+    - name: logseer-new
+      status: disabled
+    - name: logagent-new
       status: disabled
     - env: |
         grafana:
