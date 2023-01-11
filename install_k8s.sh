@@ -589,6 +589,8 @@ function Install_Kubernetes_Node (){
     clog error "ACCESS_PASSWORD or ACCESS_PRIVATE_KEY_PATH must be specified"
   fi
 
+  nodename=$(echo $(hostname) | tr 'A-Z' 'a-z')
+
   if [ ${NODE_MODE} = "node-join-control-plane" ]; then
     clog info "node join control plane as master"
     kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash} --control-plane --certificate-key ${CertificateKey}
@@ -599,9 +601,9 @@ function Install_Kubernetes_Node (){
     clog info "node join cluster as worker"
     kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash}
     if [ ! -z ${ACCESS_PASSWORD} ]; then
-      sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+      sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubectl label nodes $nodename node-role.kubernetes.io/node="
     else
-      ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+      ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubectl label nodes $nodename node-role.kubernetes.io/node="
     fi
       mkdir -p ${HOME}/.kube
       cp -i /etc/kubernetes/kubelet.conf ${HOME}/.kube/config
