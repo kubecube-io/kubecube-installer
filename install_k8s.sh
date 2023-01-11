@@ -384,8 +384,10 @@ function k8s_bin_download() {
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   fi
-  if [[ "$KUBERNETES_VERSION" == "1.26.0" && "$CONTAINER_RUNTIME" == "docker" ]];then
-    cri_dockerd_install
+  if [[ "$CONTAINER_RUNTIME" == "docker" ]];then
+    if [[  "$KUBERNETES_VERSION" == "1.24.7" || "$KUBERNETES_VERSION" == "1.25.3" || "$KUBERNETES_VERSION" == "1.26.0" ]];then
+      cri_dockerd_install
+    fi
   fi
 }
 
