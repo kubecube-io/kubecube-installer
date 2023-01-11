@@ -1,0 +1,30 @@
+{{- if eq .Values.global.componentsEnable.warden "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    kubecube.io/app: warden
+  name: warden
+  namespace: {{ template "kubecube.namespace" . }}
+spec:
+  ports:
+    - name: https
+      nodePort: 31443
+      port: 7443
+      protocol: TCP
+      targetPort: 7443
+    - name: webhook
+      nodePort: 32444
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: health
+      nodePort: 32445
+      port: 9778
+      protocol: TCP
+      targetPort: 9778
+  selector:
+    kubecube.io/app: warden
+  type: NodePort
+---
+{{- end }}

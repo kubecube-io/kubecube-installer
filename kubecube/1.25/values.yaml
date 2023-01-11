@@ -1,0 +1,279 @@
+global:
+  ## Override the deployment namespace
+  namespaceOverride: ""
+
+  dependencesEnable:
+    hnc: "true"
+    ingressController: "true"
+    localPathStorage: "true"
+    metricServer: "true"
+
+  componentsEnable:
+    kubecube: "true"
+    warden: "false"
+    audit: "true"
+    webconsole: "true"
+    cloudshell: "true"
+    frontend: "true"
+
+  # imagePullSecrets for all pods
+  imagePullSecrets: []
+
+  dataDir: "/data"
+
+  # certs used by kubecube components
+  certs:
+    tls:
+      key: "Cg=="
+      crt: "Cg=="
+    ca:
+      key: "Cg=="
+      crt: "Cg=="
+
+  # kubecube hub config
+  hub:
+    registry: hub.c.163.com
+    project: kubecube
+    username: kubecube
+    password: XXX
+    email: kubecube@163.com
+
+  # kubecube all images
+  images:
+    kubecube: cube:v1.4.1
+    warden: warden:v1.4.1
+    wardenInit: warden-init:v1.4.1
+    dependenceJob: warden-dependence:v1.2.0
+    audit: audit:v1.2.0
+    webconsole: webconsole:v1.2.4
+    cloudshell: cloudshell:v1.2.1
+    frontend: frontend:v1.2.0
+    hnc: hnc/hnc-manager:v1.0.0
+    ingressController: ingress-nginx/controller:v1.2.0
+    ingressControllerJob: ingress-nginx/kube-webhook-certgen:v1.1.1
+    localPathStorageProvisioner: rancher/local-path-provisioner:v0.0.19-m
+    localPathStorageConfigmap: busybox:latest-m
+    metricsServer: rancher/metrics-server:v0.4.1-m
+
+kubecube:
+  # kubecube/deployment.yaml
+  replicas: 1
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 500m
+    #   memory: 1Gi
+    # requests:
+    #   cpu: 500m
+    #   memory: 1Gi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+  args:
+    maxSize: 1000
+    maxBackups: 7
+    maxAge: 3
+    compress: false
+    logLevel: info
+    jsonEncode: false
+    stacktraceLevel: error
+    securePort: 7443
+    webhookServerPort: 9443
+    leaderElect: true
+    genericAuthIsEnable: false
+    genericAuthUrl: example.com
+    genericAuthMethod: GET
+    genericAuthScheme: https
+    genericAuthInsecureSkikVerify: true
+    enableVersionConversion: false
+  env:
+    downloadCharts: "false"
+    downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
+    pivotCubeSvc: kubecube:7443
+    pivotCubeHost: "Cg=="
+    jwtSecret: "56F0D8DB90241C6E"
+    retainMemberClusterResource: "false"
+    wardenRegisterModeEnable: "false"
+
+  # kubecube/pivot-cluster.yaml
+  pivotCluster:
+    name: "pivot-cluster"
+    kubernetesAPIEndpoint: "Cg=="
+    kubeconfig: "Cg=="
+
+  # kubecube/kubecube-auth-config.yaml
+  authConfig:
+    github:
+      enabled: false
+      clientId: ""
+      clientSecret: ""
+
+warden:
+  # warden/deployment.yaml
+  replicas: 1
+  nodeSelector: { }
+  affinity: { }
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubecube.io
+      operator: Exists
+  containers:
+    warden:
+      resources: {}
+        # If you do want to specify resources, uncomment the following
+        # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#        limits:
+#          cpu: 300m
+#          memory: 512Mi
+#        requests:
+#          cpu: 300m
+#          memory: 512Mi
+      args:
+        maxSize: 1000
+        maxBackups: 7
+        maxAge: 3
+        compress: false
+        logLevel: info
+        jsonEncode: false
+        stacktraceLevel: error
+        cluster: "pivot-cluster"  # member cluster name
+        leaderElect: false
+        inMemberCluster: false    # is member cluster or not
+        isClusterWritable: true
+        pivotCubeHost: "kubecube:7443"  # kubecube address
+      env:
+        JWTSecret: "56F0D8DB90241C6E"  # jwt secret for jwt token gen
+    downloader:
+      env:
+        downloadCharts: "true"  # download charts or use local
+        downloadURL: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz" # where to download charts, empty means use default
+
+  # warden/secret.yaml
+  kubeconfigSecret:
+    localCluster: "Cg=="  # local cluster kubeconfig base64
+    pivotCluster: "Cg=="  # pivot cluster kubeconfig base64
+
+audit:
+  # audit/deployment.yaml
+  replicas: 1
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+webconsole:
+  # webconsole/deployment.yaml
+  replicas: 1
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  args:
+    maxSize: 1000
+    maxBackups: 7
+    maxAge: 3
+    compress: false
+    logLevel: info
+    jsonEncode: false
+    stacktraceLevel: error
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+cloudshell:
+  # cloudshell/deployment.yaml
+  replicas: 1
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+frontend:
+  # frontend/deployment.yaml
+  replicas: 1
+  image: hub.c.163.com/kubecube/frontend:v1.1.0
+  imagePullPolicy: IfNotPresent
+  resources: {}
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#    limits:
+#      cpu: 100m
+#      memory: 128Mi
+#    requests:
+#      cpu: 100m
+#      memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+
+# override hnc sub chart
+hnc:
+  # hnc/deployment.yaml
+  nodeSelector: { }
+  affinity: { }
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+  manager:
+    args:
+      managedLabel1: kubecube.hnc.x-k8s.io/tenant
+      managedLabel2: kubecube.hnc.x-k8s.io/project
+    resources:
+      limits:
+        cpu: 100m
+        memory: 300Mi
+      requests:
+        cpu: 100m
+        memory: 150Mi
+
+## override ingress-controller sub chart
+#ingress-controller:
+#  # ingress-controller/deployment.yaml
+#  controller:
+#  # ingress-controller/job.yaml
+#  job:
+
+## override local-path-storage sub chart
+#local-path-storage:
+#  # local-path-config/deployment.yaml
+#  provisioner:
+#
+#  # local-path-config/configmap.yaml
+#  configmap:
+
+## override metrics-server sub chart
+#metrics-server:

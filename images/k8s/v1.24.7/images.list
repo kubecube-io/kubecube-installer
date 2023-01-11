@@ -1,0 +1,11 @@
+hub.c.163.com/kubecube/calico/node:v3.24.5-m
+hub.c.163.com/kubecube/calico/cni:v3.24.5-m
+hub.c.163.com/kubecube/calico/pod2daemon-flexvol:v3.24.5-m
+hub.c.163.com/kubecube/calico/kube-controllers:v3.24.5-m
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.24.7
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.24.7
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.24.7
+registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy:vv1.24.7
+registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.9
+registry.cn-hangzhou.aliyuncs.com/google_containers/etcd:3.5.6-0
+registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:v1.9.3

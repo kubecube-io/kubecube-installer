@@ -1,0 +1,636 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: externalresources.extension.kubecube.io
+spec:
+  group: extension.kubecube.io
+  names:
+    categories:
+      - extension
+    kind: ExternalResource
+    listKind: ExternalResourceList
+    plural: externalresources
+    singular: externalresource
+  scope: Cluster
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          description: ExternalResource for mapping non-k8s resource so that we can
+            use it as general k8s resource to rbac
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: ExternalResourceSpec defines the desired state of ExternalResource
+              properties:
+                namespaced:
+                  description: Namespaced the scope of resource
+                  type: boolean
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: clusters.cluster.kubecube.io
+spec:
+  group: cluster.kubecube.io
+  names:
+    categories:
+      - cluster
+    kind: Cluster
+    listKind: ClusterList
+    plural: clusters
+    singular: cluster
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .status.state
+          name: State
+          type: string
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: Cluster is the Schema for the clusters API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: ClusterSpec defines the desired state of Cluster
+              properties:
+                description:
+                  description: describe cluster
+                  type: string
+                harborAddr:
+                  description: harbor address for cluster
+                  type: string
+                ingressDomainSuffix:
+                  description: let ingress gets a domain suffix
+                  type: string
+                isMemberCluster:
+                  description: cluster is member or not
+                  type: boolean
+                isWritable:
+                  description: Is this cluster writable and if true then some resources
+                    such as workloads can be deployed on this cluster
+                  type: boolean
+                kubeconfig:
+                  description: KubeConfig contains cluster raw kubeConfig
+                  format: byte
+                  type: string
+                kubernetesAPIEndpoint:
+                  description: 'Kubernetes API Server endpoint. Example: https://10.10.0.1:6443'
+                  type: string
+                networkType:
+                  description: CNI the cluster used
+                  type: string
+              type: object
+            status:
+              description: ClusterStatus defines the observed state of Cluster
+              properties:
+                lastHeartbeat:
+                  format: date-time
+                  type: string
+                reason:
+                  type: string
+                state:
+                  type: string
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: { }
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: [ ]
+  storedVersions: [ ]
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: cuberesourcequota.quota.kubecube.io
+spec:
+  group: quota.kubecube.io
+  names:
+    categories:
+      - quota
+    kind: CubeResourceQuota
+    listKind: CubeResourceQuotaList
+    plural: cuberesourcequota
+    singular: cuberesourcequota
+  scope: Cluster
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          description: CubeResourceQuota is the Schema for the cuberesourcequota API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: CubeResourceQuotaSpec defines the desired state of CubeResourceQuota
+              properties:
+                hard:
+                  additionalProperties:
+                    anyOf:
+                      - type: integer
+                      - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: Hard is the set of desired hard limits for each named resource. Its empty when TargetObj is NodesPoolObj
+                  type: object
+                parentQuota:
+                  description: ParentQuota point to upper quota, its empty if current is top level meanwhile PhysicalLimit will be used as limit condition
+                  type: string
+                target:
+                  description: Target point to the subject object quota to effect
+                  properties:
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                  type: object
+              type: object
+            status:
+              description: CubeResourceQuotaStatus defines the observed state of CubeResourceQuota
+              properties:
+                hard:
+                  additionalProperties:
+                    anyOf:
+                      - type: integer
+                      - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: Hard is the set of enforced hard limits for each named resource. Limit always equals to request when TargetObj is NodesPoolObj
+                  type: object
+                subResourceQuotas:
+                  description: SubResourceQuotas contains child resource quotas of cube resource quota. {name}.{namespace}.quota means resource quota {name}.quota means cube resource quota
+                  items:
+                    type: string
+                  type: array
+                used:
+                  additionalProperties:
+                    anyOf:
+                      - type: integer
+                      - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: Used is the current observed total usage of the resource in the namespace
+                  type: object
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: { }
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: [ ]
+  storedVersions: [ ]
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: keys.user.kubecube.io
+spec:
+  group: user.kubecube.io
+  names:
+    categories:
+      - kubecube
+    kind: Key
+    listKind: KeyList
+    plural: keys
+    singular: key
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .spec.user
+          name: User
+          type: string
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: Key is the Schema for the keys API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: KeySpec defines the desired state of Key
+              properties:
+                secretKey:
+                  type: string
+                user:
+                  type: string
+              type: object
+            status:
+              description: KeyStatus defines the observed state of Key
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources: { }
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: [ ]
+  storedVersions: [ ]
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: projects.tenant.kubecube.io
+spec:
+  group: tenant.kubecube.io
+  names:
+    categories:
+      - kubecube
+    kind: Project
+    listKind: ProjectList
+    plural: projects
+    singular: project
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .metadata.labels.kubecube\.io/tenant
+          name: Tenant
+          type: string
+        - jsonPath: .spec.displayName
+          name: DisplayName
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+        - jsonPath: .spec.namespace
+          name: Namespace
+          type: string
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: Project is the Schema for the projects API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: ProjectSpec defines the desired state of Project
+              properties:
+                description:
+                  maxLength: 200
+                  minLength: 1
+                  type: string
+                displayName:
+                  maxLength: 100
+                  minLength: 1
+                  type: string
+                ingressDomainSuffix:
+                  items:
+                    type: string
+                  type: array
+                namespace:
+                  type: string
+              type: object
+            status:
+              description: ProjectStatus defines the observed state of Project
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources: { }
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: [ ]
+  storedVersions: [ ]
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: tenants.tenant.kubecube.io
+spec:
+  group: tenant.kubecube.io
+  names:
+    categories:
+      - kubecube
+    kind: Tenant
+    listKind: TenantList
+    plural: tenants
+    singular: tenant
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .spec.displayName
+          name: DisplayName
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+        - jsonPath: .spec.namespace
+          name: Namespace
+          type: string
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: Tenant is the Schema for the tenants API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: TenantSpec defines the desired state of Tenant
+              properties:
+                description:
+                  maxLength: 200
+                  minLength: 1
+                  type: string
+                displayName:
+                  maxLength: 100
+                  minLength: 1
+                  type: string
+                namespace:
+                  type: string
+              type: object
+            status:
+              description: TenantStatus defines the observed state of Tenant
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources: { }
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: [ ]
+  storedVersions: [ ]
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  labels:
+    kubecube.io/crds: "true"
+  creationTimestamp: null
+  name: users.user.kubecube.io
+spec:
+  group: user.kubecube.io
+  names:
+    categories:
+      - user
+    kind: User
+    listKind: UserList
+    plural: users
+    singular: user
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .spec.loginType
+          name: LoginType
+          type: string
+        - jsonPath: .status.lastLoginTime
+          name: LastLoginTime
+          type: date
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: User is the Schema for the users API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: UserSpec defines the desired state of User
+              properties:
+                displayName:
+                  type: string
+                email:
+                  type: string
+                language:
+                  description: 'The preferred written or spoken language for the user:
+                  chinese/english'
+                  type: string
+                loginType:
+                  description: Login method used, normal/openId/ldap
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+                state:
+                  type: string
+                wechat:
+                  type: string
+              type: object
+            status:
+              description: UserStatus defines the observed state of User
+              properties:
+                lastLoginIP:
+                  type: string
+                lastLoginTime:
+                  description: The user status, normal/forbidden
+                  format: date-time
+                  type: string
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  creationTimestamp: null
+  labels:
+    kubecube.io/crds: "true"
+  name: hotplugs.hotplug.kubecube.io
+spec:
+  group: hotplug.kubecube.io
+  names:
+    categories:
+      - kubecube
+    kind: Hotplug
+    listKind: HotplugList
+    plural: hotplugs
+    singular: hotplug
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .status.phase
+          name: Phase
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: Hotplug is the Schema for the hotplugs API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: HotplugSpec defines the desired state of Hotplug
+              properties:
+                component:
+                  items:
+                    properties:
+                      env:
+                        type: string
+                      name:
+                        type: string
+                      namespace:
+                        type: string
+                      pkgName:
+                        type: string
+                      status:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+            status:
+              description: HotplugStatus defines the observed state of Hotplug
+              properties:
+                phase:
+                  type: string
+                results:
+                  items:
+                    properties:
+                      message:
+                        type: string
+                      name:
+                        type: string
+                      result:
+                        type: string
+                      status:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
