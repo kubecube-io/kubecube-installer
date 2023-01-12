@@ -85,6 +85,20 @@ function containerd_uninstall() {
     clog info "containerd uninstall success"
 }
 
+function cri_dockerd_uninstall() {
+      clog info "uninstalling cri_dockerd"
+
+      clog debug "stop cri_dockerd"
+      systemctl stop cri-docker.service
+      systemctl stop cri-docker.socket
+
+      clog debug "delete residual files of cri_dockerd"
+      rm -f /etc/systemd/system/cri-docker.socket
+      rm -f /etc/systemd/system/cri-docker.service
+      rm -f /usr/local/bin/cri-dockerd
+      clog info "cri_dockerd uninstall success"
+}
+
 function clog() {
   TIMESTAMP=$(date +'%Y-%m-%d %H:%M:%S')
   case "$1" in
@@ -112,6 +126,7 @@ function main() {
     "k8s") kubernetes_uninstall
     ;;
     "docker") docker_uninstall
+    cri_dockerd_uninstall
     ;;
     "containerd") containerd_uninstall
     ;;
@@ -120,6 +135,7 @@ function main() {
       kubernetes_uninstall
       docker_uninstall
       containerd_uninstall
+      cri_dockerd_uninstall
     ;;
     *)
       echo "unknown params, only support: 'kubecube','k8s','docker','containerd','all'"
