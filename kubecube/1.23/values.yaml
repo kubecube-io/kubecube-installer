@@ -40,7 +40,7 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:v1.7.4
+    kubecube: cube:cube-feature-update-user-response-202301171716-2bb79882
     warden: warden:v1.7.4
     wardenInit: warden-init:v1.7.4
     dependenceJob: warden-dependence:v1.4.0
@@ -92,7 +92,7 @@ kubecube:
   env:
     downloadCharts: "false"
     downloadChartsUrl: "https://kubecube.nos-eastchina1.126.net/helm-chart/third/third-charts.tar.gz"
-    pivotCubeSvc: kubecube:7443
+    pivotCubeSvc: https://kubecube:7443
     pivotCubeHost: "Cg=="
     jwtSecret: "56F0D8DB90241C6E"
     retainMemberClusterResource: "false"
