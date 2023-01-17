@@ -40,12 +40,12 @@ global:
 
   # kubecube all images
   images:
-    kubecube: cube:v1.4.1
-    warden: warden:v1.4.1
-    wardenInit: warden-init:v1.7.1
-    dependenceJob: warden-dependence:v1.2.0
+    kubecube: cube:v1.7.4
+    warden: warden:v1.7.4
+    wardenInit: warden-init:v1.7.5
+    dependenceJob: warden-dependence:v1.4.0
     audit: audit:v1.2.0
-    webconsole: webconsole:v1.2.4
+    webconsole: webconsole:v1.2.5
     cloudshell: cloudshell:v1.2.1
     frontend: frontend:v1.2.0
     hnc: hnc/hnc-manager:v1.0.0
