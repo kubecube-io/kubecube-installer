@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name:  aggregate-to-project-admin-cluster
+  name: aggregate-to-project-admin-cluster
   labels:
     rbac.authorization.k8s.io/aggregate-to-project-admin-cluster: "true"
   annotations:

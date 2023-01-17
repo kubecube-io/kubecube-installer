@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name:  aggregate-to-tenant-admin-cluster
+  name: aggregate-to-tenant-admin-cluster
   labels:
     rbac.authorization.k8s.io/aggregate-to-tenant-admin-cluster: "true"
   annotations:
@@ -35,6 +35,8 @@ rules:
       - get
       - list
       - watch
+      - update
+      - patch
   - apiGroups:
       - "*"
     resources:
@@ -51,6 +53,8 @@ rules:
       - get
       - list
       - watch
+      - update
+      - patch
   - apiGroups:
       - "*"
     resources:

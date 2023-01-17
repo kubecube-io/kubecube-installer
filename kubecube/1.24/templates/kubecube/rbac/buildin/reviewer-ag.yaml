@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name:  aggregate-to-reviewer
+  name: aggregate-to-reviewer
   labels:
     rbac.authorization.k8s.io/aggregate-to-reviewer: "true"
   annotations:
