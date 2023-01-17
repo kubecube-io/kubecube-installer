@@ -7,7 +7,7 @@ metadata:
   labels:
     kubecube.io/app: kubecube-webconsole
 spec:
-  replicas: 1
+  replicas: {{ .Values.webconsole.replicas }}
   selector:
     matchLabels:
       kubecube.io/app: kubecube-webconsole
@@ -41,6 +41,14 @@ spec:
               value: kubecube-nodeport:7443
           args:
             - --appNamespace={{ template "kubecube.namespace" . }}
+            - --log-file=/etc/logs/webconsole.log
+            - --max-size={{ .Values.webconsole.args.maxSize }}
+            - --max-backups={{ .Values.webconsole.args.maxBackups }}
+            - --max-age={{ .Values.webconsole.args.maxAge }}
+            - --compress={{ .Values.webconsole.args.compress }}
+            - --log-level={{ .Values.webconsole.args.logLevel }}
+            - --json-encode={{ .Values.webconsole.args.jsonEncode }}
+            - --stacktrace-level={{ .Values.webconsole.args.stacktraceLevel }}
           name: kubecube-webconsole
           image: "{{ .Values.global.hub.registry }}/{{ .Values.global.hub.project }}/{{ .Values.global.images.webconsole }}"
           imagePullPolicy: IfNotPresent
@@ -68,5 +76,18 @@ spec:
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 3
+          volumeMounts:
+            - name: logs
+              mountPath: "/etc/logs"
+            - name: localtime
+              mountPath: /etc/localtime
+      volumes:
+        - name: logs
+          hostPath:
+            path: "{{ .Values.global.dataDir }}/log/webconsole"
+            type: DirectoryOrCreate
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
 ---
 {{- end }}
