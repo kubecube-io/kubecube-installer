@@ -38,7 +38,7 @@ spec:
             - name: JWT_SECRET
               value: 56F0D8DB90241C6E
             - name: KUBECUBE_SVC
-              value: kubecube-nodeport:7443
+              value: https://kubecube-nodeport:7443
           args:
             - --appNamespace={{ template "kubecube.namespace" . }}
             - --log-file=/etc/logs/webconsole.log

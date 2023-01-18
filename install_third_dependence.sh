@@ -15,6 +15,7 @@ if [ $(kubectl get nodes | wc -l) -eq 2 ]
 then
   echo "[WARN]delete taint of master node while only one node found"
   kubectl get nodes | grep -v "NAME" | awk '{print $1}' | sed -n '1p' | xargs -t -i kubectl taint node {} node-role.kubernetes.io/master-
+  kubectl get nodes | grep -v "NAME" | awk '{print $1}' | sed -n '1p' | xargs -t -i kubectl taint node {} node-role.kubernetes.io/control-plane-
 fi
 
 NEED_INSTALL=$1
