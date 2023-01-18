@@ -6,7 +6,7 @@ follow [doc](https://www.kubecube.io/docs/installation-guide/)
 set version
 
 ```bash
-KUBECUBE_VERSION=v1.4
+KUBECUBE_VERSION=v1.8-rc
 ```
 
 ### All in one install
