@@ -1,0 +1,17 @@
+{{- if eq .Values.global.componentsEnable.frontend "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-nodeport
+  namespace: {{ template "kubecube.namespace" . }}
+spec:
+  type: NodePort
+  selector:
+    kubecube.io/app: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+---
+{{- end }}
