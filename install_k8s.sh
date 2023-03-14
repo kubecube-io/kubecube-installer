@@ -435,7 +435,7 @@ function images_download() {
         done
       fi
 
-      # downloads image need by cube pivot cluster
+      # todo: downloads image need by cube pivot cluster
       if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
         for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
         do
