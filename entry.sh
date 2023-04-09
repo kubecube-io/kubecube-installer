@@ -58,7 +58,6 @@ function env_check() {
 
 env_check
 
-mkdir -p /etc/kubecube
 mkdir -p /etc/kubecube/down
 mkdir -p /etc/kubecube/bin
 cd /etc/kubecube
@@ -70,7 +69,7 @@ else
   wget https://kubecube.nos-eastchina1.126.net/kubecube-installer/v1.8/manifests.tar.gz -O manifests.tar.gz
   tar -xzvf manifests.tar.gz > /dev/null
 
-  # todo: download kubeucbe helm chart by version
+  # todo: download kubeucbe helm chart by version and place in /etc/kubecube/kubecube-chart
 fi
 
 if [[ ${CUSTOMIZE} = "true" ]]; then
