@@ -12,10 +12,10 @@ function kubecube_uninstall() {
   rm -rf /etc/kubecube
 
   clog debug "uninstall kubecueb helm chart release"
+  kubectl delete validatingwebhookconfigurations kubecube-validating-webhook-configuration warden-validating-webhook-configuration kubecube-monitoring-admission || true
   kubectl delete cluster --all || true
   helm uninstall kubecube -n kubecube-system || true
-  kubectl delete ns kubecube-system || true
-  kubectl delete ns hnc-system || true
+  kubectl delete ns kubecube-system hnc-system kubecube-monitoring || true
 
   clog warn "make sure namespace ingress-nginx has been terminated by: kubectl get ns ingress-nginx"
   clog warn "manually delete monitoring if you do not need it by: kubectl delete ns kubecube-monitoring"
