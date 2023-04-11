@@ -11,6 +11,8 @@ CRI_DOCKERD_VERSION=0.3.0
 source /etc/kubecube/manifests/install.conf
 source /etc/kubecube/manifests/utils.sh
 
+RELEASE=v${KUBERNETES_VERSION}
+
 function docker_bin_get() {
   systemctl status docker|grep Active|grep -q running && { clog warn "docker is already running."; return 0; }
 
@@ -304,7 +306,6 @@ function k8s_bin_get() {
   CNI_VERSION="v0.8.2"
   CRICTL_VERSION="v1.17.0"
   RELEASE_VERSION="v0.4.0"
-  RELEASE=v${KUBERNETES_VERSION}
   DOWNLOAD_DIR=/usr/local/bin
 
   K8S_VERSION_MAIN=$(echo "$KUBERNETES_VERSION"|cut -d. -f2)
@@ -435,9 +436,9 @@ function images_download() {
         done
       fi
 
-      # downloads image need by cube pivot cluster
+      # todo: downloads image need by cube pivot cluster
       if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
-        for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
+        for image in $(cat /etc/kubecube/kubecube-chart/images.list)
         do
             if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
                  clog debug "pulling image ${image}"
@@ -450,24 +451,6 @@ function images_download() {
             fi
         done
       fi
-
-      # downloads image need by cube member cluster
-      if [[ "$INSTALL_KUBECUBE_MEMBER" == "true" ]]; then
-        for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
-        do
-            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
-                 clog debug "pulling image ${image}"
-                 crictl pull "${image}"
-            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
-                 /usr/bin/docker pull "${image}"
-            else
-              clog error "container_runtime error, only support docker and containerd now!"
-              exit 1
-            fi
-        done
-      fi
-
-      # todo: support download cni images by conf
   fi
 }
 
@@ -630,7 +613,6 @@ function Main() {
     clog error "container_runtime error, only support docker and containerd now!"
     exit 1
   fi
-
 
   k8s_bin_get
   images_download
