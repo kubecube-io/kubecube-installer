@@ -1,30 +1,25 @@
-All manifests for deploying kubecube, deploy details please
-follow [doc](https://www.kubecube.io/docs/installation-guide/)
+# KubeCube-Installer
+
+KubeCube installer is here for install kubecube by "all-in-one" way. More details follow [doc](https://www.kubecube.io/docs/installation-guide/).
 
 ## Quick start
 
 set version
 
 ```bash
-KUBECUBE_VERSION=v1.8
+export KUBECUBE_VERSION=v1.8
 ```
 
 ### All in one install
 
 ```bash
-curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/${KUBECUBE_VERSION}/entry.sh | bash
+curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.3/entry.sh | bash
 ```
 
 ### Custom install
 
 ```bash
-export CUSTOMIZE="true";curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/${KUBECUBE_VERSION}/entry.sh | bash
-```
-
-### Pre Download
-
-```bash
-export PRE_DOWNLOAD="true";curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/${KUBECUBE_VERSION}/entry.sh | bash
+export CUSTOMIZE="true";curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.3/entry.sh | bash
 ```
 
 ## Clean UP
@@ -36,20 +31,4 @@ curl -o cleanup.sh https://kubecube.nos-eastchina1.126.net/hack/cleanup.sh
 ```bash
 # params can be: 'kubecube','k8s','docker','containerd','all'
 /bin/bash cleanup.sh all
-```
-### Offline Download
-```bash
-k8s_version=1.20.9
-os_arch=amd64
-```
-
-```bash
-/bin/bash offline_pkg_download.sh ${k8s_version} ${os_arch}
-```
-
-### Build dependence image
-```bash
-wget https://kubecube.nos-eastchina1.126.net/helm/helm-v3.5.4-linux-amd64.tar.gz -O helm.tar.gz
-docker build -f ./dependence.Dockerfile -t hub.c.163.com/kubecube/warden-dependence:latest .
-rm ./helm.tar.gz
 ```
