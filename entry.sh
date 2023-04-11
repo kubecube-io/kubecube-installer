@@ -58,18 +58,20 @@ function env_check() {
 
 env_check
 
-mkdir -p /etc/kubecube
 mkdir -p /etc/kubecube/down
 mkdir -p /etc/kubecube/bin
 cd /etc/kubecube
 
 if [ -e "./manifests" ]; then
-  echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m manifests already exist"
+  echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m manifests and kubecube-chart already exist"
 else
   echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading manifests for kubecube"
-  wget https://kubecube.nos-eastchina1.126.net/kubecube-installer/v1.8/manifests.tar.gz -O manifests.tar.gz
-
+  wget https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.3/manifests.tar.gz -O manifests.tar.gz
   tar -xzvf manifests.tar.gz > /dev/null
+
+  echo -e "$(date +'%Y-%m-%d %H:%M:%S') \033[32mINFO\033[0m downloading kubecube-chart ${KUBECUBE_VERSION}"
+  wget https://kubecube.nos-eastchina1.126.net/kubecube-chart/${KUBECUBE_VERSION}/kubecube-chart.tar.gz -O kubecube-chart.tar.gz
+  tar -xzvf kubecube-chart.tar.gz > /dev/null
 fi
 
 if [[ ${CUSTOMIZE} = "true" ]]; then
