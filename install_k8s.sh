@@ -6,9 +6,12 @@ DOCKER_VER=19.03.8
 BASE="/etc/kubecube"
 K8S_REGISTR="k8s.gcr.io"
 CN_K8S_REGISTR="registry.cn-hangzhou.aliyuncs.com/google_containers"
+CRI_DOCKERD_VERSION=0.3.0
 
 source /etc/kubecube/manifests/install.conf
 source /etc/kubecube/manifests/utils.sh
+
+RELEASE=v${KUBERNETES_VERSION}
 
 function docker_bin_get() {
   systemctl status docker|grep Active|grep -q running && { clog warn "docker is already running."; return 0; }
@@ -303,7 +306,6 @@ function k8s_bin_get() {
   CNI_VERSION="v0.8.2"
   CRICTL_VERSION="v1.17.0"
   RELEASE_VERSION="v0.4.0"
-  RELEASE=v${KUBERNETES_VERSION}
   DOWNLOAD_DIR=/usr/local/bin
 
   K8S_VERSION_MAIN=$(echo "$KUBERNETES_VERSION"|cut -d. -f2)
@@ -383,6 +385,32 @@ function k8s_bin_download() {
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
     curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
   fi
+
+  if [[ "$CONTAINER_RUNTIME" == "docker" ]] ;then
+    firstVersion=$(echo "$KUBERNETES_VERSION" | awk -F '.' '{{print $1}}')
+    secondVersion=$(echo "$KUBERNETES_VERSION" | awk -F '.' '{{print $2}}')
+    if [[ "$firstVersion" -eq 1 && "$secondVersion" -gt 23 ]];then
+        cri_dockerd_install
+    fi
+  fi
+}
+
+function cri_dockerd_install() {
+    systemctl status cri-docker|grep Active|grep -q running && { clog warn "cri-docker is already running."; return 0; }
+    clog info "start install cri docker"
+    cd $DOWNLOAD_DIR
+    curl -L --remote-name-all https://kubecube.nos-eastchina1.126.net/cri-dockerd/${CRI_DOCKERD_VERSION}/${os_arch}/{cri-docker.service,cri-docker.socket,cri-dockerd}
+    clog info "get cri docker end"
+    chmod +x cri-dockerd
+    mv cri-dockerd /usr/local/bin/cri-dockerd || true
+    mv cri-docker.service /etc/systemd/system/cri-docker.service
+    mv cri-docker.socket /etc/systemd/system/cri-docker.socket
+    clog info "move cri docker service end"
+    sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+    systemctl daemon-reload
+    systemctl enable cri-docker.service
+    systemctl enable --now cri-docker.socket
+    clog info "start cri docker service end"
 }
 
 function images_download() {
@@ -408,9 +436,9 @@ function images_download() {
         done
       fi
 
-      # downloads image need by cube pivot cluster
+      # todo: downloads image need by cube pivot cluster
       if [[ "$INSTALL_KUBECUBE_PIVOT" == "true" ]]; then
-        for image in $(cat /etc/kubecube/manifests/images/cube-pivot/images.list)
+        for image in $(cat /etc/kubecube/kubecube-chart/images.list)
         do
             if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
                  clog debug "pulling image ${image}"
@@ -423,24 +451,6 @@ function images_download() {
             fi
         done
       fi
-
-      # downloads image need by cube member cluster
-      if [[ "$INSTALL_KUBECUBE_MEMBER" == "true" ]]; then
-        for image in $(cat /etc/kubecube/manifests/images/cube-member/images.list)
-        do
-            if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
-                 clog debug "pulling image ${image}"
-                 crictl pull "${image}"
-            elif [[ ${CONTAINER_RUNTIME} = "docker" ]]; then
-                 /usr/bin/docker pull "${image}"
-            else
-              clog error "container_runtime error, only support docker and containerd now!"
-              exit 1
-            fi
-        done
-      fi
-
-      # todo: support download cni images by conf
   fi
 }
 
@@ -516,7 +526,8 @@ EOF
 
 function Install_Kubernetes_Master (){
   clog info "init kubernetes, version: ${KUBERNETES_VERSION}"
-
+  mv /etc/cube/kubeadm/init.config /etc/cube/kubeadm/old.config
+  kubeadm config migrate --old-config /etc/cube/kubeadm/old.config --new-config /etc/cube/kubeadm/init.config
   if [ ${NODE_MODE} = "master" ];then
     kubeadm init --config=/etc/cube/kubeadm/init.config
   elif [ ${NODE_MODE} = "control-plane-master" ];then
@@ -528,7 +539,7 @@ function Install_Kubernetes_Master (){
   chown $(id -u):$(id -g) ${HOME}/.kube/config
 
   clog debug "installing cni ${CNI}"
-  kubectl apply -f /etc/kubecube/manifests/cni/${CNI} > /dev/null
+  kubectl apply -f /etc/kubecube/manifests/cni/${CNI}/${RELEASE} > /dev/null
 
   sleep 7 >/dev/null
   clog debug "inspect node"
@@ -566,6 +577,8 @@ function Install_Kubernetes_Node (){
     clog error "ACCESS_PASSWORD or ACCESS_PRIVATE_KEY_PATH must be specified"
   fi
 
+  nodename=$(echo $(hostname) | tr 'A-Z' 'a-z')
+
   if [ ${NODE_MODE} = "node-join-control-plane" ]; then
     clog info "node join control plane as master"
     kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash} --control-plane --certificate-key ${CertificateKey}
@@ -576,9 +589,9 @@ function Install_Kubernetes_Node (){
     clog info "node join cluster as worker"
     kubeadm join ${MASTER_IP}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${Hash}
     if [ ! -z ${ACCESS_PASSWORD} ]; then
-      sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+      sshpass -p ${ACCESS_PASSWORD} ssh -p ${SSH_PORT} ${SSH_USER}@${MASTER_IP} "kubectl label nodes $nodename node-role.kubernetes.io/node="
     else
-      ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubectl label nodes $(hostname) node-role.kubernetes.io/node="
+      ssh -i ${ACCESS_PRIVATE_KEY_PATH} -o "StrictHostKeyChecking no" ${SSH_USER}@${MASTER_IP} -p ${SSH_PORT} "kubectl label nodes $nodename node-role.kubernetes.io/node="
     fi
       mkdir -p ${HOME}/.kube
       cp -i /etc/kubernetes/kubelet.conf ${HOME}/.kube/config
@@ -600,7 +613,6 @@ function Main() {
     clog error "container_runtime error, only support docker and containerd now!"
     exit 1
   fi
-
 
   k8s_bin_get
   images_download
