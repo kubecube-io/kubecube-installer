@@ -513,8 +513,14 @@ if [ -z ${CONTROL_PLANE_ENDPOINT} ]; then
   CONTROL_PLANE_ENDPOINT=${IPADDR}
 fi
 
+apiversion=kubeadm.k8s.io/v1beta2
+
+if [ $(echo "$KUBERNETES_VERSION 1.26" | awk '{ if ($1 > $2) print 1; else print 0 }') -eq 1 ]; then
+  apiversion=kubeadm.k8s.io/v1beta3
+fi
+
 cat >/etc/cube/kubeadm/init.config <<EOF
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: ${apiversion}
 kind: ClusterConfiguration
 kubernetesVersion: ${KUBERNETES_VERSION}
 controlPlaneEndpoint: ${CONTROL_PLANE_ENDPOINT}
