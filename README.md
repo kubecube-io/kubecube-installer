@@ -7,19 +7,19 @@ KubeCube installer is here for install kubecube by "all-in-one" way. More detail
 set version
 
 ```bash
-export KUBECUBE_VERSION=v1.8
+export KUBECUBE_VERSION=v1.9-rc
 ```
 
 ### All in one install
 
 ```bash
-curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.3/entry.sh | bash
+curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.4-rc/entry.sh | bash
 ```
 
 ### Custom install
 
 ```bash
-export CUSTOMIZE="true";curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.3/entry.sh | bash
+export CUSTOMIZE="true";curl -fsSL https://kubecube.nos-eastchina1.126.net/kubecube-installer/release/v1.4-rc/entry.sh | bash
 ```
 
 ## Clean UP
