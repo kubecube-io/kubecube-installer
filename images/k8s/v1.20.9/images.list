@@ -1,7 +1,7 @@
-hub.c.163.com/kubecube/calico/node:v3.19.1-m
-hub.c.163.com/kubecube/calico/cni:v3.19.1-m
-hub.c.163.com/kubecube/calico/pod2daemon-flexvol:v3.19.1-m
-hub.c.163.com/kubecube/calico/kube-controllers:v3.19.1-m
+docker.io/kubecube/calico-node:v3.19.1-m
+docker.io/kubecube/calico-cni:v3.19.1-m
+docker.io/kubecube/calico-pod2daemon-flexvol:v3.19.1-m
+docker.io/kubecube/calico-kube-controllers:v3.19.1-m
 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver:v1.20.9
 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager:v1.20.9
 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.20.9
