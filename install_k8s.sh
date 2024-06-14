@@ -489,6 +489,19 @@ function make_cluster_configuration (){
     IPADDR=${KUBERNETES_BIND_ADDRESS}
   fi
 
+  cri_socket=unix:///var/run/cri-dockerd.sock
+
+  if [[ ${CONTAINER_RUNTIME} = "containerd" ]]; then
+    cri_socket=unix:///var/run/containerd/containerd.sock
+  fi
+
+INIT_CONF=$(cat <<- EOF
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: ${cri_socket}
+EOF
+)
 API_SERVER_CONF=$(cat <<- EOF
 # set control plane components listen on IPADDR
 controllerManager:
@@ -513,14 +526,22 @@ if [ -z ${CONTROL_PLANE_ENDPOINT} ]; then
   CONTROL_PLANE_ENDPOINT=${IPADDR}
 fi
 
+apiversion=kubeadm.k8s.io/v1beta2
+
+if [ $(echo "$KUBERNETES_VERSION 1.26" | awk '{ if ($1 > $2) print 1; else print 0 }') -eq 1 ]; then
+  apiversion=kubeadm.k8s.io/v1beta3
+fi
+
 cat >/etc/cube/kubeadm/init.config <<EOF
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: ${apiversion}
 kind: ClusterConfiguration
 kubernetesVersion: ${KUBERNETES_VERSION}
 controlPlaneEndpoint: ${CONTROL_PLANE_ENDPOINT}
 ${API_SERVER_CONF}
 ---
 ${KUBE_PROXY_CONF}
+---
+${INIT_CONF}
 EOF
 }
 
